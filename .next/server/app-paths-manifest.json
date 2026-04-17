@@ -1,8 +1,6 @@
 {
   "/_global-error/page": "app/_global-error/page.js",
   "/_not-found/page": "app/_not-found/page.js",
-  "/contact/page": "app/contact/page.js",
-  "/market/page": "app/market/page.js",
-  "/music/page": "app/music/page.js",
+  "/api/contact/route": "app/api/contact/route.js",
   "/page": "app/page.js"
 }

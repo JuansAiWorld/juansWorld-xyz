@@ -1,8 +1,6 @@
 {
   "/_global-error/page": "/_global-error",
   "/_not-found/page": "/_not-found",
-  "/contact/page": "/contact",
-  "/market/page": "/market",
-  "/music/page": "/music",
+  "/api/contact/route": "/api/contact",
   "/page": "/"
 }

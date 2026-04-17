@@ -223,7 +223,12 @@
                 banner.className = 'banner success';
                 history.replaceState(null, '', 'ask-juan.html');
             } else if (params.has('error')) {
-                banner.textContent = 'Something went wrong. Please try again or reach out directly.';
+                const msg = params.get('msg');
+                let text = 'Something went wrong. Please try again or reach out directly.';
+                if (params.get('error') === 'missing') text = 'Please fill in all required fields.';
+                if (params.get('error') === 'config') text = 'Server configuration error. Contact the site admin.';
+                if (msg) text += ' (' + decodeURIComponent(msg) + ')';
+                banner.textContent = text;
                 banner.className = 'banner error';
                 history.replaceState(null, '', 'ask-juan.html');
             }

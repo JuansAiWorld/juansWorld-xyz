@@ -42,22 +42,10 @@
       "namedRegex": "^/_not\\-found(?:/)?$"
     },
     {
-      "page": "/contact",
-      "regex": "^/contact(?:/)?$",
+      "page": "/api/contact",
+      "regex": "^/api/contact(?:/)?$",
       "routeKeys": {},
-      "namedRegex": "^/contact(?:/)?$"
-    },
-    {
-      "page": "/market",
-      "regex": "^/market(?:/)?$",
-      "routeKeys": {},
-      "namedRegex": "^/market(?:/)?$"
-    },
-    {
-      "page": "/music",
-      "regex": "^/music(?:/)?$",
-      "routeKeys": {},
-      "namedRegex": "^/music(?:/)?$"
+      "namedRegex": "^/api/contact(?:/)?$"
     }
   ],
   "dataRoutes": [],
