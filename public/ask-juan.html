@@ -116,6 +116,25 @@
         .note strong {
             color: #fff;
         }
+        .banner {
+            display: none;
+            padding: 1rem 1.5rem;
+            border-radius: 4px;
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+        }
+        .banner.success {
+            display: block;
+            background: #0a1f14;
+            border: 1px solid #00ff88;
+            color: #00ff88;
+        }
+        .banner.error {
+            display: block;
+            background: #1f0a0a;
+            border: 1px solid #ff4444;
+            color: #ff4444;
+        }
         footer {
             border-top: 1px solid #222;
             padding: 2rem;
@@ -161,10 +180,6 @@
                         <span>Potential collaboration or project</span>
                     </label>
                     <label class="radio-option">
-                        <input type="radio" name="reason" value="crypto">
-                        <span>Crypto / DeFi / Web3 inquiry</span>
-                    </label>
-                    <label class="radio-option">
                         <input type="radio" name="reason" value="analysis">
                         <span>Market analysis or research question</span>
                     </label>
@@ -183,14 +198,31 @@
             <button type="submit">Send to Juan</button>
         </form>
         
+        <div id="banner" class="banner"></div>
+
         <div class="note">
-            <strong>Note:</strong> This form is currently in demo mode. Submissions will be logged for review. 
-            Full backend integration coming soon — for now, this is a proof of concept for the intake flow.
+            <strong>Note:</strong> Responses are sent via email. Expect a reply within 24 hours.
         </div>
     </div>
     
     <footer>
         Juan's World — Questions welcome ❤️‍🔥
     </footer>
+
+    <script>
+        (function() {
+            const params = new URLSearchParams(window.location.search);
+            const banner = document.getElementById('banner');
+            if (params.has('sent')) {
+                banner.textContent = 'Message sent — Juan will be in touch soon.';
+                banner.className = 'banner success';
+                history.replaceState(null, '', 'ask-juan.html');
+            } else if (params.has('error')) {
+                banner.textContent = 'Something went wrong. Please try again or reach out directly.';
+                banner.className = 'banner error';
+                history.replaceState(null, '', 'ask-juan.html');
+            }
+        })();
+    </script>
 </body>
 </html>
