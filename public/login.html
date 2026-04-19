@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Blue Jays Reports</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XWCEHFL4TE"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-XWCEHFL4TE');
+    </script>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">
+            <h1>🐦 Blue Jays Reports</h1>
+            <p>Members-only game analysis</p>
+        </div>
+        
+        <div class="card">
+            <div id="error-message" class="flash error" style="display: none;"></div>
+            
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" required autofocus>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                
+                <button type="submit" class="btn">Sign In</button>
+            </form>
+        </div>
+        
+        <a href="/" class="back-link">← Back to Home</a>
+    </div>
+    
+    <script src="/js/auth.js"></script>
+</body>
+</html>
