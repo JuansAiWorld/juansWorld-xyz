@@ -1,6 +1,16 @@
 import { promises as fs } from 'fs';
 import path from 'path';
 import { hashPassword, verifyPassword } from './auth';
+import { Redis } from '@upstash/redis';
+
+let redis: Redis | null = null;
+try {
+  if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
+    redis = Redis.fromEnv();
+  }
+} catch {
+  redis = null;
+}
 
 const USERS_FILE = path.join(process.cwd(), 'data', 'users.json');
 
@@ -10,9 +20,30 @@ export interface User {
   role: 'admin' | 'user';
 }
 
-async function ensureUsersFile(): Promise<void> {
+async function getUsersFromRedis(): Promise<User[] | null> {
+  if (!redis) return null;
   try {
-    await fs.access(USERS_FILE);
+    const data = await redis.get<User[]>('users');
+    return data || [];
+  } catch {
+    return null;
+  }
+}
+
+async function saveUsersToRedis(users: User[]): Promise<boolean> {
+  if (!redis) return false;
+  try {
+    await redis.set('users', users);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+async function getUsersFromFile(): Promise<User[]> {
+  try {
+    const data = await fs.readFile(USERS_FILE, 'utf-8');
+    return JSON.parse(data);
   } catch {
     await fs.mkdir(path.dirname(USERS_FILE), { recursive: true });
     const { salt, hash } = hashPassword('changeme123');
@@ -20,18 +51,39 @@ async function ensureUsersFile(): Promise<void> {
       { username: 'admin', passwordHash: `${salt}:${hash}`, role: 'admin' },
     ];
     await fs.writeFile(USERS_FILE, JSON.stringify(defaultUsers, null, 2));
+    return defaultUsers;
   }
 }
 
+async function saveUsersToFile(users: User[]): Promise<void> {
+  await fs.mkdir(path.dirname(USERS_FILE), { recursive: true });
+  await fs.writeFile(USERS_FILE, JSON.stringify(users, null, 2));
+}
+
+async function ensureDefaultUsers(): Promise<User[]> {
+  const { salt, hash } = hashPassword('changeme123');
+  return [{ username: 'admin', passwordHash: `${salt}:${hash}`, role: 'admin' }];
+}
+
 export async function getUsers(): Promise<User[]> {
-  await ensureUsersFile();
-  const data = await fs.readFile(USERS_FILE, 'utf-8');
-  return JSON.parse(data);
+  const redisUsers = await getUsersFromRedis();
+  if (redisUsers !== null) {
+    if (redisUsers.length === 0) {
+      const defaults = await ensureDefaultUsers();
+      await saveUsersToRedis(defaults);
+      return defaults;
+    }
+    return redisUsers;
+  }
+
+  return getUsersFromFile();
 }
 
 export async function saveUsers(users: User[]): Promise<void> {
-  await fs.mkdir(path.dirname(USERS_FILE), { recursive: true });
-  await fs.writeFile(USERS_FILE, JSON.stringify(users, null, 2));
+  const saved = await saveUsersToRedis(users);
+  if (!saved) {
+    await saveUsersToFile(users);
+  }
 }
 
 export async function findUser(username: string): Promise<User | undefined> {
