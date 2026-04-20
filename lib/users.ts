@@ -45,19 +45,25 @@ async function getUsersFromFile(): Promise<User[]> {
     const data = await fs.readFile(USERS_FILE, 'utf-8');
     return JSON.parse(data);
   } catch {
-    await fs.mkdir(path.dirname(USERS_FILE), { recursive: true });
-    const { salt, hash } = hashPassword('changeme123');
-    const defaultUsers: User[] = [
-      { username: 'admin', passwordHash: `${salt}:${hash}`, role: 'admin' },
-    ];
-    await fs.writeFile(USERS_FILE, JSON.stringify(defaultUsers, null, 2));
-    return defaultUsers;
+    const defaults = await ensureDefaultUsers();
+    try {
+      await fs.mkdir(path.dirname(USERS_FILE), { recursive: true });
+      await fs.writeFile(USERS_FILE, JSON.stringify(defaults, null, 2));
+    } catch {
+      // Read-only filesystem (e.g., Vercel production without Redis)
+      // Return defaults without persisting
+    }
+    return defaults;
   }
 }
 
 async function saveUsersToFile(users: User[]): Promise<void> {
-  await fs.mkdir(path.dirname(USERS_FILE), { recursive: true });
-  await fs.writeFile(USERS_FILE, JSON.stringify(users, null, 2));
+  try {
+    await fs.mkdir(path.dirname(USERS_FILE), { recursive: true });
+    await fs.writeFile(USERS_FILE, JSON.stringify(users, null, 2));
+  } catch {
+    // Read-only filesystem — silently skip
+  }
 }
 
 async function ensureDefaultUsers(): Promise<User[]> {
