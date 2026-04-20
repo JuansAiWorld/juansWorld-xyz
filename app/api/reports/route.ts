@@ -1,10 +1,11 @@
 import { NextResponse } from 'next/server';
 import { checkAuth } from '@/lib/auth';
+import { findUser } from '@/lib/users';
 import { getAllReports } from '@/lib/reports-db';
 
 export async function GET(request: Request) {
-  const user = await checkAuth();
-  if (!user) {
+  const username = await checkAuth();
+  if (!username) {
     return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
   }
 
@@ -23,11 +24,14 @@ export async function GET(request: Request) {
   const start = (page - 1) * perPage;
   const paginated = reports.slice(start, start + perPage);
 
+  const userRecord = await findUser(username);
+
   return NextResponse.json({
     reports: paginated,
     page,
     total_pages: Math.ceil(total / perPage) || 1,
     total,
-    user,
+    user: username,
+    role: userRecord?.role || 'user',
   });
 }

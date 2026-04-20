@@ -61,7 +61,7 @@ async function loadReports() {
         document.getElementById('username').textContent = data.user;
         
         // Show admin link if admin
-        if (data.user === 'admin') {
+        if (data.role === 'admin') {
             document.getElementById('admin-link').style.display = 'inline';
         }
 

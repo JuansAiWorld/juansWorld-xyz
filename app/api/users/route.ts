@@ -1,13 +1,14 @@
 import { NextResponse } from 'next/server';
 import { checkAuth } from '@/lib/auth';
-import { getUsers, createUser, updateUser, deleteUser } from '@/lib/users';
+import { getUsers, findUser, createUser, updateUser, deleteUser } from '@/lib/users';
 
 async function requireAdmin() {
-  const user = await checkAuth();
-  if (!user) {
+  const username = await checkAuth();
+  if (!username) {
     return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
   }
-  if (user !== 'admin') {
+  const user = await findUser(username);
+  if (!user || user.role !== 'admin') {
     return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
   }
   return null;
