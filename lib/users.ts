@@ -12,12 +12,23 @@ try {
   redis = null;
 }
 
-const USERS_FILE = path.join(process.cwd(), 'data', 'users.json');
+// Use /tmp on Vercel (writable), otherwise use project data dir
+const USERS_FILE = process.env.VERCEL
+  ? '/tmp/users.json'
+  : path.join(process.cwd(), 'data', 'users.json');
+
+let memoryUsers: User[] | null = null;
 
 export interface User {
   username: string;
   passwordHash: string;
   role: 'admin' | 'user';
+}
+
+export function getStorageStatus() {
+  if (redis) return 'redis';
+  if (process.env.VERCEL) return 'tmp-file';
+  return 'local-file';
 }
 
 async function getUsersFromRedis(): Promise<User[] | null> {
@@ -50,19 +61,19 @@ async function getUsersFromFile(): Promise<User[]> {
       await fs.mkdir(path.dirname(USERS_FILE), { recursive: true });
       await fs.writeFile(USERS_FILE, JSON.stringify(defaults, null, 2));
     } catch {
-      // Read-only filesystem (e.g., Vercel production without Redis)
-      // Return defaults without persisting
+      // Read-only filesystem — return defaults without persisting
     }
     return defaults;
   }
 }
 
-async function saveUsersToFile(users: User[]): Promise<void> {
+async function saveUsersToFile(users: User[]): Promise<boolean> {
   try {
     await fs.mkdir(path.dirname(USERS_FILE), { recursive: true });
     await fs.writeFile(USERS_FILE, JSON.stringify(users, null, 2));
+    return true;
   } catch {
-    // Read-only filesystem — silently skip
+    return false;
   }
 }
 
@@ -72,24 +83,47 @@ async function ensureDefaultUsers(): Promise<User[]> {
 }
 
 export async function getUsers(): Promise<User[]> {
+  // 1. Try Redis
   const redisUsers = await getUsersFromRedis();
-  if (redisUsers !== null) {
-    if (redisUsers.length === 0) {
-      const defaults = await ensureDefaultUsers();
-      await saveUsersToRedis(defaults);
-      return defaults;
-    }
+  if (redisUsers !== null && redisUsers.length > 0) {
+    memoryUsers = redisUsers;
     return redisUsers;
   }
 
-  return getUsersFromFile();
+  // 2. Try file
+  const fileUsers = await getUsersFromFile();
+  if (fileUsers.length > 0) {
+    memoryUsers = fileUsers;
+    // If Redis is empty but connected, seed it
+    if (redisUsers !== null && redisUsers.length === 0) {
+      await saveUsersToRedis(fileUsers);
+    }
+    return fileUsers;
+  }
+
+  // 3. Fall back to memory cache
+  if (memoryUsers && memoryUsers.length > 0) {
+    return memoryUsers;
+  }
+
+  // 4. Return defaults
+  const defaults = await ensureDefaultUsers();
+  memoryUsers = defaults;
+  await saveUsersToRedis(defaults);
+  await saveUsersToFile(defaults);
+  return defaults;
 }
 
 export async function saveUsers(users: User[]): Promise<void> {
-  const saved = await saveUsersToRedis(users);
-  if (!saved) {
-    await saveUsersToFile(users);
-  }
+  memoryUsers = users;
+
+  const savedRedis = await saveUsersToRedis(users);
+  if (savedRedis) return;
+
+  const savedFile = await saveUsersToFile(users);
+  if (savedFile) return;
+
+  // If nothing else works, at least keep it in memory for this instance
 }
 
 export async function findUser(username: string): Promise<User | undefined> {
