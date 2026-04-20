@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { verifyPassword, createSession, ADMIN_PASSWORD_HASH } from '@/lib/auth';
+import { createSession } from '@/lib/auth';
+import { verifyUserPassword } from '@/lib/users';
 
 export async function POST(request: Request) {
   try {
@@ -12,23 +13,9 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Username and password required' }, { status: 400 });
     }
 
-    if (username !== 'admin') {
+    const valid = await verifyUserPassword(username, password);
+    if (!valid) {
       return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
-    }
-
-    if (ADMIN_PASSWORD_HASH) {
-      const parts = ADMIN_PASSWORD_HASH.split(':');
-      if (parts.length !== 2) {
-        return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
-      }
-      const [salt, storedHash] = parts;
-      if (!verifyPassword(password, salt, storedHash)) {
-        return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
-      }
-    } else {
-      if (password !== 'changeme123') {
-        return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
-      }
     }
 
     const sessionToken = createSession(username);

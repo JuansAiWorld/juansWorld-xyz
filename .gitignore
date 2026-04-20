@@ -4,4 +4,5 @@ juansworld-xyz-site-update-2026-04-17.tar.gz
 *.tar.gz
 
 
+/data/
 .env*

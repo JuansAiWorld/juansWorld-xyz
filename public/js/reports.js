@@ -60,6 +60,11 @@ async function loadReports() {
         // Update username
         document.getElementById('username').textContent = data.user;
         
+        // Show admin link if admin
+        if (data.user === 'admin') {
+            document.getElementById('admin-link').style.display = 'inline';
+        }
+
         // Show/hide clear button
         document.getElementById('clear-btn').style.display = currentOpponent ? 'inline-block' : 'none';
         
