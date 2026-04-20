@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Analytics } from '@vercel/analytics/next'
+import Script from 'next/script'
 
 export const metadata: Metadata = {
   title: "Juan's World",
@@ -13,10 +14,18 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-XWCEHFL4TE"></script>
-        <script dangerouslySetInnerHTML={{
-          __html: `window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());gtag('config', 'G-XWCEHFL4TE');`
-        }} />
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-XWCEHFL4TE"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-XWCEHFL4TE');
+          `}
+        </Script>
       </head>
       <body>
         {children}
