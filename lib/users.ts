@@ -51,20 +51,26 @@ async function saveUsersToRedis(users: User[]): Promise<boolean> {
   }
 }
 
-async function getUsersFromFile(): Promise<User[]> {
+async function getUsersFromFile(): Promise<User[] | null> {
   try {
     const data = await fs.readFile(USERS_FILE, 'utf-8');
     return JSON.parse(data);
   } catch {
-    const defaults = await ensureDefaultUsers();
-    try {
-      await fs.mkdir(path.dirname(USERS_FILE), { recursive: true });
-      await fs.writeFile(USERS_FILE, JSON.stringify(defaults, null, 2));
-    } catch {
-      // Read-only filesystem — return defaults without persisting
-    }
-    return defaults;
+    // File doesn't exist or read failed — don't auto-create defaults here.
+    // Rely on getUsers() to handle first-run seeding.
+    return null;
   }
+}
+
+async function initDefaultUsersFile(): Promise<User[]> {
+  const defaults = await ensureDefaultUsers();
+  try {
+    await fs.mkdir(path.dirname(USERS_FILE), { recursive: true });
+    await fs.writeFile(USERS_FILE, JSON.stringify(defaults, null, 2));
+  } catch {
+    // Read-only filesystem — return defaults without persisting
+  }
+  return defaults;
 }
 
 async function saveUsersToFile(users: User[]): Promise<boolean> {
@@ -92,7 +98,7 @@ export async function getUsers(): Promise<User[]> {
 
   // 2. Try file
   const fileUsers = await getUsersFromFile();
-  if (fileUsers.length > 0) {
+  if (fileUsers !== null && fileUsers.length > 0) {
     memoryUsers = fileUsers;
     // If Redis is empty but connected, seed it
     if (redisUsers !== null && redisUsers.length === 0) {
@@ -106,11 +112,10 @@ export async function getUsers(): Promise<User[]> {
     return memoryUsers;
   }
 
-  // 4. Return defaults
-  const defaults = await ensureDefaultUsers();
+  // 4. First run — seed defaults
+  const defaults = await initDefaultUsersFile();
   memoryUsers = defaults;
   await saveUsersToRedis(defaults);
-  await saveUsersToFile(defaults);
   return defaults;
 }
 
