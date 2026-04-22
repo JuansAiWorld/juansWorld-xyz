@@ -497,8 +497,9 @@
         }
 
         function toggleEditor(id) {
-            const editor = document.getElementById(`editor-${CSS.escape(id)}`);
-            const btn = document.getElementById(`edit-btn-${CSS.escape(id)}`);
+            const editor = document.getElementById('editor-' + id);
+            const btn = document.getElementById('edit-btn-' + id);
+            if (!editor || !btn) return;
             const isActive = editor.classList.contains('active');
 
             // Close all other editors first
@@ -516,7 +517,7 @@
         }
 
         async function saveAssignments(id) {
-            const editor = document.getElementById(`editor-${CSS.escape(id)}`);
+            const editor = document.getElementById('editor-' + id);
             const checkboxes = editor.querySelectorAll('input[type="checkbox"]:checked');
             const usernames = Array.from(checkboxes).map(cb => cb.value);
 
