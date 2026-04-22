@@ -171,6 +171,58 @@
             color: #666;
             font-size: 0.8rem;
         }
+        .assignment-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            margin-bottom: 0.5rem;
+            min-height: 1.5rem;
+        }
+        .assignment-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.6rem;
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid #00ff88;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            color: #00ff88;
+        }
+        .assignment-badge.unassigned {
+            background: rgba(102, 102, 102, 0.1);
+            border-color: #444;
+            color: #888;
+        }
+        .assignment-editor {
+            display: none;
+            margin-top: 0.5rem;
+            padding: 0.75rem;
+            background: #111;
+            border: 1px solid #222;
+            border-radius: 4px;
+        }
+        .assignment-editor.active {
+            display: block;
+        }
+        .user-checkboxes {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem 1rem;
+            margin-bottom: 0.75rem;
+        }
+        .user-checkboxes label {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-size: 0.85rem;
+            color: #ccc;
+            cursor: pointer;
+        }
+        .user-checkboxes input[type="checkbox"] {
+            accent-color: #00ff88;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -402,23 +454,40 @@
             document.getElementById('pdfs-empty').style.display = 'none';
             tbody.innerHTML = allPdfs.map(pdf => {
                 const assigned = pdf.assignedUsers || [];
-                const userOptions = allUsers.map(u =>
-                    `<option value="${escapeHtml(u.username)}" ${assigned.includes(u.username) ? 'selected' : ''}>${escapeHtml(u.username)}</option>`
-                ).join('');
+
+                const badges = assigned.length > 0
+                    ? assigned.map(u => `<span class="assignment-badge">${escapeHtml(u)}</span>`).join('')
+                    : `<span class="assignment-badge unassigned">Unassigned — no one can see this</span>`;
+
+                const checkboxes = allUsers.map(u => `
+                    <label>
+                        <input type="checkbox" value="${escapeHtml(u.username)}" ${assigned.includes(u.username) ? 'checked' : ''}>
+                        ${escapeHtml(u.username)}
+                    </label>
+                `).join('');
 
                 return `
                 <tr data-id="${escapeHtml(pdf.slug)}">
                     <td>
                         <div class="pdf-title">${escapeHtml(pdf.title)}</div>
-                        <div class="pdf-meta">${escapeHtml(pdf.date_formatted)}</div>
+                        <div class="pdf-meta">${escapeHtml(pdf.date_formatted)} · ${escapeHtml(pdf.slug)}</div>
                     </td>
                     <td>
-                        <select class="user-select" multiple data-id="${escapeHtml(pdf.slug)}" style="min-height: 80px;">
-                            ${userOptions}
-                        </select>
+                        <div class="assignment-badges" id="badges-${escapeHtml(pdf.slug)}">
+                            ${badges}
+                        </div>
+                        <div class="assignment-editor" id="editor-${escapeHtml(pdf.slug)}">
+                            <div class="user-checkboxes">
+                                ${checkboxes}
+                            </div>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <button class="btn-small" onclick="saveAssignments('${escapeHtml(pdf.slug)}')">Save Assignments</button>
+                                <button class="btn-small" onclick="toggleEditor('${escapeHtml(pdf.slug)}')">Cancel</button>
+                            </div>
+                        </div>
                     </td>
-                    <td>
-                        <button class="btn-small" onclick="updateAssignments('${escapeHtml(pdf.slug)}')">Save</button>
+                    <td style="white-space: nowrap;">
+                        <button class="btn-small" id="edit-btn-${escapeHtml(pdf.slug)}" onclick="toggleEditor('${escapeHtml(pdf.slug)}')">Edit</button>
                         <button class="btn-small btn-danger" onclick="deletePdf('${escapeHtml(pdf.slug)}')">Delete</button>
                     </td>
                 </tr>
@@ -427,10 +496,29 @@
             document.getElementById('pdfs-table').style.display = 'table';
         }
 
-        async function updateAssignments(id) {
-            const row = document.querySelector(`tr[data-id="${CSS.escape(id)}"]`);
-            const select = row.querySelector('.user-select');
-            const usernames = Array.from(select.selectedOptions).map(o => o.value);
+        function toggleEditor(id) {
+            const editor = document.getElementById(`editor-${CSS.escape(id)}`);
+            const btn = document.getElementById(`edit-btn-${CSS.escape(id)}`);
+            const isActive = editor.classList.contains('active');
+
+            // Close all other editors first
+            document.querySelectorAll('.assignment-editor.active').forEach(el => {
+                el.classList.remove('active');
+            });
+            document.querySelectorAll('[id^="edit-btn-"]').forEach(el => {
+                el.textContent = 'Edit';
+            });
+
+            if (!isActive) {
+                editor.classList.add('active');
+                btn.textContent = 'Close';
+            }
+        }
+
+        async function saveAssignments(id) {
+            const editor = document.getElementById(`editor-${CSS.escape(id)}`);
+            const checkboxes = editor.querySelectorAll('input[type="checkbox"]:checked');
+            const usernames = Array.from(checkboxes).map(cb => cb.value);
 
             try {
                 const response = await fetch(`${API_BASE}/reports/assign`, {
