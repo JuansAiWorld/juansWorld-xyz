@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reports — Juan's World</title>
+    <title>STL Files — Juan's World</title>
     <link rel="stylesheet" href="/css/style.css">
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-XWCEHFL4TE"></script>
     <script>
@@ -12,34 +12,48 @@
       gtag('js', new Date());
       gtag('config', 'G-XWCEHFL4TE');
     </script>
+    <style>
+        .stl-badge {
+            display: inline-block;
+            padding: 0.15rem 0.5rem;
+            background: var(--bg-dark);
+            border: 1px solid #00ccff;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            color: #00ccff;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            vertical-align: middle;
+            margin-left: 0.5rem;
+        }
+        .file-size {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            margin-left: 0.5rem;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>Juan's World</h1>
+            <h1>STL Files</h1>
             <div class="user-menu">
                 <span id="username">Loading...</span>
-                <a href="/stls.html">STL Files</a>
+                <a href="/reports.html">Reports</a>
                 <a href="/admin.html" id="admin-link" style="display: none;">Admin</a>
                 <a href="#" id="logout-link">Logout</a>
             </div>
         </header>
-        
-        <div class="filters">
-            <input type="text" id="opponent-filter" placeholder="Filter by opponent...">
-            <button id="filter-btn">Filter</button>
-            <button id="clear-btn" style="display: none;">Clear</button>
-        </div>
-        
-        <div id="loading" class="empty-state">Loading reports...</div>
+
+        <div id="loading" class="empty-state">Loading files...</div>
         <div id="error" class="empty-state" style="display: none;"></div>
-        
-        <div id="reports-list" class="report-list" style="display: none;"></div>
-        
+
+        <div id="stls-list" class="report-list" style="display: none;"></div>
+
         <div id="pagination" class="pagination" style="display: none;"></div>
     </div>
-    
+
     <script src="/js/auth.js"></script>
-    <script src="/js/reports.js"></script>
+    <script src="/js/stls.js"></script>
 </body>
 </html>
