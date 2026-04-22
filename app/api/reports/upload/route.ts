@@ -3,7 +3,7 @@ import { writeFile } from 'fs/promises';
 import path from 'path';
 import { checkAuth } from '@/lib/auth';
 import { findUser } from '@/lib/users';
-import { createPdfReport, ensurePdfsDir } from '@/lib/reports-db';
+import { createPdfReport, ensurePdfsDir, PDFS_DIR } from '@/lib/reports-db';
 
 async function requireAdmin() {
   const username = await checkAuth();
@@ -38,7 +38,7 @@ export async function POST(request: Request) {
 
     const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
     const filename = `${Date.now()}-${safeName}`;
-    const filePath = path.join(process.cwd(), 'public', 'pdfs', filename);
+    const filePath = path.join(PDFS_DIR, filename);
 
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);

@@ -4,7 +4,9 @@ import { marked } from 'marked';
 import { Redis } from '@upstash/redis';
 
 const REPORTS_DIR = path.join(process.cwd(), 'reports');
-const PDFS_DIR = path.join(process.cwd(), 'public', 'pdfs');
+export const PDFS_DIR = process.env.VERCEL
+  ? '/tmp/pdfs'
+  : path.join(process.cwd(), 'public', 'pdfs');
 
 let redis: Redis | null = null;
 try {

@@ -46,7 +46,7 @@ export async function GET(request: Request) {
         path: pdfReport.filename,
         type: 'pdf',
         html: '',
-        pdfUrl: `/pdfs/${pdfReport.filename}`,
+        pdfUrl: `/api/pdfs/${pdfReport.filename}`,
         assignedUsers: isAdmin ? pdfReport.assignedUsers : undefined,
       },
       user: username,
