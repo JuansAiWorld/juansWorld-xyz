@@ -43,9 +43,33 @@ async function loadReport() {
         }
         
         const data = await response.json();
+        const report = data.report;
         
         loading.style.display = 'none';
-        content.innerHTML = data.report.html;
+        
+        if (report.type === 'pdf') {
+            content.innerHTML = `
+                <div style="margin-bottom: 1.5rem;">
+                    <h1 style="font-size: 1.75rem; margin-bottom: 0.5rem;">${escapeHtml(report.title)}</h1>
+                    <p style="color: var(--text-muted); font-size: 0.875rem;">${report.date_formatted}</p>
+                </div>
+                <div style="border: 1px solid var(--border); border-radius: 8px; overflow: hidden; background: var(--bg-dark);">
+                    <iframe 
+                        src="${report.pdfUrl}" 
+                        style="width: 100%; height: 70vh; border: none;"
+                        title="${escapeHtml(report.title)}">
+                    </iframe>
+                </div>
+                <div style="margin-top: 1rem;">
+                    <a href="${report.pdfUrl}" target="_blank" download class="btn btn-secondary" style="width: auto; padding: 0.5rem 1rem; font-size: 0.875rem;">
+                        Download PDF
+                    </a>
+                </div>
+            `;
+        } else {
+            content.innerHTML = report.html;
+        }
+        
         content.style.display = 'block';
         
     } catch (err) {
@@ -53,4 +77,10 @@ async function loadReport() {
         error.textContent = 'Error loading report. Please try again.';
         error.style.display = 'block';
     }
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
 }

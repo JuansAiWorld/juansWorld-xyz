@@ -1,10 +1,11 @@
 import { NextResponse } from 'next/server';
 import { checkAuth } from '@/lib/auth';
-import { getReportBySlug } from '@/lib/reports-db';
+import { findUser } from '@/lib/users';
+import { getReportBySlug, getPdfReportById, getAllPdfReports } from '@/lib/reports-db';
 
 export async function GET(request: Request) {
-  const user = await checkAuth();
-  if (!user) {
+  const username = await checkAuth();
+  if (!username) {
     return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
   }
 
@@ -15,10 +16,42 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'Report ID required' }, { status: 400 });
   }
 
+  // Try markdown first
   const report = await getReportBySlug(slug);
-  if (!report) {
-    return NextResponse.json({ error: 'Report not found' }, { status: 404 });
+  if (report) {
+    return NextResponse.json({ report, user: username });
   }
 
-  return NextResponse.json({ report, user });
+  // Try PDF
+  const pdfReport = await getPdfReportById(slug);
+  if (pdfReport) {
+    const userRecord = await findUser(username);
+    const isAdmin = userRecord?.role === 'admin';
+
+    // Check access
+    if (!isAdmin && !pdfReport.assignedUsers.includes(username)) {
+      return NextResponse.json({ error: 'Report not found' }, { status: 404 });
+    }
+
+    return NextResponse.json({
+      report: {
+        slug: pdfReport.id,
+        title: pdfReport.title,
+        date: pdfReport.uploadedAt,
+        date_formatted: new Date(pdfReport.uploadedAt).toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        }),
+        path: pdfReport.filename,
+        type: 'pdf',
+        html: '',
+        pdfUrl: `/pdfs/${pdfReport.filename}`,
+        assignedUsers: isAdmin ? pdfReport.assignedUsers : undefined,
+      },
+      user: username,
+    });
+  }
+
+  return NextResponse.json({ error: 'Report not found' }, { status: 404 });
 }
