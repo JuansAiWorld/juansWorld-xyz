@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
-import { createReadStream } from 'fs';
 import path from 'path';
-import { stat } from 'fs/promises';
+import { stat, readFile } from 'fs/promises';
 import { checkAuth } from '@/lib/auth';
 import { findUser } from '@/lib/users';
 import { getAllPdfReports, PDFS_DIR } from '@/lib/reports-db';
@@ -35,7 +34,7 @@ export async function GET(
     return NextResponse.json({ error: 'Access denied' }, { status: 403 });
   }
 
-  // Serve file
+  // Serve file from buffer (more reliable than streams in serverless)
   const filePath = path.join(PDFS_DIR, filename);
   try {
     const fileStat = await stat(filePath);
@@ -43,8 +42,8 @@ export async function GET(
       return NextResponse.json({ error: 'File not found' }, { status: 404 });
     }
 
-    const stream = createReadStream(filePath);
-    return new NextResponse(stream as any, {
+    const buffer = await readFile(filePath);
+    return new NextResponse(buffer, {
       headers: {
         'Content-Type': 'application/pdf',
         'Content-Length': fileStat.size.toString(),

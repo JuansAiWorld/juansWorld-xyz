@@ -137,7 +137,7 @@
             color: #00ff88;
             border: 1px solid #00ff88;
         }
-        #users-loading, #pdfs-loading, #stls-loading { color: #666; }
+        #users-loading, #pdfs-loading { color: #666; }
         .badge {
             display: inline-block;
             padding: 0.15rem 0.5rem;
@@ -232,7 +232,6 @@
             <div class="user-menu">
                 <span id="admin-username"></span>
                 <a href="/reports.html">Reports</a>
-                <a href="/stls.html">STL Files</a>
                 <a href="#" id="logout-link">Logout</a>
             </div>
         </header>
@@ -269,35 +268,6 @@
         </div>
 
         <div class="section">
-            <h2>Upload STL File</h2>
-            <form id="stl-upload-form" class="form-row" style="flex-direction: column; align-items: stretch; gap: 0.75rem;">
-                <div class="form-row" style="margin-bottom: 0;">
-                    <input type="text" id="stl-title" placeholder="File title" style="flex: 1;" required>
-                    <input type="file" id="stl-file" accept=".stl,model/stl,application/octet-stream" required>
-                </div>
-                <div>
-                    <button type="submit" class="btn-small">Upload STL</button>
-                </div>
-            </form>
-        </div>
-
-        <div class="section">
-            <h2>STL Files</h2>
-            <div id="stls-loading">Loading...</div>
-            <table id="stls-table" style="display: none;">
-                <thead>
-                    <tr>
-                        <th>Title</th>
-                        <th>Assigned Users</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="stls-body"></tbody>
-            </table>
-            <p id="stls-empty" style="display: none; color: #666; font-size: 0.9rem;">No STL files uploaded yet.</p>
-        </div>
-
-        <div class="section">
             <h2>Users</h2>
             <div id="users-loading">Loading...</div>
             <table id="users-table" style="display: none;">
@@ -330,7 +300,6 @@
     <script>
         let allUsers = [];
         let allPdfs = [];
-        let allStls = [];
 
         async function requireAdmin() {
             const ok = await requireAuth();
@@ -591,180 +560,6 @@
             }
         }
 
-        /* ─── STL Files ─── */
-
-        async function loadStls() {
-            try {
-                const response = await fetch(`${API_BASE}/stls`, { credentials: 'same-origin' });
-                if (!response.ok) return;
-                const data = await response.json();
-                allStls = data.stls;
-                renderStls();
-            } catch (e) {
-                console.error(e);
-            }
-        }
-
-        function renderStls() {
-            document.getElementById('stls-loading').style.display = 'none';
-            const tbody = document.getElementById('stls-body');
-
-            if (allStls.length === 0) {
-                document.getElementById('stls-table').style.display = 'none';
-                document.getElementById('stls-empty').style.display = 'block';
-                return;
-            }
-
-            document.getElementById('stls-empty').style.display = 'none';
-            tbody.innerHTML = allStls.map(stl => {
-                const assigned = stl.assignedUsers || [];
-
-                const badges = assigned.length > 0
-                    ? assigned.map(u => `<span class="assignment-badge">${escapeHtml(u)}</span>`).join('')
-                    : `<span class="assignment-badge unassigned">Unassigned — no one can see this</span>`;
-
-                const checkboxes = allUsers.map(u => `
-                    <label>
-                        <input type="checkbox" value="${escapeHtml(u.username)}" ${assigned.includes(u.username) ? 'checked' : ''}>
-                        ${escapeHtml(u.username)}
-                    </label>
-                `).join('');
-
-                return `
-                <tr data-stl-id="${escapeHtml(stl.id)}">
-                    <td>
-                        <div class="pdf-title">${escapeHtml(stl.title)}</div>
-                        <div class="pdf-meta">${formatDate(stl.uploadedAt)} · ${escapeHtml(stl.id)}${stl.fileSize ? ' · ' + formatBytes(stl.fileSize) : ''}</div>
-                    </td>
-                    <td>
-                        <div class="assignment-badges" id="stl-badges-${escapeHtml(stl.id)}">
-                            ${badges}
-                        </div>
-                        <div class="assignment-editor" id="stl-editor-${escapeHtml(stl.id)}">
-                            <div class="user-checkboxes">
-                                ${checkboxes}
-                            </div>
-                            <div style="display: flex; gap: 0.5rem;">
-                                <button class="btn-small" onclick="saveStlAssignments('${escapeHtml(stl.id)}')">Save Assignments</button>
-                                <button class="btn-small" onclick="toggleStlEditor('${escapeHtml(stl.id)}')">Cancel</button>
-                            </div>
-                        </div>
-                    </td>
-                    <td style="white-space: nowrap;">
-                        <button class="btn-small" id="stl-edit-btn-${escapeHtml(stl.id)}" onclick="toggleStlEditor('${escapeHtml(stl.id)}')">Edit</button>
-                        <button class="btn-small btn-danger" onclick="deleteStl('${escapeHtml(stl.id)}')">Delete</button>
-                    </td>
-                </tr>
-                `;
-            }).join('');
-            document.getElementById('stls-table').style.display = 'table';
-        }
-
-        function toggleStlEditor(id) {
-            const editor = document.getElementById('stl-editor-' + id);
-            const btn = document.getElementById('stl-edit-btn-' + id);
-            if (!editor || !btn) return;
-            const isActive = editor.classList.contains('active');
-
-            document.querySelectorAll('.assignment-editor.active').forEach(el => {
-                el.classList.remove('active');
-            });
-            document.querySelectorAll('[id^="stl-edit-btn-"]').forEach(el => {
-                el.textContent = 'Edit';
-            });
-
-            if (!isActive) {
-                editor.classList.add('active');
-                btn.textContent = 'Close';
-            }
-        }
-
-        async function saveStlAssignments(id) {
-            const editor = document.getElementById('stl-editor-' + id);
-            const checkboxes = editor.querySelectorAll('input[type="checkbox"]:checked');
-            const usernames = Array.from(checkboxes).map(cb => cb.value);
-
-            try {
-                const response = await fetch(`${API_BASE}/stls/assign`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ id, usernames }),
-                    credentials: 'same-origin'
-                });
-                const data = await response.json();
-                if (response.ok) {
-                    showMessage('Assignments updated', 'success');
-                    loadStls();
-                } else {
-                    showMessage(data.error || 'Failed to update assignments', 'error');
-                }
-            } catch (e) {
-                showMessage('Network error', 'error');
-            }
-        }
-
-        async function deleteStl(id) {
-            if (!confirm('Delete this STL file?')) return;
-
-            try {
-                const response = await fetch(`${API_BASE}/stls?id=${encodeURIComponent(id)}`, {
-                    method: 'DELETE',
-                    credentials: 'same-origin'
-                });
-                const data = await response.json();
-                if (response.ok) {
-                    showMessage('STL deleted', 'success');
-                    loadStls();
-                } else {
-                    showMessage(data.error || 'Failed to delete', 'error');
-                }
-            } catch (e) {
-                showMessage('Network error', 'error');
-            }
-        }
-
-        document.getElementById('stl-upload-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const title = document.getElementById('stl-title').value.trim();
-            const fileInput = document.getElementById('stl-file');
-            const file = fileInput.files[0];
-
-            if (!title || !file) {
-                showMessage('Title and STL file required', 'error');
-                return;
-            }
-
-            const MAX_MB = 4;
-            if (file.size > MAX_MB * 1024 * 1024) {
-                showMessage(`File too large. Max ${MAX_MB}MB allowed on this plan.`, 'error');
-                return;
-            }
-
-            const formData = new FormData();
-            formData.append('title', title);
-            formData.append('file', file);
-
-            try {
-                const response = await fetch(`${API_BASE}/stls/upload`, {
-                    method: 'POST',
-                    body: formData,
-                    credentials: 'same-origin'
-                });
-                const data = await response.json();
-                if (response.ok) {
-                    showMessage('STL uploaded successfully', 'success');
-                    document.getElementById('stl-upload-form').reset();
-                    loadStls();
-                } else if (response.status === 413) {
-                    showMessage('File too large for server. Try a smaller file or contact support.', 'error');
-                } else {
-                    showMessage(data.error || 'Upload failed', 'error');
-                }
-            } catch (err) {
-                showMessage('Network error', 'error');
-            }
-        });
-
         document.getElementById('upload-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const title = document.getElementById('pdf-title').value.trim();
@@ -842,7 +637,6 @@
                 if (ok) {
                     loadUsers();
                     loadPdfs();
-                    loadStls();
                 }
             });
         });

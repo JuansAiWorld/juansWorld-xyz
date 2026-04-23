@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
-import { createReadStream } from 'fs';
 import path from 'path';
-import { stat } from 'fs/promises';
+import { stat, readFile } from 'fs/promises';
 import { checkAuth } from '@/lib/auth';
 import { findUser } from '@/lib/users';
 import { getAllStls, STLS_DIR } from '@/lib/stls-db';
@@ -40,8 +39,8 @@ export async function GET(
       return NextResponse.json({ error: 'File not found' }, { status: 404 });
     }
 
-    const stream = createReadStream(filePath);
-    return new NextResponse(stream as any, {
+    const buffer = await readFile(filePath);
+    return new NextResponse(buffer, {
       headers: {
         'Content-Type': 'model/stl',
         'Content-Length': fileStat.size.toString(),
