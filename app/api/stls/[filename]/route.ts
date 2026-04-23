@@ -40,7 +40,7 @@ export async function GET(
     }
 
     const buffer = await readFile(filePath);
-    return new NextResponse(buffer, {
+    return new NextResponse(new Uint8Array(buffer), {
       headers: {
         'Content-Type': 'model/stl',
         'Content-Length': fileStat.size.toString(),
