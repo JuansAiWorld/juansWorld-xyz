@@ -3,7 +3,7 @@ import { writeFile } from 'fs/promises';
 import path from 'path';
 import { checkAuth } from '@/lib/auth';
 import { findUser } from '@/lib/users';
-import { createPdfReport, ensurePdfsDir, PDFS_DIR } from '@/lib/reports-db';
+import { createPdfReport, ensurePdfsDir, PDFS_DIR, savePdfBinary } from '@/lib/reports-db';
 
 async function requireAdmin() {
   const username = await checkAuth();
@@ -42,7 +42,13 @@ export async function POST(request: Request) {
 
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
-    await writeFile(filePath, buffer);
+
+    // Save to Redis as primary storage (fallback to disk)
+    const savedRedis = await savePdfBinary(filename, buffer);
+    if (!savedRedis) {
+      await ensurePdfsDir();
+      await writeFile(filePath, buffer);
+    }
 
     const report = await createPdfReport(title, filename, adminUser);
 

@@ -247,13 +247,50 @@ export async function assignUsersToPdfReport(id: string, usernames: string[]): P
   await savePdfReports(reports);
 }
 
+/* ─── PDF binary storage (Redis primary, disk fallback) ─── */
+
+export async function savePdfBinary(filename: string, buffer: Buffer): Promise<boolean> {
+  if (!redis) return false;
+  try {
+    const base64 = buffer.toString('base64');
+    await redis.set(`pdf-binary:${filename}`, base64);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export async function getPdfBinary(filename: string): Promise<Buffer | null> {
+  if (!redis) return null;
+  try {
+    const base64 = await redis.get<string>(`pdf-binary:${filename}`);
+    if (!base64) return null;
+    return Buffer.from(base64, 'base64');
+  } catch {
+    return null;
+  }
+}
+
+export async function deletePdfBinary(filename: string): Promise<boolean> {
+  if (!redis) return false;
+  try {
+    await redis.del(`pdf-binary:${filename}`);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 export async function deletePdfReport(id: string): Promise<void> {
   const reports = await getAllPdfReports();
   const idx = reports.findIndex((r) => r.id === id);
   if (idx === -1) throw new Error('Report not found');
   const report = reports[idx];
 
-  // Delete file from disk
+  // Delete from Redis binary storage
+  await deletePdfBinary(report.filename);
+
+  // Delete file from disk (fallback cleanup)
   try {
     const filePath = path.join(PDFS_DIR, report.filename);
     await fs.unlink(filePath);

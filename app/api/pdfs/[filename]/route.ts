@@ -3,7 +3,7 @@ import path from 'path';
 import { stat, readFile } from 'fs/promises';
 import { checkAuth } from '@/lib/auth';
 import { findUser } from '@/lib/users';
-import { getAllPdfReports, PDFS_DIR } from '@/lib/reports-db';
+import { getAllPdfReports, PDFS_DIR, getPdfBinary } from '@/lib/reports-db';
 
 export async function GET(
   request: Request,
@@ -34,23 +34,27 @@ export async function GET(
     return NextResponse.json({ error: 'Access denied' }, { status: 403 });
   }
 
-  // Serve file from buffer (more reliable than streams in serverless)
-  const filePath = path.join(PDFS_DIR, filename);
-  try {
-    const fileStat = await stat(filePath);
-    if (!fileStat.isFile()) {
+  // Serve file from Redis first, then fallback to disk
+  let buffer = await getPdfBinary(filename);
+
+  if (!buffer) {
+    const filePath = path.join(PDFS_DIR, filename);
+    try {
+      const fileStat = await stat(filePath);
+      if (!fileStat.isFile()) {
+        return NextResponse.json({ error: 'File not found' }, { status: 404 });
+      }
+      buffer = await readFile(filePath);
+    } catch {
       return NextResponse.json({ error: 'File not found' }, { status: 404 });
     }
-
-    const buffer = await readFile(filePath);
-    return new NextResponse(buffer, {
-      headers: {
-        'Content-Type': 'application/pdf',
-        'Content-Length': fileStat.size.toString(),
-        'Content-Disposition': `inline; filename="${filename}"`,
-      },
-    });
-  } catch {
-    return NextResponse.json({ error: 'File not found' }, { status: 404 });
   }
+
+  return new NextResponse(buffer, {
+    headers: {
+      'Content-Type': 'application/pdf',
+      'Content-Length': buffer.length.toString(),
+      'Content-Disposition': `inline; filename="${filename}"`,
+    },
+  });
 }
