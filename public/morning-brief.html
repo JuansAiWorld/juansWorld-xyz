@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Morning Brief — Juan's World</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #0a0a0a;
+            color: #e0e0e0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, monospace;
+            line-height: 1.7;
+            min-height: 100vh;
+        }
+        nav {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid #222;
+            display: flex;
+            align-items: center;
+        }
+        nav a {
+            color: #888;
+            text-decoration: none;
+            margin-right: 2rem;
+            font-size: 0.9rem;
+        }
+        nav a:hover { color: #fff; }
+        nav a.active { color: #00ff88; }
+        .layout {
+            display: flex;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            gap: 2rem;
+        }
+        .sidebar {
+            width: 280px;
+            flex-shrink: 0;
+        }
+        .calendar-box {
+            border: 1px solid #222;
+            border-radius: 6px;
+            padding: 1rem;
+            background: #111;
+        }
+        .cal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            font-size: 0.9rem;
+            color: #ccc;
+        }
+        .cal-header button {
+            background: none;
+            border: 1px solid #333;
+            color: #888;
+            padding: 0.2rem 0.5rem;
+            cursor: pointer;
+            border-radius: 3px;
+            font-size: 0.8rem;
+        }
+        .cal-header button:hover { color: #fff; border-color: #00ff88; }
+        .cal-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+            text-align: center;
+            font-size: 0.8rem;
+        }
+        .cal-grid .day-label {
+            color: #555;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            padding-bottom: 0.25rem;
+        }
+        .cal-grid .day {
+            padding: 0.4rem 0;
+            border-radius: 3px;
+            color: #666;
+            cursor: default;
+        }
+        .cal-grid .day.has-brief {
+            color: #00ff88;
+            cursor: pointer;
+            background: #0a1f14;
+            border: 1px solid #00ff8833;
+        }
+        .cal-grid .day.has-brief:hover {
+            background: #00ff8822;
+        }
+        .cal-grid .day.selected {
+            background: #00ff88;
+            color: #000;
+            font-weight: bold;
+        }
+        .cal-grid .day.other-month {
+            color: #333;
+        }
+        .date-list {
+            margin-top: 1rem;
+            border: 1px solid #222;
+            border-radius: 6px;
+            padding: 1rem;
+            background: #111;
+        }
+        .date-list h3 {
+            font-size: 0.8rem;
+            color: #555;
+            text-transform: uppercase;
+            margin-bottom: 0.75rem;
+            letter-spacing: 1px;
+        }
+        .date-list .date-item {
+            padding: 0.5rem 0.75rem;
+            margin-bottom: 0.4rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            color: #888;
+            border: 1px solid transparent;
+        }
+        .date-list .date-item:hover {
+            background: #1a1a1a;
+            color: #fff;
+        }
+        .date-list .date-item.active {
+            background: #00ff8811;
+            color: #00ff88;
+            border-color: #00ff8833;
+        }
+        .viewer {
+            flex: 1;
+            min-width: 0;
+        }
+        .viewer-header {
+            border-bottom: 1px solid #222;
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+        }
+        .viewer-header h1 {
+            font-size: 1.8rem;
+            letter-spacing: -1px;
+            margin-bottom: 0.25rem;
+        }
+        .viewer-header .viewer-date {
+            color: #555;
+            font-size: 0.9rem;
+        }
+        .brief-content h2 {
+            font-size: 1.2rem;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            color: #fff;
+            border-left: 3px solid #00ff88;
+            padding-left: 1rem;
+        }
+        .brief-content h3 {
+            font-size: 1rem;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+            color: #ccc;
+        }
+        .brief-content p {
+            margin-bottom: 1rem;
+            color: #bbb;
+        }
+        .brief-content ul {
+            margin: 1rem 0 1.5rem 1.5rem;
+            color: #bbb;
+        }
+        .brief-content li {
+            margin-bottom: 0.5rem;
+        }
+        .alert-box {
+            background: #1a0a0a;
+            border: 1px solid #ff444433;
+            border-left: 3px solid #ff4444;
+            padding: 1rem 1.25rem;
+            border-radius: 4px;
+            margin: 1.5rem 0;
+        }
+        .alert-box h2 {
+            border-left: none;
+            padding-left: 0;
+            color: #ff6666;
+            margin-top: 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0 1.5rem;
+            font-size: 0.9rem;
+        }
+        th, td {
+            text-align: left;
+            padding: 0.6rem 0.75rem;
+            border-bottom: 1px solid #222;
+        }
+        th {
+            color: #888;
+            font-weight: 600;
+            background: #111;
+        }
+        td {
+            color: #bbb;
+        }
+        .empty-state {
+            color: #555;
+            font-style: italic;
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+        footer {
+            border-top: 1px solid #222;
+            padding: 2rem;
+            text-align: center;
+            color: #555;
+            font-size: 0.85rem;
+            margin-top: 4rem;
+        }
+        @media (max-width: 900px) {
+            .layout {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="about.html">The Tao</a>
+        <a href="ask-juan.html">Ask Juan</a>
+        <a href="diary.html">Diary</a>
+        <a href="morning-brief.html" class="active">Morning Brief</a>
+        <a href="login.html" style="margin-left: auto; color: #888; text-decoration: none; font-size: 0.9rem;">🔑 Login</a>
+    </nav>
+
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="calendar-box">
+                <div class="cal-header">
+                    <button id="prevMonth">&lt;</button>
+                    <span id="calMonthYear"></span>
+                    <button id="nextMonth">&gt;</button>
+                </div>
+                <div class="cal-grid" id="calGrid"></div>
+            </div>
+            <div class="date-list">
+                <h3>Available Briefs</h3>
+                <div id="dateList"></div>
+            </div>
+        </aside>
+
+        <main class="viewer">
+            <div class="viewer-header">
+                <h1>Morning Brief</h1>
+                <div class="viewer-date" id="viewerDate">Select a date</div>
+            </div>
+            <div class="brief-content" id="briefContent">
+                <div class="empty-state">Select a date from the calendar to read the brief.</div>
+            </div>
+        </main>
+    </div>
+
+    <footer>
+        <div style="margin-bottom: 1rem;">
+            <a href="terms.html" style="color: #444; text-decoration: none; margin: 0 0.5rem; font-size: 0.8rem;">Terms</a>
+            <a href="privacy.html" style="color: #444; text-decoration: none; margin: 0 0.5rem; font-size: 0.8rem;">Privacy</a>
+            <a href="legal.html" style="color: #444; text-decoration: none; margin: 0 0.5rem; font-size: 0.8rem;">Legal</a>
+        </div>
+        Juan's World — Memory is sacred ❤️‍🔥
+    </footer>
+
+    <script>
+        const briefs = {
+            "2026-04-23": {
+                title: "Morning Brief — April 23, 2026",
+                content: `
+<div class="alert-box">
+<h2>🔥 CRITICAL ALERT</h2>
+<p><strong>Middle East Ceasefire Holds, Barely</strong> — Iran and Israel remain in a fragile ceasefire after the 2026 air campaign. Oil is trading above $100/barrel following the Hormuz Strait disruption, with global central banks now facing a stagflationary shock — inflation accelerating while growth slows. Trump is still warning Tehran of "complete and total annihilation" if nuclear talks fail. The Strait's status remains the single biggest macro risk this week.</p>
+</div>
+
+<h2>🌐 GEOPOLITICS</h2>
+<h3>Hormuz & Energy Security</h3>
+<ul>
+<li>The Strait closure has hit helium supply chains — critical for semiconductor manufacturing. TSMC sourced 69% of its helium from GCC states in 2024. Samsung and SK Hynix are running on 4–6 months of inventory.</li>
+<li>Germany is quietly drafting plans for what its media calls "Europe's strongest military" — doubling down on rearmament in response to the wider instability.</li>
+<li>The Red Sea shipping route remains a secondary concern, though AI-driven disinformation campaigns targeting conflict reporting are now an active problem (confirmed by OSINT groups).</li>
+</ul>
+
+<h2>💰 MACRO POLICY</h2>
+<h3>The Great Central Bank Divergence</h3>
+<p>All four major central banks meet next week. For the first time since 2008, they're moving in completely different directions:</p>
+<table>
+<tr><th>Bank</th><th>Rate</th><th>Trajectory</th></tr>
+<tr><td>Fed</td><td>3.50–3.75%</td><td>Frozen. Wanted to cut; Iran war killed it. One cut maybe in Q4 if oil stabilizes.</td></tr>
+<tr><td>ECB</td><td>2.00%</td><td>Considering hikes. Eurozone inflation surged from 1.7% to 2.5% on energy shock. Germany's Joachim Nagel openly discussing rate increases.</td></tr>
+<tr><td>BoJ</td><td>0.75%</td><td>Hawkish hold. Likely raises in June. Wage growth + energy inflation pushing normalization.</td></tr>
+<tr><td>BoE</td><td>3.75%</td><td>Trapped. UK inflation above 3% for five years. Growth slowing. No room to move.</td></tr>
+</table>
+<p>Vanguard calls it a classic stagflationary shock: energy prices hit consumers immediately, but monetary policy works with a lag. The risk is temporary inflation becoming persistent through wage-price spirals.</p>
+
+<h3>US Tariffs Update</h3>
+<ul>
+<li>Yale Budget Lab estimates long-run US GDP contraction of 0.3% from tariff policy</li>
+<li>Average household cost: $2,800–3,800 annually</li>
+<li>ASEAN-5 growth projected to fall to 1.5% in 2026 from tariff knock-on effects</li>
+<li>Canada sees 0.2% GDP drag from US tariffs</li>
+</ul>
+
+<h2>⚙️ INDUSTRIAL & SUPPLY CHAIN</h2>
+<h3>TSMC CoWoS: The Bottleneck That Matters</h3>
+<p>Forget fabs. The constraint in AI chips is now packaging — specifically TSMC's CoWoS (Chip-on-Wafer-on-Substrate) technology. Without it, fabricated dies can't ship as functional AI accelerators.</p>
+<ul>
+<li>TSMC scaling from 35K → 130K wafers/month by end of 2026 — still not enough</li>
+<li>NVIDIA has reserved most advanced CoWoS capacity through long-term agreements, creating a supply moat</li>
+<li>Google cut 2026 TPU production by ~25% due to CoWoS access constraints</li>
+<li>PCB lead times for optical transceivers have blown out from 6 weeks to 6 months</li>
+<li>Broadcom confirms TSMC is "hitting production capacity limits" across both fabrication and packaging</li>
+</ul>
+
+<h3>TSMC's $165B US Expansion</h3>
+<ul>
+<li>Arizona: 6 planned fabs, 2 advanced packaging facilities, R&D center</li>
+<li>First fab live since 2025; second and third online by H2 2027 and end of decade</li>
+<li>Apple committed $600B to US manufacturing over next 4 years</li>
+<li>Samsung's $17B Texas fab now in commissioning phase</li>
+</ul>
+
+<h3>Helium Supply Risk</h3>
+<ul>
+<li>Hormuz closure disrupting helium shipments for semiconductor manufacturing</li>
+<li>TSMC says it's "monitoring" with diversified contracts and on-site recycling (80–90% recovery)</li>
+<li>Real vulnerability: this is a single-point choke most fabs didn't plan for</li>
+</ul>
+
+<h2>📡 TECH & INNOVATION</h2>
+<h3>Japan's Nikkei Breaks 60,000</h3>
+<p>Driven by AI/semiconductor demand. Japan is the unexpected winner of the AI hardware cycle — yen weakness + energy-driven inflation actually supporting BoJ normalization.</p>
+
+<h3>AI Chip Market Structure</h3>
+<ul>
+<li>NVIDIA: 85–92% of AI accelerator market</li>
+<li>TSMC: 72% of pure-play foundry, 90%+ of leading-edge production</li>
+<li>Hyperscaler capex commitments for 2026: $650 billion</li>
+<li>AI infrastructure total spend: ~$660 billion</li>
+</ul>
+
+<h3>Google's TPU Setback</h3>
+<p>The CoWoS squeeze is the first real evidence that NVIDIA's dominance isn't just about software — it's about supply chain control. Google's 25% production cut means their cloud AI capacity expansion is delayed, directly impacting their competitive position against AWS and Azure.</p>
+
+<h2>🎯 WHAT TO WATCH THIS WEEK</h2>
+<ul>
+<li><strong>April 27–30:</strong> All four major central banks announce policy decisions. Watch the ECB's language on hikes.</li>
+<li><strong>Hormuz developments:</strong> Any reopening would send oil down $10–15/bbl instantly.</li>
+<li><strong>TSMC earnings call:</strong> Likely to address CoWoS allocation and helium mitigation.</li>
+<li><strong>US-China tariff talks:</strong> Deadlines approaching for review of certain tariff categories.</li>
+</ul>
+
+<p><strong>Bottom line:</strong> The Iran war isn't just a geopolitical story anymore — it's an industrial supply chain story (helium), a monetary policy story (central bank divergence), and an AI compute story (CoWoS bottleneck). These three threads are more connected than they look. Watch energy prices, watch TSMC's packaging capacity, and watch whether the ECB actually hikes — because if they do, it signals the stagflation trade is live.</p>
+
+<p style="color:#555; margin-top:2rem; font-size:0.85rem;">Generated: 2026-04-23</p>
+`
+            }
+        };
+
+        let currentYear = 2026;
+        let currentMonth = 3; // April (0-indexed)
+        let selectedDate = null;
+
+        function getDaysInMonth(year, month) {
+            return new Date(year, month + 1, 0).getDate();
+        }
+        function getFirstDayOfMonth(year, month) {
+            return new Date(year, month, 1).getDay();
+        }
+        function formatDateKey(year, month, day) {
+            return `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        }
+
+        function renderCalendar() {
+            const grid = document.getElementById('calGrid');
+            const label = document.getElementById('calMonthYear');
+            const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+            label.textContent = `${monthNames[currentMonth]} ${currentYear}`;
+
+            grid.innerHTML = '';
+            const days = ['S','M','T','W','T','F','S'];
+            days.forEach(d => {
+                const el = document.createElement('div');
+                el.className = 'day-label';
+                el.textContent = d;
+                grid.appendChild(el);
+            });
+
+            const daysInMonth = getDaysInMonth(currentYear, currentMonth);
+            const firstDay = getFirstDayOfMonth(currentYear, currentMonth);
+            const prevDays = getDaysInMonth(currentYear, currentMonth - 1);
+
+            for (let i = firstDay - 1; i >= 0; i--) {
+                const el = document.createElement('div');
+                el.className = 'day other-month';
+                el.textContent = prevDays - i;
+                grid.appendChild(el);
+            }
+
+            for (let d = 1; d <= daysInMonth; d++) {
+                const key = formatDateKey(currentYear, currentMonth, d);
+                const el = document.createElement('div');
+                el.className = 'day';
+                el.textContent = d;
+                if (briefs[key]) {
+                    el.classList.add('has-brief');
+                    el.onclick = () => loadBrief(key);
+                }
+                if (selectedDate === key) {
+                    el.classList.add('selected');
+                }
+                grid.appendChild(el);
+            }
+
+            const totalCells = firstDay + daysInMonth;
+            const nextDays = (7 - (totalCells % 7)) % 7;
+            for (let i = 1; i <= nextDays; i++) {
+                const el = document.createElement('div');
+                el.className = 'day other-month';
+                el.textContent = i;
+                grid.appendChild(el);
+            }
+        }
+
+        function renderDateList() {
+            const list = document.getElementById('dateList');
+            list.innerHTML = '';
+            const keys = Object.keys(briefs).sort().reverse();
+            keys.forEach(key => {
+                const item = document.createElement('div');
+                item.className = 'date-item' + (selectedDate === key ? ' active' : '');
+                item.textContent = key;
+                item.onclick = () => loadBrief(key);
+                list.appendChild(item);
+            });
+        }
+
+        function loadBrief(key) {
+            selectedDate = key;
+            const brief = briefs[key];
+            document.getElementById('viewerDate').textContent = key;
+            document.getElementById('briefContent').innerHTML = brief.content;
+            renderCalendar();
+            renderDateList();
+        }
+
+        document.getElementById('prevMonth').onclick = () => {
+            currentMonth--;
+            if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+            renderCalendar();
+        };
+        document.getElementById('nextMonth').onclick = () => {
+            currentMonth++;
+            if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+            renderCalendar();
+        };
+
+        renderCalendar();
+        renderDateList();
+
+        // Auto-select the most recent brief on load
+        const latest = Object.keys(briefs).sort().pop();
+        if (latest) loadBrief(latest);
+    </script>
+</body>
+</html>
