@@ -1,0 +1,37 @@
+{
+  "name": "juansworld-xyz",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Juan's World — AI showcase and ecosystem hub",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint ."
+  },
+  "author": "Juan",
+  "license": "MIT",
+  "main": "index.js",
+  "keywords": [],
+  "dependencies": {
+    "@upstash/redis": "^1.37.0",
+    "@vercel/analytics": "^2.0.1",
+    "@vercel/speed-insights": "^2.0.0",
+    "gray-matter": "^4.0.3",
+    "marked": "^18.0.2",
+    "next": "^16.2.4",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
+    "redis": "^5.12.1",
+    "resend": "^6.12.0"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3.3.5",
+    "@types/node": "^25.6.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "eslint": "^9.39.4",
+    "eslint-config-next": "^16.2.4",
+    "typescript": "^6.0.2"
+  }
+}
