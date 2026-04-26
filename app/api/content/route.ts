@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { checkAuth } from '@/lib/auth';
 import { findUser } from '@/lib/users';
-import { getAllContent, isContentVisible } from '@/lib/content-db';
+import { getAllContent, getContentBySlug, isContentVisible } from '@/lib/content-db';
 
 
 export async function GET(request: Request) {
@@ -10,9 +10,24 @@ export async function GET(request: Request) {
   const category = searchParams.get('category') || '';
   const page = parseInt(searchParams.get('page') || '1', 10);
   const lang = searchParams.get('lang') || 'en';
+  const slug = searchParams.get('slug');
 
   const userRecord = username ? await findUser(username) : null;
   const isAdmin = userRecord?.role === 'admin';
+
+  // Single item lookup
+  if (slug) {
+    const item = await getContentBySlug(slug, category || undefined);
+    if (!item) {
+      return NextResponse.json({ error: 'Content not found' }, { status: 404 });
+    }
+    const now = new Date();
+    const canSee = item.category === 'brief' || item.isPublic || isAdmin || (username && isContentVisible(item, now));
+    if (!canSee) {
+      return NextResponse.json({ error: 'Content not found' }, { status: 404 });
+    }
+    return NextResponse.json({ item, user: username, role: userRecord?.role || 'guest' });
+  }
 
   // Fetch markdown content
   let content = await getAllContent(lang);

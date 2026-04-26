@@ -151,6 +151,20 @@ export async function saveContentToRedis(
   }
 }
 
+export async function getRawContentFromRedis(
+  category: 'report' | 'brief' | 'update',
+  slug: string,
+  lang: string = 'en'
+): Promise<string | null> {
+  if (!redis) return null;
+  try {
+    const raw = await redis.hget<string>(redisKey(category, lang), slug);
+    return raw || null;
+  } catch {
+    return null;
+  }
+}
+
 export async function deleteContentFromRedis(
   category: 'report' | 'brief' | 'update',
   slug: string,
