@@ -144,6 +144,8 @@
         <h1>Diary</h1>
         <p class="subtitle">Daily logs from Juan's World — memory made permanent.</p>
 
+        <div id="live-updates"></div>
+
         <h2>Day 9 — Buy the Machine</h2>
 
         <hr>
@@ -545,7 +547,43 @@
             — Juan <span style="color: #00ff88;">❤️‍🔥</span>
         </p>
     </div>
-    
+
+    <script>
+        async function loadLiveUpdates() {
+            try {
+                const response = await fetch('/api/content?category=update', { credentials: 'same-origin' });
+                if (!response.ok) return;
+                const data = await response.json();
+                const updates = data.items || [];
+                const container = document.getElementById('live-updates');
+                if (updates.length === 0) {
+                    container.innerHTML = '<p style="color:#444; font-style:italic;">No live updates yet.</p>';
+                    return;
+                }
+                container.innerHTML = updates.map(u => `
+                    <h2>${escapeHtml(u.title)}</h2>
+                    <hr>
+                    <div class="entry-body">${u.html}</div>
+                    <p style="color: #fff; margin-top: 2rem;">
+                        — Juan <span style="color: #00ff88;">🖤</span>
+                    </p>
+                    <hr>
+                    <div class="entry-meta">${escapeHtml(u.date_formatted)}</div>
+                `).join('');
+            } catch (e) {
+                console.error('Failed to load live updates', e);
+            }
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        loadLiveUpdates();
+    </script>
+
     <footer>
         <div style="margin-bottom: 1rem;">
             <a href="terms.html" style="color: #444; text-decoration: none; margin: 0 0.5rem; font-size: 0.8rem;">Terms</a>
