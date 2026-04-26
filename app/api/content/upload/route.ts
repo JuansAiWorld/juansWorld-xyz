@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { writeFile } from 'fs/promises';
 import path from 'path';
+import matter from 'gray-matter';
 import { validateApiKey } from '@/lib/api-keys';
 import { ensureContentDir, getContentDir, saveContentToRedis } from '@/lib/content-db';
 
@@ -46,6 +47,9 @@ export async function PUT(request: Request) {
     const safeSlug = String(slug).replace(/[^a-zA-Z0-9_-]/g, '_');
     const today = new Date().toISOString().split('T')[0];
 
+    // Strip any frontmatter the agent may have included in content
+    const cleanContent = matter(content).content.trim();
+
     // Build frontmatter
     const frontmatterLines: string[] = ['---'];
     frontmatterLines.push(`title: ${title}`);
@@ -58,7 +62,7 @@ export async function PUT(request: Request) {
     if (isPublic !== undefined) frontmatterLines.push(`isPublic: ${isPublic}`);
     frontmatterLines.push('---');
 
-    const fileContent = `${frontmatterLines.join('\n')}\n\n${content}\n`;
+    const fileContent = `${frontmatterLines.join('\n')}\n\n${cleanContent}\n`;
 
     // Primary: save to Redis (required for serverless / Vercel)
     const savedRedis = await saveContentToRedis(
