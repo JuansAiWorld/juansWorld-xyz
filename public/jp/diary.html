@@ -763,7 +763,7 @@
                 const updates = data.items || [];
                 const container = document.getElementById('live-updates');
                 if (updates.length === 0) {
-                    container.innerHTML = '<p style="color:#444; font-style:italic;">ライブ更新はまだありません。</p>';
+                    container.style.display = 'none';
                     return;
                 }
                 container.innerHTML = updates.map(u => `
