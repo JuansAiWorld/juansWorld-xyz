@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { createSession } from '@/lib/auth';
-import { verifyUserPassword } from '@/lib/users';
+import { verifyUserPassword, updateUserLastLogin } from '@/lib/users';
+import { recordLoginEvent } from '@/lib/login-log';
 
 export async function POST(request: Request) {
   try {
@@ -28,6 +29,20 @@ export async function POST(request: Request) {
       maxAge: 7 * 24 * 60 * 60,
       path: '/',
     });
+
+    // Record login event and update last login timestamp
+    const ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown';
+    const userAgent = request.headers.get('user-agent') || 'unknown';
+    await Promise.all([
+      updateUserLastLogin(username),
+      recordLoginEvent({
+        username,
+        action: 'login',
+        timestamp: new Date().toISOString(),
+        ip: ip.split(',')[0].trim(),
+        userAgent,
+      }),
+    ]);
 
     return NextResponse.json({ success: true, username });
   } catch {

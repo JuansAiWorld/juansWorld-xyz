@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { checkAuth } from '@/lib/auth';
 import { findUser } from '@/lib/users';
 import { getAllContent, isContentVisible } from '@/lib/content-db';
-import { getAllPdfReports } from '@/lib/reports-db';
+
 
 export async function GET(request: Request) {
   const username = await checkAuth();
@@ -20,26 +20,7 @@ export async function GET(request: Request) {
     content = content.filter((item) => item.category === category);
   }
 
-  // Fetch PDFs and merge
-  const pdfReports = await getAllPdfReports();
-  const pdfItems = pdfReports.map((p) => ({
-    slug: p.id,
-    title: p.title,
-    date: p.uploadedAt,
-    date_formatted: new Date(p.uploadedAt).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    }),
-    path: p.filename,
-    type: 'pdf' as const,
-    category: 'report' as const,
-    publishAt: p.publishAt,
-    expireAt: p.expireAt,
-    assignedUsers: p.assignedUsers,
-  }));
-
-  const merged = [...content, ...pdfItems].sort(
+  const merged = [...content].sort(
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
   );
 

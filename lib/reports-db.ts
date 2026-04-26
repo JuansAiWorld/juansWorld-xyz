@@ -2,27 +2,8 @@ import { promises as fs } from 'fs';
 import path from 'path';
 import { marked } from 'marked';
 import matter from 'gray-matter';
-import { Redis } from '@upstash/redis';
 
 const REPORTS_DIR = path.join(process.cwd(), 'reports');
-export const PDFS_DIR = process.env.VERCEL
-  ? '/tmp/pdfs'
-  : path.join(process.cwd(), 'public', 'pdfs');
-
-let redis: Redis | null = null;
-try {
-  if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
-    redis = Redis.fromEnv();
-  }
-} catch {
-  redis = null;
-}
-
-const REPORTS_META_FILE = process.env.VERCEL
-  ? '/tmp/reports-meta.json'
-  : path.join(process.cwd(), 'data', 'reports-meta.json');
-
-let memoryReports: PdfReport[] | null = null;
 
 /* ─── Types ─── */
 
@@ -43,19 +24,7 @@ export interface ReportDetail extends Report {
   html: string;
 }
 
-export interface PdfReport {
-  id: string;
-  title: string;
-  filename: string;
-  assignedUsers: string[];
-  uploadedAt: string;
-  uploadedBy: string;
-  type: 'pdf';
-  publishAt?: string;
-  expireAt?: string;
-}
-
-/* ─── Markdown reports (existing) ─── */
+/* ─── Markdown reports ─── */
 
 async function getMarkdownFiles(dir: string): Promise<string[]> {
   const entries = await fs.readdir(dir, { withFileTypes: true });
@@ -158,121 +127,6 @@ export async function getReportBySlug(slug: string): Promise<ReportDetail | null
   return null;
 }
 
-/* ─── PDF reports (new) ─── */
-
-async function getPdfReportsFromRedis(): Promise<PdfReport[] | null> {
-  if (!redis) return null;
-  try {
-    const data = await redis.get<PdfReport[]>('pdf-reports');
-    return data || [];
-  } catch {
-    return null;
-  }
-}
-
-async function savePdfReportsToRedis(reports: PdfReport[]): Promise<boolean> {
-  if (!redis) return false;
-  try {
-    await redis.set('pdf-reports', reports);
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-async function getPdfReportsFromFile(): Promise<PdfReport[] | null> {
-  try {
-    const data = await fs.readFile(REPORTS_META_FILE, 'utf-8');
-    return JSON.parse(data);
-  } catch {
-    return null;
-  }
-}
-
-async function savePdfReportsToFile(reports: PdfReport[]): Promise<boolean> {
-  try {
-    await fs.mkdir(path.dirname(REPORTS_META_FILE), { recursive: true });
-    await fs.writeFile(REPORTS_META_FILE, JSON.stringify(reports, null, 2));
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-export async function getAllPdfReports(): Promise<PdfReport[]> {
-  const redisReports = await getPdfReportsFromRedis();
-  if (redisReports !== null) {
-    memoryReports = redisReports;
-    return redisReports;
-  }
-
-  const fileReports = await getPdfReportsFromFile();
-  if (fileReports !== null) {
-    memoryReports = fileReports;
-    await savePdfReportsToRedis(fileReports);
-    return fileReports;
-  }
-
-  if (memoryReports) {
-    return memoryReports;
-  }
-
-  return [];
-}
-
-export async function savePdfReports(reports: PdfReport[]): Promise<void> {
-  memoryReports = reports;
-  const savedRedis = await savePdfReportsToRedis(reports);
-  if (savedRedis) return;
-  await savePdfReportsToFile(reports);
-}
-
-export async function getPdfReportById(id: string): Promise<PdfReport | null> {
-  const reports = await getAllPdfReports();
-  return reports.find((r) => r.id === id) || null;
-}
-
-export async function createPdfReport(
-  title: string,
-  filename: string,
-  uploadedBy: string
-): Promise<PdfReport> {
-  const reports = await getAllPdfReports();
-  const report: PdfReport = {
-    id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-    title,
-    filename,
-    assignedUsers: [],
-    uploadedAt: new Date().toISOString(),
-    uploadedBy,
-    type: 'pdf',
-  };
-  reports.push(report);
-  await savePdfReports(reports);
-  return report;
-}
-
-export async function assignUsersToPdfReport(id: string, usernames: string[]): Promise<void> {
-  const reports = await getAllPdfReports();
-  const idx = reports.findIndex((r) => r.id === id);
-  if (idx === -1) throw new Error('Report not found');
-  reports[idx].assignedUsers = usernames;
-  await savePdfReports(reports);
-}
-
-export async function updatePdfReportSchedule(
-  id: string,
-  publishAt?: string,
-  expireAt?: string
-): Promise<void> {
-  const reports = await getAllPdfReports();
-  const idx = reports.findIndex((r) => r.id === id);
-  if (idx === -1) throw new Error('Report not found');
-  if (publishAt !== undefined) reports[idx].publishAt = publishAt || undefined;
-  if (expireAt !== undefined) reports[idx].expireAt = expireAt || undefined;
-  await savePdfReports(reports);
-}
-
 export function isContentVisible(
   item: { publishAt?: string | null; expireAt?: string | null },
   now = new Date()
@@ -282,67 +136,4 @@ export function isContentVisible(
   if (publishDate && publishDate > now) return false;
   if (expireDate && expireDate <= now) return false;
   return true;
-}
-
-/* ─── PDF binary storage (Redis primary, disk fallback) ─── */
-
-export async function savePdfBinary(filename: string, buffer: Buffer): Promise<boolean> {
-  if (!redis) return false;
-  try {
-    const base64 = buffer.toString('base64');
-    await redis.set(`pdf-binary:${filename}`, base64);
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-export async function getPdfBinary(filename: string): Promise<Buffer | null> {
-  if (!redis) return null;
-  try {
-    const base64 = await redis.get<string>(`pdf-binary:${filename}`);
-    if (!base64) return null;
-    return Buffer.from(base64, 'base64');
-  } catch {
-    return null;
-  }
-}
-
-export async function deletePdfBinary(filename: string): Promise<boolean> {
-  if (!redis) return false;
-  try {
-    await redis.del(`pdf-binary:${filename}`);
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-export async function deletePdfReport(id: string): Promise<void> {
-  const reports = await getAllPdfReports();
-  const idx = reports.findIndex((r) => r.id === id);
-  if (idx === -1) throw new Error('Report not found');
-  const report = reports[idx];
-
-  // Delete from Redis binary storage
-  await deletePdfBinary(report.filename);
-
-  // Delete file from disk (fallback cleanup)
-  try {
-    const filePath = path.join(PDFS_DIR, report.filename);
-    await fs.unlink(filePath);
-  } catch {
-    // Ignore file deletion errors
-  }
-
-  reports.splice(idx, 1);
-  await savePdfReports(reports);
-}
-
-export async function ensurePdfsDir(): Promise<void> {
-  try {
-    await fs.mkdir(PDFS_DIR, { recursive: true });
-  } catch {
-    // Ignore
-  }
 }

@@ -74,18 +74,15 @@ async function loadReports() {
             return;
         }
         
-        list.innerHTML = data.reports.map(report => {
-            const isPdf = report.type === 'pdf';
-            const badge = isPdf ? '<span class="report-badge">PDF</span>' : '';
-            return `
+        list.innerHTML = data.reports.map(report => `
             <a href="/report.html?id=${report.slug}" class="report-card">
                 <div class="report-info">
-                    <h3>${escapeHtml(report.title)} ${badge}</h3>
+                    <h3>${escapeHtml(report.title)}</h3>
                     <span class="date">${report.date_formatted}</span>
                 </div>
                 <span class="report-arrow">→</span>
             </a>
-        `}).join('');
+        `).join('');
         
         // Render pagination
         if (data.total_pages > 1) {

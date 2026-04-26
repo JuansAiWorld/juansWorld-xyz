@@ -23,6 +23,7 @@ export interface User {
   username: string;
   passwordHash: string;
   role: 'admin' | 'user';
+  lastLoginAt?: string;
 }
 
 export function getStorageStatus() {
@@ -194,5 +195,13 @@ export async function deleteUser(username: string): Promise<void> {
   const idx = users.findIndex((u) => u.username === username);
   if (idx === -1) throw new Error('User not found');
   users.splice(idx, 1);
+  await saveUsers(users);
+}
+
+export async function updateUserLastLogin(username: string): Promise<void> {
+  const users = await getUsers();
+  const idx = users.findIndex((u) => u.username === username);
+  if (idx === -1) return;
+  users[idx].lastLoginAt = new Date().toISOString();
   await saveUsers(users);
 }
