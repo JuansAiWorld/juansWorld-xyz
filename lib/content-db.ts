@@ -2,6 +2,16 @@ import { promises as fs } from 'fs';
 import path from 'path';
 import { marked } from 'marked';
 import matter from 'gray-matter';
+import { Redis } from '@upstash/redis';
+
+let redis: Redis | null = null;
+try {
+  if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
+    redis = Redis.fromEnv();
+  }
+} catch {
+  redis = null;
+}
 
 const CONTENT_DIRS: Record<string, Record<string, string>> = {
   report: { en: path.join(process.cwd(), 'reports') },
@@ -50,7 +60,104 @@ async function getMarkdownFiles(dir: string): Promise<string[]> {
   return files;
 }
 
-async function scanCategory(
+async function parseMarkdownItem(
+  slug: string,
+  raw: string,
+  category: 'report' | 'brief' | 'update',
+  filePath?: string
+): Promise<ContentItem> {
+  const parsed = matter(raw);
+  const html = await marked(parsed.content);
+
+  const title =
+    parsed.data.title ||
+    (parsed.content.split('\n')[0].trim().startsWith('#')
+      ? parsed.content.split('\n')[0].trim().replace(/^#+\s*/, '')
+      : slug);
+
+  const date = parsed.data.date
+    ? new Date(parsed.data.date).toISOString()
+    : new Date().toISOString();
+
+  return {
+    slug,
+    title,
+    date,
+    date_formatted: new Date(parsed.data.date || Date.now()).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    }),
+    path: filePath || `${category}/${slug}.md`,
+    type: 'markdown',
+    category,
+    publishAt: parsed.data.publishAt,
+    expireAt: parsed.data.expireAt,
+    assignedUsers: parsed.data.assignedUsers,
+    isPublic: parsed.data.isPublic ?? category === 'brief',
+    content: parsed.content,
+    html,
+  };
+}
+
+/* ─── Redis content storage ─── */
+
+function redisKey(category: string, lang: string = 'en'): string {
+  return `content:${category}:${lang}`;
+}
+
+async function scanRedisCategory(
+  category: 'report' | 'brief' | 'update',
+  lang: string = 'en'
+): Promise<ContentItem[]> {
+  if (!redis) return [];
+  try {
+    const data = await redis.hgetall<Record<string, string>>(redisKey(category, lang));
+    if (!data || Object.keys(data).length === 0) return [];
+
+    const items: ContentItem[] = [];
+    for (const [slug, rawMarkdown] of Object.entries(data)) {
+      if (!rawMarkdown) continue;
+      items.push(await parseMarkdownItem(slug, rawMarkdown, category));
+    }
+    return items;
+  } catch {
+    return [];
+  }
+}
+
+export async function saveContentToRedis(
+  category: 'report' | 'brief' | 'update',
+  slug: string,
+  rawMarkdown: string,
+  lang: string = 'en'
+): Promise<boolean> {
+  if (!redis) return false;
+  try {
+    await redis.hset(redisKey(category, lang), { [slug]: rawMarkdown });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export async function deleteContentFromRedis(
+  category: 'report' | 'brief' | 'update',
+  slug: string,
+  lang: string = 'en'
+): Promise<boolean> {
+  if (!redis) return false;
+  try {
+    await redis.hdel(redisKey(category, lang), slug);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/* ─── Filesystem content storage ─── */
+
+async function scanFilesystemCategory(
   category: 'report' | 'brief' | 'update',
   lang: string = 'en'
 ): Promise<ContentItem[]> {
@@ -62,39 +169,41 @@ async function scanCategory(
     const stat = await fs.stat(file);
     const created = new Date(stat.mtime);
     const raw = await fs.readFile(file, 'utf-8');
-    const parsed = matter(raw);
-
-    const title =
-      parsed.data.title ||
-      (parsed.content.split('\n')[0].trim().startsWith('#')
-        ? parsed.content.split('\n')[0].trim().replace(/^#+\s*/, '')
-        : path.basename(file, '.md'));
-
     const slug = path.basename(file, '.md');
 
-    const html = await marked(parsed.content);
-    items.push({
-      slug,
-      title,
-      date: parsed.data.date ? new Date(parsed.data.date).toISOString() : created.toISOString(),
-      date_formatted: new Date(parsed.data.date || created).toLocaleDateString('en-US', {
+    const item = await parseMarkdownItem(slug, raw, category, path.relative(process.cwd(), file));
+    // Use file mtime as fallback date if frontmatter has no date
+    if (!matter(raw).data.date) {
+      item.date = created.toISOString();
+      item.date_formatted = created.toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'long',
         day: 'numeric',
-      }),
-      path: path.relative(process.cwd(), file),
-      type: 'markdown',
-      category,
-      publishAt: parsed.data.publishAt,
-      expireAt: parsed.data.expireAt,
-      assignedUsers: parsed.data.assignedUsers,
-      isPublic: parsed.data.isPublic ?? category === 'brief',
-      content: parsed.content,
-      html,
-    });
+      });
+    }
+    items.push(item);
   }
 
-  return items.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  return items;
+}
+
+/* ─── Unified scan ─── */
+
+async function scanCategory(
+  category: 'report' | 'brief' | 'update',
+  lang: string = 'en'
+): Promise<ContentItem[]> {
+  const [redisItems, fileItems] = await Promise.all([
+    scanRedisCategory(category, lang),
+    scanFilesystemCategory(category, lang),
+  ]);
+
+  const redisSlugs = new Set(redisItems.map((i) => i.slug));
+  const uniqueFileItems = fileItems.filter((i) => !redisSlugs.has(i.slug));
+
+  return [...redisItems, ...uniqueFileItems].sort(
+    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+  );
 }
 
 export async function getAllContent(lang?: string): Promise<ContentItem[]> {
@@ -113,20 +222,7 @@ export async function getContentBySlug(
   category?: string
 ): Promise<ContentItem | null> {
   const all = await getAllContent();
-  const found = all.find((item) => item.slug === slug && (!category || item.category === category));
-  if (!found) return null;
-
-  const dir = CONTENT_DIRS[found.category]['en'];
-  const filePath = path.join(dir, `${slug}.md`);
-  const raw = await fs.readFile(filePath, 'utf-8');
-  const parsed = matter(raw);
-  const html = await marked(parsed.content);
-
-  return {
-    ...found,
-    content: parsed.content,
-    html,
-  };
+  return all.find((item) => item.slug === slug && (!category || item.category === category)) || null;
 }
 
 export async function getContentByCategory(
