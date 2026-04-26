@@ -22,6 +22,7 @@ export async function PUT(request: Request) {
       title,
       content,
       category = 'update',
+      lang = 'en',
       publishAt,
       expireAt,
       assignedUsers,
@@ -63,16 +64,17 @@ export async function PUT(request: Request) {
     const savedRedis = await saveContentToRedis(
       category as 'report' | 'brief' | 'update',
       safeSlug,
-      fileContent
+      fileContent,
+      lang
     );
 
     // Fallback: write to filesystem for local dev
     if (!savedRedis) {
-      const dir = getContentDir(category as 'report' | 'brief' | 'update');
-      await ensureContentDir(category as 'report' | 'brief' | 'update');
+      const dir = getContentDir(category as 'report' | 'brief' | 'update', lang);
+      await ensureContentDir(category as 'report' | 'brief' | 'update', lang);
       const filePath = path.join(dir, `${safeSlug}.md`);
       await writeFile(filePath, fileContent, 'utf-8');
-      return NextResponse.json({ success: true, slug: safeSlug, category, path: filePath });
+      return NextResponse.json({ success: true, slug: safeSlug, category, lang, path: filePath });
     }
 
     return NextResponse.json({ success: true, slug: safeSlug, category, storage: 'redis' });

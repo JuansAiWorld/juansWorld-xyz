@@ -60,14 +60,20 @@ async function getMarkdownFiles(dir: string): Promise<string[]> {
   return files;
 }
 
+function dateLocale(lang: string): string {
+  return lang === 'ja' ? 'ja-JP' : 'en-US';
+}
+
 async function parseMarkdownItem(
   slug: string,
   raw: string,
   category: 'report' | 'brief' | 'update',
-  filePath?: string
+  filePath?: string,
+  lang: string = 'en'
 ): Promise<ContentItem> {
   const parsed = matter(raw);
   const html = await marked(parsed.content);
+  const locale = dateLocale(lang);
 
   const title =
     parsed.data.title ||
@@ -83,7 +89,7 @@ async function parseMarkdownItem(
     slug,
     title,
     date,
-    date_formatted: new Date(parsed.data.date || Date.now()).toLocaleDateString('en-US', {
+    date_formatted: new Date(parsed.data.date || Date.now()).toLocaleDateString(locale, {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
@@ -118,7 +124,7 @@ async function scanRedisCategory(
     const items: ContentItem[] = [];
     for (const [slug, rawMarkdown] of Object.entries(data)) {
       if (!rawMarkdown) continue;
-      items.push(await parseMarkdownItem(slug, rawMarkdown, category));
+      items.push(await parseMarkdownItem(slug, rawMarkdown, category, undefined, lang));
     }
     return items;
   } catch {
@@ -171,11 +177,11 @@ async function scanFilesystemCategory(
     const raw = await fs.readFile(file, 'utf-8');
     const slug = path.basename(file, '.md');
 
-    const item = await parseMarkdownItem(slug, raw, category, path.relative(process.cwd(), file));
+    const item = await parseMarkdownItem(slug, raw, category, path.relative(process.cwd(), file), lang);
     // Use file mtime as fallback date if frontmatter has no date
     if (!matter(raw).data.date) {
       item.date = created.toISOString();
-      item.date_formatted = created.toLocaleDateString('en-US', {
+      item.date_formatted = created.toLocaleDateString(dateLocale(lang), {
         year: 'numeric',
         month: 'long',
         day: 'numeric',
