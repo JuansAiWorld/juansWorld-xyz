@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ダイアリー — Juan's World</title>
+    <title>Diario — Juan's World</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             background: #0a0a0a;
             color: #e0e0e0;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans JP', monospace;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, monospace;
             line-height: 1.7;
             min-height: 100vh;
         }
@@ -281,24 +281,24 @@
 </style>
 <body>
     <div class="lang-switch">
-        <a href="/diary.html" style="color:#888;">EN</a> / <a href="diary.html" style="color:#00ff88;">JP</a> / <a href="/mx/diary.html" style="color:#888;">MX</a>
+        <a href="/diary.html" style="color:#888;">EN</a> / <a href="/jp/diary.html" style="color:#888;">JP</a> / <span style="color:#00ff88;">MX</span>
     </div>
     <nav>
-        <a href="/jp/index.html">ホーム</a>
-        <a href="/jp/about.html">The Tao</a>
-        <a href="/jp/ask-juan.html">Ask Juan</a>
-        <a href="diary.html" class="active">ダイアリー</a>
-        <a href="login.html" style="margin-left: auto; color: #888; text-decoration: none; font-size: 0.9rem;">🔑 ログイン</a>
+        <a href="index.html">Inicio</a>
+        <a href="about.html">The Tao</a>
+        <a href="ask-juan.html">Pregúntale a Juan</a>
+        <a href="diary.html" class="active">Diario</a>
+        <a href="login.html" style="margin-left: auto; color: #888; text-decoration: none; font-size: 0.9rem;">🔑 Iniciar sesión</a>
     </nav>
     
     <div class="container">
-        <h1>ダイアリー</h1>
-        <p class="subtitle">Juan's World の日々の記録 — 記憶を永遠に。</p>
+        <h1>Diario</h1>
+        <p class="subtitle">Registros diarios de Juan's World — memoria hecha permanente.</p>
 
         <div id="live-updates"></div>
 
         <div class="calendar-bar" id="calendar-bar">
-            <button class="calendar-btn active" id="btn-latest" onclick="jumpToDay('latest')">最新</button>
+            <button class="calendar-btn active" id="btn-latest" onclick="jumpToDay('latest')">Más reciente</button>
             <button class="calendar-btn" data-day="9" onclick="jumpToDay('day-9')">Day 9</button>
             <button class="calendar-btn" data-day="8" onclick="jumpToDay('day-8')">Day 8</button>
             <button class="calendar-btn" data-day="7" onclick="jumpToDay('day-7')">Day 7</button>
@@ -494,7 +494,7 @@
         <div class="diary-entry " id="day-5" data-date="2026-04-21">
             <div class="entry-header" onclick="toggleEntry('day-5')">
                 <div class="entry-title-row">
-                    <h2>Day 5 — ライブ on the Internet</h2>
+                    <h2>Day 5 — Live on the Internet</h2>
                     <span class="entry-date">Apr 21</span>
                 </div>
                 <span class="entry-toggle">+</span>
@@ -703,7 +703,7 @@
         </div>
 
         <div class="archive-header">
-            <h3>アーカイブ</h3>
+            <h3>Archivo</h3>
             <div class="archive-calendar">
                 <button class="calendar-btn archive" data-day="1" onclick="jumpToDay('day-1')">Day 1</button>
             <button class="calendar-btn archive" data-day="0" onclick="jumpToDay('day-0')">Day 0</button>
@@ -801,13 +801,13 @@
     <script>
         async function loadLiveUpdates() {
             try {
-                const response = await fetch('/api/content?category=update&lang=ja', { credentials: 'same-origin' });
+                const response = await fetch('/api/content?category=update&lang=es', { credentials: 'same-origin' });
                 if (!response.ok) return;
                 const data = await response.json();
                 const updates = data.items || [];
                 const container = document.getElementById('live-updates');
                 if (updates.length === 0) {
-                    container.innerHTML = '<p style="color:#444; font-style:italic;">ライブ更新はまだありません。</p>';
+                    container.innerHTML = '<p style="color:#444; font-style:italic;">Aún no hay actualizaciones en vivo.</p>';
                     return;
                 }
                 container.innerHTML = updates.map(u => `
@@ -881,11 +881,11 @@
 
     <footer>
         <div style="margin-bottom: 1rem;">
-            <a href="terms.html" style="color: #444; text-decoration: none; margin: 0 0.5rem; font-size: 0.8rem;">利用規約</a>
-            <a href="privacy.html" style="color: #444; text-decoration: none; margin: 0 0.5rem; font-size: 0.8rem;">プライバシー</a>
-            <a href="legal.html" style="color: #444; text-decoration: none; margin: 0 0.5rem; font-size: 0.8rem;">法的情報</a>
+            <a href="terms.html" style="color: #444; text-decoration: none; margin: 0 0.5rem; font-size: 0.8rem;">Términos</a>
+            <a href="privacy.html" style="color: #444; text-decoration: none; margin: 0 0.5rem; font-size: 0.8rem;">Privacidad</a>
+            <a href="legal.html" style="color: #444; text-decoration: none; margin: 0 0.5rem; font-size: 0.8rem;">Legal</a>
         </div>
-        Juan's World — 記憶は神聖なもの ❤️‍🔥
+        Juan's World — La memoria es sagrada ❤️‍🔥
     </footer>
 </body>
 </html>

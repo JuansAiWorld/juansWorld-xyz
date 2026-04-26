@@ -18,10 +18,12 @@ const CONTENT_DIRS: Record<string, Record<string, string>> = {
   brief: {
     en: path.join(process.cwd(), 'content', 'briefs'),
     ja: path.join(process.cwd(), 'content', 'briefs-jp'),
+    es: path.join(process.cwd(), 'content', 'briefs-mx'),
   },
   update: {
     en: path.join(process.cwd(), 'content', 'updates'),
     ja: path.join(process.cwd(), 'content', 'updates-jp'),
+    es: path.join(process.cwd(), 'content', 'updates-mx'),
   },
 };
 
@@ -61,7 +63,9 @@ async function getMarkdownFiles(dir: string): Promise<string[]> {
 }
 
 function dateLocale(lang: string): string {
-  return lang === 'ja' ? 'ja-JP' : 'en-US';
+  if (lang === 'ja') return 'ja-JP';
+  if (lang === 'es') return 'es-MX';
+  return 'en-US';
 }
 
 async function parseMarkdownItem(
