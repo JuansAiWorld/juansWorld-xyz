@@ -114,19 +114,7 @@
             .grid { grid-template-columns: 1fr !important; }
             .card { padding: 1rem !important; }
         }
-            .lang-switch {
-            position: absolute;
-            top: 1.5rem;
-            right: 2rem;
-            color: #555;
-            font-size: 0.85rem;
-        }
-        .lang-switch a {
-            color: #888;
-            text-decoration: none;
-        }
-        .lang-switch a:hover { color: #00ff88; }
-
+            
         /* ─── Calendar & Collapsible Entries ─── */
         .calendar-bar {
             position: sticky;
@@ -280,10 +268,7 @@
         }
 </style>
 <body>
-    <div class="lang-switch">
-        <a href="/diary.html" style="color:#888;">EN</a> / <a href="diary.html" style="color:#00ff88;">JP</a> / <a href="/mx/diary.html" style="color:#888;">MX</a>
-    </div>
-    <nav>
+<nav>
         <a href="/jp/index.html">ホーム</a>
         <a href="/jp/about.html">The Tao</a>
         <a href="/jp/ask-juan.html">Ask Juan</a>
@@ -855,6 +840,11 @@
             <a href="terms.html" style="color: #444; text-decoration: none; margin: 0 0.5rem; font-size: 0.8rem;">利用規約</a>
             <a href="privacy.html" style="color: #444; text-decoration: none; margin: 0 0.5rem; font-size: 0.8rem;">プライバシー</a>
             <a href="legal.html" style="color: #444; text-decoration: none; margin: 0 0.5rem; font-size: 0.8rem;">法的情報</a>
+        </div>
+                <div class="lang-footer" style="margin-bottom: 1rem;">
+            <a href="/index.html" onclick="localStorage.setItem('preferredLang','en')">English</a>
+            <a href="index.html" onclick="localStorage.setItem('preferredLang','ja')" style="color:#00ff88;">日本語</a>
+            <a href="/mx/index.html" onclick="localStorage.setItem('preferredLang','es')">Español</a>
         </div>
         Juan's World — 記憶は神聖なもの ❤️‍🔥
     </footer>

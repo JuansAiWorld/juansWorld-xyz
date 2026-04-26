@@ -32,19 +32,7 @@
             align-items: center;
         }
         nav a:hover { color: #fff; }
-        .lang-switch {
-            position: absolute;
-            top: 1.5rem;
-            right: 2rem;
-            color: #555;
-            font-size: 0.85rem;
-        }
-        .lang-switch a {
-            color: #888;
-            text-decoration: none;
-        }
-        .lang-switch a:hover { color: #00ff88; }
-        .container {
+                .container {
             max-width: 600px;
             margin: 0 auto;
             padding: 4rem 2rem;
@@ -175,6 +163,34 @@
             .card { padding: 1rem !important; }
         }
     </style>
+<script>
+(function() {
+    const path = window.location.pathname;
+    const currentLang = path.startsWith('/jp/') ? 'ja' : path.startsWith('/mx/') ? 'es' : 'en';
+    
+    // If user has a stored preference, respect it (don't auto-redirect)
+    if (localStorage.getItem('preferredLang')) return;
+    
+    // Only auto-detect on first visit to EN pages
+    if (currentLang !== 'en') return;
+    
+    const browserLang = navigator.language || navigator.userLanguage || '';
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+    
+    let targetLang = null;
+    if (browserLang.startsWith('ja') || tz === 'Asia/Tokyo') {
+        targetLang = 'ja';
+    } else if (browserLang.startsWith('es') || tz.startsWith('America/Mexico') || tz === 'America/Tijuana' || tz === 'America/Chihuahua' || tz === 'America/Mazatlan' || tz === 'America/Merida' || tz === 'America/Monterrey' || tz === 'America/Cancun' || tz === 'America/Hermosillo') {
+        targetLang = 'es';
+    }
+    
+    if (targetLang) {
+        localStorage.setItem('preferredLang', targetLang);
+        const prefix = targetLang === 'ja' ? '/jp' : '/mx';
+        window.location.replace(prefix + path);
+    }
+})();
+</script>
 </head>
 <body>
     <nav>
@@ -184,12 +200,7 @@
         <a href="/jp/diary.html">Diary</a>
         <a href="/jp/login.html" style="margin-left: auto; color: #888; text-decoration: none; font-size: 0.9rem;">🔑 Login</a>
     </nav>
-
-    <div class="lang-switch">
-        <a href="/ask-juan.html">English</a> / <span style="color:#00ff88;">日本語</span> / <a href="/mx/ask-juan.html">MX</a>
-    </div>
-
-    <div class="container">
+<div class="container">
         <h1>Juanに質問</h1>
         <p class="subtitle">質問、コラボレーションのご提案、またはただの挨拶。このフォームから直接Juanに届きます。</p>
 
@@ -270,5 +281,13 @@
             }
         })();
     </script>
+    <footer style="text-align:center; padding:2rem; color:#555; font-size:0.85rem; border-top:1px solid #222;">
+        <div class="lang-footer" style="margin-bottom: 1rem;">
+            <a href="/index.html" onclick="localStorage.setItem('preferredLang','en')">English</a>
+            <a href="/jp/index.html" onclick="localStorage.setItem('preferredLang','ja')" style="color:#00ff88;">日本語</a>
+            <a href="/mx/index.html" onclick="localStorage.setItem('preferredLang','es')">Español</a>
+        </div>
+        Juan's World — Memory is sacred ❤️‍🔥
+    </footer>
 </body>
 </html>
