@@ -11,6 +11,19 @@ try {
   redis = null;
 }
 
+function yamlValue(value: string): string {
+  if (/[:#{}[\],&*!?|>'"@%-]/.test(value) || value.trim() !== value) {
+    return `"${value.replace(/"/g, '\\"')}"`;
+  }
+  return value;
+}
+
+function extractContentAfterFrontmatter(raw: string): string {
+  // Find content after the first frontmatter block (--- ... ---)
+  const match = raw.match(/^---\n[\s\S]*?\n---\n?([\s\S]*)$/);
+  return match ? match[1].trim() : raw.trim();
+}
+
 export async function GET() {
   if (!redis) {
     return NextResponse.json({ error: 'Redis not available' }, { status: 500 });
@@ -30,26 +43,57 @@ export async function GET() {
         for (const [slug, rawMarkdown] of Object.entries(data)) {
           if (!rawMarkdown) continue;
 
-          // Parse the stored markdown
-          const parsed = matter(rawMarkdown);
+          // Extract the content part after the first frontmatter block
+          const contentPart = extractContentAfterFrontmatter(rawMarkdown);
 
-          // Check if the content part itself contains frontmatter (double frontmatter issue)
-          const innerParsed = matter(parsed.content);
-          const hasNestedFrontmatter = innerParsed.data && Object.keys(innerParsed.data).length > 0;
+          // Check if the content part itself starts with frontmatter (double frontmatter)
+          const hasNestedFrontmatter = contentPart.trim().startsWith('---');
 
+          // Also try parsing to get metadata for rebuild
+          let parsed;
+          try {
+            parsed = matter(rawMarkdown);
+          } catch {
+            // If parsing fails, just extract manually
+            parsed = { data: {}, content: contentPart };
+          }
+
+          // Get clean content: if nested frontmatter exists, strip it
+          let cleanContent = parsed.content;
           if (hasNestedFrontmatter) {
-            // Rebuild with clean content (strip the nested frontmatter)
-            const cleanContent = innerParsed.content.trim();
-            const frontmatterLines: string[] = ['---'];
-            if (parsed.data.title) frontmatterLines.push(`title: ${parsed.data.title}`);
-            if (parsed.data.date) frontmatterLines.push(`date: ${parsed.data.date}`);
-            if (parsed.data.publishAt) frontmatterLines.push(`publishAt: ${parsed.data.publishAt}`);
-            if (parsed.data.expireAt) frontmatterLines.push(`expireAt: ${parsed.data.expireAt}`);
-            if (parsed.data.assignedUsers) frontmatterLines.push(`assignedUsers: [${parsed.data.assignedUsers.map((u: string) => `"${u}"`).join(', ')}]`);
-            if (parsed.data.isPublic !== undefined) frontmatterLines.push(`isPublic: ${parsed.data.isPublic}`);
-            frontmatterLines.push('---');
+            try {
+              const inner = matter(contentPart);
+              if (inner.content && inner.content.trim()) {
+                cleanContent = inner.content;
+              }
+            } catch {
+              // If inner parsing fails, just use contentPart as-is
+              cleanContent = contentPart;
+            }
+          }
 
-            const cleanMarkdown = `${frontmatterLines.join('\n')}\n\n${cleanContent}\n`;
+          cleanContent = cleanContent.trim();
+
+          // Rebuild frontmatter with quoted values
+          const data = parsed.data as Record<string, any>;
+          const frontmatterLines: string[] = ['---'];
+          if (data.title) frontmatterLines.push(`title: ${yamlValue(String(data.title))}`);
+          if (data.date) frontmatterLines.push(`date: ${data.date}`);
+          if (data.publishAt) frontmatterLines.push(`publishAt: ${data.publishAt}`);
+          if (data.expireAt) frontmatterLines.push(`expireAt: ${data.expireAt}`);
+          if (data.assignedUsers) {
+            const users = Array.isArray(data.assignedUsers)
+              ? data.assignedUsers
+              : [data.assignedUsers];
+            frontmatterLines.push(`assignedUsers: [${users.map((u: string) => `"${u}"`).join(', ')}]`);
+          }
+          if (data.isPublic !== undefined) frontmatterLines.push(`isPublic: ${data.isPublic}`);
+          frontmatterLines.push('---');
+
+          const cleanMarkdown = `${frontmatterLines.join('\n')}\n\n${cleanContent}\n`;
+
+          // Only save if something changed
+          if (cleanMarkdown !== rawMarkdown) {
             await redis.hset(key, { [slug]: cleanMarkdown });
             results.push(`Cleaned ${lang}/${category}/${slug}`);
           }

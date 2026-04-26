@@ -5,6 +5,14 @@ import matter from 'gray-matter';
 import { validateApiKey } from '@/lib/api-keys';
 import { ensureContentDir, getContentDir, saveContentToRedis } from '@/lib/content-db';
 
+function yamlValue(value: string): string {
+  // Quote string values that contain special YAML chars
+  if (/[:#{}[\],&*!?|>'"@%-]/.test(value) || value.trim() !== value) {
+    return `"${value.replace(/"/g, '\\"')}"`;
+  }
+  return value;
+}
+
 export async function PUT(request: Request) {
   const apiKey = request.headers.get('x-api-key');
   if (!apiKey) {
@@ -50,9 +58,9 @@ export async function PUT(request: Request) {
     // Strip any frontmatter the agent may have included in content
     const cleanContent = matter(content).content.trim();
 
-    // Build frontmatter
+    // Build frontmatter with quoted values
     const frontmatterLines: string[] = ['---'];
-    frontmatterLines.push(`title: ${title}`);
+    frontmatterLines.push(`title: ${yamlValue(title)}`);
     frontmatterLines.push(`date: ${today}`);
     if (publishAt) frontmatterLines.push(`publishAt: ${publishAt}`);
     if (expireAt) frontmatterLines.push(`expireAt: ${expireAt}`);
