@@ -1,0 +1,4324 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>
+   Juan's World - DevOps Manual for AI Developers
+  </title>
+  <script src="https://cdn.tailwindcss.com">
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js">
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Tiempos+Headline:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js">
+  </script>
+  <style>
+   :root {
+            --primary: #8B7355;
+            --secondary: #D4C4A8;
+            --accent: #A67C52;
+            --neutral: #F5F3F0;
+            --base: #FEFCFA;
+            --text: #2C2A27;
+            --text-light: #6B6864;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--base);
+            color: var(--text);
+            line-height: 1.7;
+        }
+        
+        .serif {
+            font-family: 'Tiempos Headline', serif;
+        }
+        
+        .toc-fixed {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 280px;
+            height: 100vh;
+            background: var(--neutral);
+            border-right: 1px solid #E5E2DD;
+            overflow-y: auto;
+            z-index: 40;
+            padding: 2rem 1.5rem;
+        }
+        
+        .main-content {
+            margin-left: 280px;
+            min-height: 100vh;
+        }
+        
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            grid-template-rows: auto auto;
+            gap: 2rem;
+            height: 70vh;
+            margin-bottom: 4rem;
+        }
+        
+        .hero-title {
+            grid-column: 1 / -1;
+            display: flex;
+            align-items: center;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            padding: 3rem;
+            border-radius: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-title::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
+        }
+        
+        .hero-summary {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            border: 1px solid #E5E2DD;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        
+        .hero-visual {
+            background: var(--secondary);
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .section-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--secondary), transparent);
+            margin: 4rem 0;
+        }
+        
+        .toc-link {
+            display: block;
+            padding: 0.5rem 0;
+            color: var(--text-light);
+            text-decoration: none;
+            border-left: 2px solid transparent;
+            padding-left: 1rem;
+            transition: all 0.2s ease;
+        }
+        
+        .toc-link:hover, .toc-link.active {
+            color: var(--primary);
+            border-left-color: var(--primary);
+            background: rgba(139, 115, 85, 0.05);
+            margin-left: -1.5rem;
+            padding-left: 2.5rem;
+        }
+        
+        .toc-link.level-2 {
+            padding-left: 2rem;
+            font-size: 0.9rem;
+        }
+        
+        .toc-link.level-2:hover, .toc-link.level-2.active {
+            padding-left: 3.5rem;
+        }
+        
+        .diagram-container {
+            background: white;
+            border: 1px solid #E5E2DD;
+            border-radius: 1rem;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            display: flex;
+            justify-content: center;
+            min-height: 300px;
+            max-height: 800px;
+        }
+        
+        .code-block {
+            background: #1E1E1E;
+            color: #D4D4D4;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(139, 115, 85, 0.1), rgba(166, 124, 82, 0.05));
+            border-left: 4px solid var(--accent);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 0.75rem 0.75rem 0;
+        }
+        
+        .citation {
+            display: inline-block;
+            background: var(--accent);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.8rem;
+            text-decoration: none;
+            margin: 0 0.25rem;
+            transition: background 0.2s ease;
+        }
+        
+        .citation:hover {
+            background: var(--primary);
+        }
+        
+        /* Mermaid diagram styling */
+        .mermaid-container {
+            display: flex;
+            justify-content: center;
+            min-height: 300px;
+            max-height: 800px;
+            background: #ffffff;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mermaid-container .mermaid {
+            width: 100%;
+            max-width: 100%;
+            height: 100%;
+            cursor: grab;
+            transition: transform 0.3s ease;
+            transform-origin: center center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            touch-action: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        .mermaid-container .mermaid svg {
+            max-width: 100%;
+            height: 100%;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .mermaid-container .mermaid:active {
+            cursor: grabbing;
+        }
+
+        .mermaid-container.zoomed .mermaid {
+            height: 100%;
+            width: 100%;
+            cursor: grab;
+        }
+
+        .mermaid-controls {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            display: flex;
+            gap: 10px;
+            z-index: 20;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 8px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .mermaid-control-btn {
+            background: #ffffff;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            padding: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: #374151;
+            font-size: 14px;
+            min-width: 36px;
+            height: 36px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mermaid-control-btn:hover {
+            background: #f8fafc;
+            border-color: #3b82f6;
+            color: #3b82f6;
+            transform: translateY(-1px);
+        }
+
+        .mermaid-control-btn:active {
+            transform: scale(0.95);
+        }
+        
+        /* Enhanced mermaid node styling for better contrast */
+        .mermaid .node rect,
+        .mermaid .node circle,
+        .mermaid .node ellipse,
+        .mermaid .node polygon {
+            stroke-width: 2px !important;
+        }
+        
+        .mermaid .node text {
+            font-family: 'Inter', sans-serif !important;
+            font-size: 13px !important;
+            font-weight: 500 !important;
+        }
+        
+        .mermaid .edgePath path {
+            stroke-width: 2px !important;
+        }
+        
+        .mermaid .edgeLabel {
+            background-color: white !important;
+            border-radius: 4px !important;
+            padding: 2px 6px !important;
+            font-family: 'Inter', sans-serif !important;
+            font-size: 11px !important;
+            font-weight: 500 !important;
+        }
+        
+        /* Ensure good contrast for different node colors */
+        .mermaid .node[style*="fill:#8B7355"] text,
+        .mermaid .node[style*="fill:#A67C52"] text,
+        .mermaid .node[style*="fill:#2C2A27"] text {
+            fill: white !important;
+            font-weight: 600 !important;
+        }
+        
+        .mermaid .node[style*="fill:#F5F3F0"] text,
+        .mermaid .node[style*="fill:#D4C4A8"] text,
+        .mermaid .node[style*="fill:#FEFCFA"] text {
+            fill: #2C2A27 !important;
+            font-weight: 500 !important;
+        }
+        
+        .mermaid .node[style*="fill:#e3f2fd"] text,
+        .mermaid .node[style*="fill:#e8f5e8"] text,
+        .mermaid .node[style*="fill:#fff3e0"] text,
+        .mermaid .node[style*="fill:#fce4ec"] text,
+        .mermaid .node[style*="fill:#f3e5f5"] text {
+            fill: #2C2A27 !important;
+            font-weight: 500 !important;
+        }
+        
+        /* Arrow styling */
+        .mermaid .arrowheadPath {
+            fill: #6B6864 !important;
+            stroke: #6B6864 !important;
+        }
+        
+@media (max-width: 1024px) {
+    .toc-fixed {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+    }
+    
+    .toc-fixed.mobile-open {
+        transform: translateX(0);
+    }
+    
+    .main-content {
+        margin-left: 0;
+    }
+    
+    .hero-grid {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto;
+        height: auto;
+    }
+
+    /* Responsive mermaid controls */
+    .mermaid-control-btn:not(.reset-zoom) {
+        display: none;
+    }
+    .mermaid-controls {
+        top: auto;
+        bottom: 15px;
+        right: 15px;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-grid {
+        gap: 1rem;
+    }
+    
+    .hero-title {
+        padding: 1.5rem;
+    }
+    
+    .hero-title h1 {
+        font-size: 1.8rem;
+        line-height: 1.2;
+    }
+    
+    .hero-title p {
+        font-size: 0.9rem;
+    }
+    
+    .hero-summary, .hero-visual {
+        padding: 1.5rem;
+    }
+}
+  </style>
+ </head>
+ <body>
+  <!-- Mobile TOC Toggle -->
+  <button class="lg:hidden fixed top-4 left-4 z-50 bg-white p-2 rounded-lg shadow-lg" id="mobile-toc-toggle">
+   <i class="fas fa-bars text-xl">
+   </i>
+  </button>
+  <!-- Fixed Table of Contents -->
+  <nav class="toc-fixed" id="toc-nav">
+   <div class="mb-8">
+    <h2 class="serif text-xl font-bold text-gray-800 mb-4">
+     Contents
+    </h2>
+    <div class="space-y-1">
+     <a class="toc-link" href="#executive-summary">
+      Executive Summary
+     </a>
+     <a class="toc-link" href="#core-concepts">
+      Core Concepts
+     </a>
+     <a class="toc-link level-2" href="#static-vs-api">
+      Static HTML vs API Routes
+     </a>
+     <a class="toc-link level-2" href="#redis-storage">
+      Redis with Filesystem Fallback
+     </a>
+     <a class="toc-link level-2" href="#hmac-sessions">
+      HMAC Session Authentication
+     </a>
+     <a class="toc-link level-2" href="#api-keys">
+      API Keys for AI Agents
+     </a>
+     <a class="toc-link level-2" href="#content-lifecycle">
+      Content Lifecycle
+     </a>
+     <a class="toc-link level-2" href="#rbac">
+      Role-Based Access Control
+     </a>
+     <a class="toc-link" href="#architecture">
+      System Architecture
+     </a>
+     <a class="toc-link" href="#data-flows">
+      Data Flow Walkthroughs
+     </a>
+     <a class="toc-link" href="#permissions">
+      Permissions & Access Control
+     </a>
+     <a class="toc-link" href="#redis-model">
+      Redis Data Model
+     </a>
+     <a class="toc-link" href="#api-reference">
+      API Reference
+     </a>
+     <a class="toc-link" href="#environment-setup">
+      Environment Setup
+     </a>
+     <a class="toc-link" href="#replication">
+      System Replication
+     </a>
+     <a class="toc-link" href="#glossary">
+      Glossary
+     </a>
+    </div>
+   </div>
+   <div class="mt-12 pt-8 border-t border-gray-200">
+    <p class="text-xs text-gray-500 mb-2">
+     Architecture Guide
+    </p>
+    <h3 class="serif text-lg font-semibold text-gray-800">
+     Juan's World
+    </h3>
+    <p class="text-sm text-gray-600 mt-2">
+     A Next.js-based content publishing platform with AI agent integration
+    </p>
+   </div>
+  </nav>
+  <!-- Main Content -->
+  <main class="main-content" id="main-content">
+   <!-- Hero Section with Bento Grid -->
+   <section class="px-8 py-12">
+    <div class="max-w-6xl mx-auto">
+     <div class="hero-grid">
+      <!-- Hero Title -->
+      <div class="hero-title">
+       <div class="relative z-10">
+        <h1 class="serif text-4xl md:text-5xl font-bold mb-4">
+         <em>
+          Juan's World
+         </em>
+         <br/>
+         DevOps Manual for AI Developers
+        </h1>
+        <p class="text-xl opacity-90 max-w-2xl">
+         A comprehensive guide to understanding, implementing, and replicating a Next.js-based content publishing platform with AI agent integration
+        </p>
+       </div>
+      </div>
+      <!-- Executive Summary -->
+      <div class="hero-summary">
+       <h3 class="serif text-2xl font-semibold mb-4 text-gray-800">
+        Executive Summary
+       </h3>
+       <p class="text-gray-700 mb-4">
+        <strong>
+         Juan's World is a full-stack web application built on Next.js, Upstash Redis, and Vercel
+        </strong>
+        that serves as a personal publishing platform with multi-user access controls, AI agent integration, and multilingual content delivery.
+       </p>
+       <p class="text-gray-600 text-sm">
+        The system enables AI agents to autonomously publish markdown content that renders to live webpages, deployed serverlessly on Vercel with Redis as primary storage and filesystem fallback for data durability.
+       </p>
+      </div>
+      <!-- Visual Element -->
+      <div class="hero-visual">
+       <img alt="Abstract network diagram showing connections between frontend, backend, and database components" aspect="wide" class="w-full h-full object-cover rounded-lg opacity-80" data-modified="1" data-score="0.00" query="abstract system architecture diagram" referrerpolicy="no-referrer" size="large" src="https://kimi-web-img.moonshot.cn/img/logiclayers.in/faa871b1a1857fdb417b73cdf6412526a7795d81.png"/>
+      </div>
+     </div>
+    </div>
+   </section>
+   <!-- Executive Summary -->
+   <section class="px-8 py-12 bg-white" id="executive-summary">
+    <div class="max-w-4xl mx-auto">
+     <h2 class="serif text-3xl font-bold mb-8 text-gray-800">
+      Executive Summary
+     </h2>
+     <div class="prose prose-lg max-w-none">
+      <h3 class="serif text-xl font-semibold mb-4">
+       What This System Is
+      </h3>
+      <p class="mb-6">
+       Juan's World represents a modern approach to web architecture that collapses traditional frontend-backend divisions through
+       <strong>
+        Next.js
+       </strong>
+       —a framework allowing developers to write both presentation and logic layers in unified JavaScript/TypeScript. For someone who has never encountered Next.js, imagine combining two separate jobs: the frontend developer who creates what users see (HTML, CSS, JavaScript) and the backend developer who manages servers, databases, and business logic. Next.js enables a single developer or team to handle both aspects seamlessly.
+      </p>
+      <div class="highlight-box">
+       <p class="font-medium mb-2">
+        Key Architectural Decisions:
+       </p>
+       <ul class="list-disc list-inside space-y-1 text-sm">
+        <li>
+         <strong>
+          Static HTML frontend
+         </strong>
+         for instant page loads and CDN distribution
+        </li>
+        <li>
+         <strong>
+          API Routes
+         </strong>
+         for dynamic functionality and AI agent integration
+        </li>
+        <li>
+         <strong>
+          Upstash Redis
+         </strong>
+         as primary in-memory database for performance
+        </li>
+        <li>
+         <strong>
+          Filesystem fallback
+         </strong>
+         for data durability during Redis outages
+        </li>
+        <li>
+         <strong>
+          Vercel hosting
+         </strong>
+         for serverless deployment and global distribution
+        </li>
+       </ul>
+      </div>
+      <h3 class="serif text-xl font-semibold mb-4 mt-8">
+       What It Does
+      </h3>
+      <p class="mb-6">
+       Juan's World serves four distinct audiences with tailored experiences.
+       <strong>
+        Public visitors
+       </strong>
+       access static HTML pages (index, about, diary) with instant loading times.
+       <strong>
+        Authenticated users
+       </strong>
+       receive personalized dashboards with content filtered by assignment—seeing only reports and STL files explicitly shared with them.
+       <strong>
+        Administrators
+       </strong>
+       manage the platform through an admin panel, controlling user accounts, generating API keys, and uploading 3D assets.
+       <strong>
+        AI agents
+       </strong>
+       autonomously publish content through API key authentication, enabling automated content workflows.
+      </p>
+      <h3 class="serif text-xl font-semibold mb-4 mt-8">
+       Why This Architecture Works
+      </h3>
+      <p class="mb-6">
+       The design reflects deliberate trade-offs prioritizing simplicity and operational resilience over enterprise complexity. Static pages eliminate server processing for most requests, reducing costs and improving performance. The Redis-plus-filesystem model provides exceptional speed with data safety nets. Dual authentication methods (HMAC sessions for humans, API keys for agents) acknowledge different interaction patterns. Role-based access control with four distinct roles hits the sweet spot: simple enough to implement correctly, expressive enough to enforce real security boundaries.
+      </p>
+     </div>
+    </div>
+   </section>
+   <div class="section-divider">
+   </div>
+   <!-- Core Concepts -->
+   <section class="px-8 py-12" id="core-concepts">
+    <div class="max-w-4xl mx-auto">
+     <h2 class="serif text-3xl font-bold mb-8 text-gray-800">
+      Core Concepts Explained
+     </h2>
+     <!-- Static HTML vs API Routes -->
+     <div class="mb-12" id="static-vs-api">
+      <h3 class="serif text-2xl font-semibold mb-6 text-gray-800">
+       Static HTML Frontend vs. API Routes
+      </h3>
+      <div class="mb-6">
+       <h4 class="font-semibold text-lg mb-3">
+        What Static HTML Means
+       </h4>
+       <p class="mb-4">
+        In Juan's World,
+        <strong>
+         static HTML frontend
+        </strong>
+        refers to pre-built HTML files served directly from Vercel's CDN without server-side processing. Unlike dynamic sites that assemble pages per-request, these files are generated once during deployment and served instantly worldwide.
+       </p>
+       <div class="bg-gray-50 p-4 rounded-lg mb-4">
+        <p class="text-sm font-medium mb-2">
+         Performance Benefits:
+        </p>
+        <ul class="text-sm space-y-1">
+         <li>
+          •
+          <strong>
+           Speed:
+          </strong>
+          No database queries or template rendering
+         </li>
+         <li>
+          •
+          <strong>
+           Cost:
+          </strong>
+          Static file serving is essentially free at scale
+         </li>
+         <li>
+          •
+          <strong>
+           Reliability:
+          </strong>
+          No server failures or memory leaks
+         </li>
+         <li>
+          •
+          <strong>
+           Global Access:
+          </strong>
+          CDN caches at hundreds of edge locations
+         </li>
+        </ul>
+       </div>
+      </div>
+      <div class="mb-6">
+       <h4 class="font-semibold text-lg mb-3">
+        What API Routes Provide
+       </h4>
+       <p class="mb-4">
+        <strong>
+         API routes
+        </strong>
+        are special Next.js files that define HTTP endpoints. They live in the
+        <code class="bg-gray-100 px-2 py-1 rounded">
+         app/api/
+        </code>
+        directory and handle raw HTTP requests rather than rendering pages.
+       </p>
+       <div class="code-block">
+        // Example API Route (app/api/content/route.ts)
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const category = searchParams.get('category');
+  // ... query Redis, return JSON
+  return Response.json({ items: [...] });
+}
+       </div>
+      </div>
+      <div class="highlight-box">
+       <p class="font-medium mb-2">
+        Think of it this way:
+       </p>
+       <p>
+        Static HTML pages are the
+        <strong>
+         "display layer"
+        </strong>
+        —what everyone sees. API routes are the
+        <strong>
+         "action layer"
+        </strong>
+        —handling logins, saving content, and serving dynamic data. Every interactive feature on a static page ultimately depends on an API route behind the scenes.
+       </p>
+      </div>
+     </div>
+     <!-- Redis Storage -->
+     <div class="mb-12" id="redis-storage">
+      <h3 class="serif text-2xl font-semibold mb-6 text-gray-800">
+       Redis as Primary Database with Filesystem Fallback
+      </h3>
+      <div class="mb-6">
+       <h4 class="font-semibold text-lg mb-3">
+        Why Redis Instead of Traditional Databases
+       </h4>
+       <p class="mb-4">
+        <strong>
+         Redis
+        </strong>
+        is an in-memory data structure store that serves as Juan's World's primary database. Unlike PostgreSQL or MySQL, Redis keeps all data in RAM, providing extraordinary performance—hundreds of thousands of operations per second.
+       </p>
+       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div class="bg-green-50 p-4 rounded-lg">
+         <p class="font-medium text-green-800 mb-2">
+          ✓ Advantages:
+         </p>
+         <ul class="text-sm text-green-700 space-y-1">
+          <li>
+           • Sub-millisecond read latency
+          </li>
+          <li>
+           • Simple key-value/hash data model
+          </li>
+          <li>
+           • Managed service (no server maintenance)
+          </li>
+          <li>
+           • Perfect for read-heavy content sites
+          </li>
+         </ul>
+        </div>
+        <div class="bg-yellow-50 p-4 rounded-lg">
+         <p class="font-medium text-yellow-800 mb-2">
+          ⚠ Considerations:
+         </p>
+         <ul class="text-sm text-yellow-700 space-y-1">
+          <li>
+           • Data volatility (RAM-based)
+          </li>
+          <li>
+           • Limited query capabilities (no SQL joins)
+          </li>
+          <li>
+           • Managed service costs
+          </li>
+         </ul>
+        </div>
+       </div>
+      </div>
+      <div class="mb-6">
+       <h4 class="font-semibold text-lg mb-3">
+        The Filesystem Fallback Safety Net
+       </h4>
+       <p class="mb-4">
+        The
+        <strong>
+         filesystem fallback
+        </strong>
+        ensures data durability when Redis is unavailable. Every write follows a cascade:
+       </p>
+       <div class="code-block">
+        Write Flow:
+1. Update in-memory cache (immediate availability)
+2. Try Redis (primary storage)
+3. If Redis fails → Try local filesystem (backup)
+4. If filesystem fails → Keep in memory (ephemeral)
+       </div>
+       <p class="text-sm text-gray-600 mt-2">
+        <em>
+         On local development:
+        </em>
+        Files written to
+        <code>
+         ./data/
+        </code>
+        and
+        <code>
+         ./content/
+        </code>
+        (persistent)
+        <br/>
+        <em>
+         On Vercel:
+        </em>
+        Files written to
+        <code>
+         /tmp/
+        </code>
+        (ephemeral)
+       </p>
+      </div>
+     </div>
+     <!-- HMAC Sessions -->
+     <div class="mb-12" id="hmac-sessions">
+      <h3 class="serif text-2xl font-semibold mb-6 text-gray-800">
+       Session-Based Authentication Using HMAC Signatures
+      </h3>
+      <div class="mb-6">
+       <h4 class="font-semibold text-lg mb-3">
+        What Sessions Solve
+       </h4>
+       <p class="mb-4">
+        <strong>
+         Sessions
+        </strong>
+        allow users to prove identity once (via password) and then access protected resources for days without re-authentication. Without sessions, every request would require resending credentials.
+       </p>
+      </div>
+      <div class="mb-6">
+       <h4 class="font-semibold text-lg mb-3">
+        HMAC: Stateless Verification
+       </h4>
+       <p class="mb-4">
+        Rather than storing random tokens in a database, Juan's World uses
+        <strong>
+         HMAC (Hash-based Message Authentication Code)
+        </strong>
+        to generate cryptographically signed tokens.
+       </p>
+       <div class="code-block">
+        // Session Token Format: username:signature
+// Signature = SHA256(username:SESSION_SECRET).slice(0,32)
+
+// Example: alice:a3f7b2d8e9c1...
+
+// Verification requires no database lookup:
+function checkAuth(token) {
+  const [username, sig] = token.split(':');
+  const expected = SHA256(username + SECRET).digest('hex').slice(0,32);
+  return sig === expected ? username : null;
+}
+       </div>
+      </div>
+      <div class="highlight-box">
+       <p class="font-medium mb-2">
+        Key Security Properties:
+       </p>
+       <ul class="list-disc list-inside space-y-1 text-sm">
+        <li>
+         ✓
+         <strong>
+          Stateless:
+         </strong>
+         No database queries during verification
+        </li>
+        <li>
+         ✓
+         <strong>
+          Fast:
+         </strong>
+         Microsecond validation time
+        </li>
+        <li>
+         ✓
+         <strong>
+          Secure:
+         </strong>
+         Signature depends on server-side secret
+        </li>
+        <li>
+         ✓
+         <strong>
+          Scoped:
+         </strong>
+         Token contains username directly
+        </li>
+       </ul>
+      </div>
+     </div>
+     <!-- API Keys -->
+     <div class="mb-12" id="api-keys">
+      <h3 class="serif text-2xl font-semibold mb-6 text-gray-800">
+       API Key Authentication for AI Agents
+      </h3>
+      <div class="mb-6">
+       <h4 class="font-semibold text-lg mb-3">
+        Why Agents Need Different Authentication
+       </h4>
+       <p class="mb-4">
+        <strong>
+         AI agents
+        </strong>
+        are software programs, not human users. They cannot use session cookies because they don't run in browsers, don't maintain cookie jars across requests, and don't interact with HTML login forms.
+       </p>
+       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div class="bg-blue-50 p-4 rounded-lg">
+         <p class="font-medium text-blue-800 mb-2">
+          Human Users:
+         </p>
+         <ul class="text-sm text-blue-700 space-y-1">
+          <li>
+           • Session cookies
+          </li>
+          <li>
+           • Browser-managed
+          </li>
+          <li>
+           • 7-day expiration
+          </li>
+          <li>
+           • Broad permissions
+          </li>
+         </ul>
+        </div>
+        <div class="bg-purple-50 p-4 rounded-lg">
+         <p class="font-medium text-purple-800 mb-2">
+          AI Agents:
+         </p>
+         <ul class="text-sm text-purple-700 space-y-1">
+          <li>
+           • API keys
+          </li>
+          <li>
+           • Programmatic
+          </li>
+          <li>
+           • Until revoked
+          </li>
+          <li>
+           • Narrow permissions
+          </li>
+         </ul>
+        </div>
+       </div>
+      </div>
+      <div class="mb-6">
+       <h4 class="font-semibold text-lg mb-3">
+        API Key Validation Flow
+       </h4>
+       <p class="mb-4">
+        API keys are validated through lookup in the Redis-stored
+        <code>
+         api-keys
+        </code>
+        array. The validation process:
+       </p>
+       <div class="code-block">
+        // Agent Request Headers:
+{
+  "Content-Type": "application/json",
+  "x-api-key": "ak_live_51H8m..."
+}
+
+// Validation in lib/api-keys.ts:
+function validateApiKey(headerKey) {
+  const validKeys = JSON.parse(await redis.get('api-keys') || '[]');
+  return validKeys.some(keyObj => keyObj.key === headerKey);
+}
+       </div>
+      </div>
+     </div>
+     <!-- Content Lifecycle -->
+     <div class="mb-12" id="content-lifecycle">
+      <h3 class="serif text-2xl font-semibold mb-6 text-gray-800">
+       Content Lifecycle: From AI Agent to Live Webpage
+      </h3>
+      <div class="mb-6">
+       <h4 class="font-semibold text-lg mb-3">
+        The Journey of a Blog Post
+       </h4>
+       <p class="mb-4">
+        The content lifecycle illustrates how an AI-generated diary entry becomes a live webpage through a series of transformations:
+       </p>
+       <div class="bg-gray-50 p-6 rounded-lg">
+        <ol class="list-decimal list-inside space-y-3 text-sm">
+         <li>
+          <strong>
+           AI Agent generates content
+          </strong>
+          and sends PUT request with
+          <code>
+           x-api-key
+          </code>
+         </li>
+         <li>
+          <strong>
+           API key validation
+          </strong>
+          checks agent permissions
+         </li>
+         <li>
+          <strong>
+           Frontmatter stripping
+          </strong>
+          removes any agent-provided YAML metadata
+         </li>
+         <li>
+          <strong>
+           Clean frontmatter rebuild
+          </strong>
+          creates validated metadata block
+         </li>
+         <li>
+          <strong>
+           Redis storage
+          </strong>
+          via HSET command to
+          <code>
+           content:update:en
+          </code>
+          hash
+         </li>
+         <li>
+          <strong>
+           Filesystem fallback
+          </strong>
+          if Redis unavailable
+         </li>
+         <li>
+          <strong>
+           Public API request
+          </strong>
+          serves content to visitors
+         </li>
+         <li>
+          <strong>
+           Markdown parsing
+          </strong>
+          with gray-matter extracts metadata
+         </li>
+         <li>
+          <strong>
+           HTML rendering
+          </strong>
+          with marked converts to display format
+         </li>
+         <li>
+          <strong>
+           Browser injection
+          </strong>
+          displays content without page reload
+         </li>
+        </ol>
+       </div>
+      </div>
+      <div class="diagram-container">
+       <div class="mermaid">
+        flowchart LR
+    A["🤖 AI Agent"] -->|"PUT /api/content/upload"| B["API Key Validation"]
+    B -->|"✅ Valid"| C["Strip Frontmatter"]
+    C --> D["Rebuild Clean YAML"]
+    D --> E["Save to Redis Hash"]
+    E --> F["Filesystem Fallback"]
+    F --> G["🌐 Browser Request"]
+    G --> H["Parse Markdown"]
+    H --> I["Render HTML"]
+    I --> J["Inject into Page"]
+
+    style A fill:#e3f2fd,stroke:#1976d2,stroke-width:2px,color:#000
+    style B fill:#fff3e0,stroke:#f57c00,stroke-width:2px,color:#000
+    style E fill:#e8f5e8,stroke:#388e3c,stroke-width:2px,color:#000
+    style G fill:#fce4ec,stroke:#c2185b,stroke-width:2px,color:#000
+    style J fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px,color:#000
+       </div>
+      </div>
+     </div>
+     <!-- RBAC -->
+     <div class="mb-12" id="rbac">
+      <h3 class="serif text-2xl font-semibold mb-6 text-gray-800">
+       Role-Based Access Control
+      </h3>
+      <div class="mb-6">
+       <h4 class="font-semibold text-lg mb-3">
+        Four Distinct Roles
+       </h4>
+       <p class="mb-4">
+        The four-role model provides minimum viable granularity for the system's use cases:
+       </p>
+       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div class="border border-gray-200 p-4 rounded-lg">
+         <p class="font-medium text-gray-800 mb-2">
+          🌐 Public (No Auth)
+         </p>
+         <ul class="text-sm text-gray-600 space-y-1">
+          <li>
+           • View public pages
+          </li>
+          <li>
+           • Access contact form
+          </li>
+          <li>
+           • Read diary entries
+          </li>
+          <li>
+           • View morning briefs
+          </li>
+         </ul>
+        </div>
+        <div class="border border-gray-200 p-4 rounded-lg">
+         <p class="font-medium text-gray-800 mb-2">
+          🔑 User (Session Auth)
+         </p>
+         <ul class="text-sm text-gray-600 space-y-1">
+          <li>
+           • Personalized dashboard
+          </li>
+          <li>
+           • Assigned reports & STL files
+          </li>
+          <li>
+           • Profile management
+          </li>
+          <li>
+           • All public capabilities
+          </li>
+         </ul>
+        </div>
+        <div class="border border-gray-200 p-4 rounded-lg">
+         <p class="font-medium text-gray-800 mb-2">
+          🛡️ Admin (Session + Role)
+         </p>
+         <ul class="text-sm text-gray-600 space-y-1">
+          <li>
+           • User management
+          </li>
+          <li>
+           • API key generation
+          </li>
+          <li>
+           • STL file assignment
+          </li>
+          <li>
+           • Audit log access
+          </li>
+         </ul>
+        </div>
+        <div class="border border-gray-200 p-4 rounded-lg">
+         <p class="font-medium text-gray-800 mb-2">
+          🤖 AI Agent (API Key)
+         </p>
+         <ul class="text-sm text-gray-600 space-y-1">
+          <li>
+           • Create content
+          </li>
+          <li>
+           • Update content
+          </li>
+          <li>
+           • Delete content
+          </li>
+          <li>
+           • No human UI access
+          </li>
+         </ul>
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+   </section>
+   <div class="section-divider">
+   </div>
+   <!-- System Architecture -->
+   <section class="px-8 py-12 bg-white" id="architecture">
+    <div class="max-w-6xl mx-auto">
+     <h2 class="serif text-3xl font-bold mb-8 text-gray-800">
+      System Architecture Diagram
+     </h2>
+     <div class="mb-8">
+      <p class="text-lg text-gray-700 mb-6">
+       The following diagram illustrates the complete system architecture with annotated components. Click the fullscreen button to explore details.
+      </p>
+     </div>
+     <div class="diagram-container">
+      <div class="mermaid">
+       flowchart TB
+    %% Users Subgraph
+    subgraph Users["👤 Users"]
+        PUB["🌐 Public Visitor"]
+        USER["🔑 Logged-in User"]
+        ADMIN["🛡️ Admin"]
+        AGENT["🤖 AI Agent
+       <br/>
+       (API Key)"]
+    end
+
+    %% Frontend Subgraph
+    subgraph Frontend["📄 Frontend — Static HTML"]
+        direction TB
+        PUBLIC["Public Pages
+       <br/>
+       index • about • ask-juan
+       <br/>
+       diary • morning-brief • legal"]
+        AUTH["Auth Pages
+       <br/>
+       login → dashboard → reports
+       <br/>
+       stls • admin"]
+        JP["/jp/ — Japanese"]
+        MX["/mx/ — Español"]
+    end
+
+    %% API Subgraph
+    subgraph API["⚡ Next.js API Routes"]
+        direction TB
+        CONTENT_API["/api/content
+       <br/>
+       GET list • GET by slug
+       <br/>
+       PUT create • PATCH update
+       <br/>
+       DELETE delete"]
+        AUTH_API["/api/login • /api/logout
+       <br/>
+       Session cookies"]
+        ADMIN_API["/api/users • /api/keys
+       <br/>
+       /api/stls/upload • /api/stls/assign"]
+        CONTACT_API["/api/contact
+       <br/>
+       → Resend email"]
+        LOGIN_LOG_API["/api/logins
+       <br/>
+       Audit trail"]
+    end
+
+    %% Backend Libraries Subgraph
+    subgraph Backend["🔧 Backend Libraries"]
+        direction TB
+        AUTH_LIB["lib/auth.ts
+       <br/>
+       PBKDF2 + HMAC sessions"]
+        USERS["lib/users.ts
+       <br/>
+       User CRUD"]
+        CONTENT_DB["lib/content-db.ts
+       <br/>
+       Markdown scanner + renderer"]
+        API_KEYS["lib/api-keys.ts
+       <br/>
+       Agent key management"]
+        LOGIN_LOG["lib/login-log.ts
+       <br/>
+       Session audit"]
+        STL_DB["lib/stls-db.ts
+       <br/>
+       3D file metadata"]
+    end
+
+    %% Storage Layer Subgraph
+    subgraph Storage["💾 Storage Layer"]
+        direction TB
+        REDIS["Upstash Redis
+       <br/>
+       users • api-keys • login-log
+       <br/>
+       stl-files • content:cat:lang"]
+        FS["Filesystem Fallback
+       <br/>
+       Local: ./data/ ./content/
+       <br/>
+       Vercel: /tmp/"]
+    end
+
+    %% External Services Subgraph
+    subgraph External["🌎 External"]
+        RESEND["Resend
+       <br/>
+       (Email)"]
+        GA["Google Analytics"]
+        VERCEL["Vercel Analytics"]
+    end
+
+    %% Connections
+    PUB --> PUBLIC
+    USER --> AUTH
+    ADMIN --> AUTH
+    AGENT --> CONTENT_API
+
+    PUBLIC -->|fetch| CONTENT_API
+    AUTH -->|fetch| CONTENT_API
+    AUTH -->|fetch| AUTH_API
+    AUTH -->|fetch| ADMIN_API
+    AUTH -->|fetch| LOGIN_LOG_API
+    PUBLIC -->|form POST| CONTACT_API
+
+    CONTENT_API --> CONTENT_DB
+    AUTH_API --> AUTH_LIB
+    AUTH_API --> USERS
+    AUTH_API --> LOGIN_LOG
+    ADMIN_API --> USERS
+    ADMIN_API --> API_KEYS
+    ADMIN_API --> STL_DB
+    CONTACT_API --> RESEND
+    LOGIN_LOG_API --> LOGIN_LOG
+
+    CONTENT_DB --> REDIS
+    CONTENT_DB --> FS
+    USERS --> REDIS
+    USERS --> FS
+    API_KEYS --> REDIS
+    API_KEYS --> FS
+    LOGIN_LOG --> REDIS
+    LOGIN_LOG --> FS
+    STL_DB --> REDIS
+    STL_DB --> FS
+
+    PUBLIC --> GA
+    AUTH --> GA
+    VERCEL -.->|tracking| Frontend
+
+    style PUB fill:#e3f2fd,stroke:#1976d2,stroke-width:2px,color:#000
+    style USER fill:#fff3e0,stroke:#f57c00,stroke-width:2px,color:#000
+    style ADMIN fill:#e8f5e8,stroke:#388e3c,stroke-width:2px,color:#000
+    style AGENT fill:#fce4ec,stroke:#c2185b,stroke-width:2px,color:#000
+    style PUBLIC fill:#f5f5f5,stroke:#616161,stroke-width:2px,color:#000
+    style AUTH fill:#f5f5f5,stroke:#616161,stroke-width:2px,color:#000
+    style JP fill:#f5f5f5,stroke:#616161,stroke-width:2px,color:#000
+    style MX fill:#f5f5f5,stroke:#616161,stroke-width:2px,color:#000
+    style CONTENT_API fill:#e8f5e8,stroke:#388e3c,stroke-width:2px,color:#000
+    style AUTH_API fill:#fff3e0,stroke:#f57c00,stroke-width:2px,color:#000
+    style ADMIN_API fill:#fce4ec,stroke:#c2185b,stroke-width:2px,color:#000
+    style CONTACT_API fill:#e3f2fd,stroke:#1976d2,stroke-width:2px,color:#000
+    style LOGIN_LOG_API fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px,color:#000
+    style AUTH_LIB fill:#fff3e0,stroke:#f57c00,stroke-width:2px,color:#000
+    style USERS fill:#e8f5e8,stroke:#388e3c,stroke-width:2px,color:#000
+    style CONTENT_DB fill:#e3f2fd,stroke:#1976d2,stroke-width:2px,color:#000
+    style API_KEYS fill:#fce4ec,stroke:#c2185b,stroke-width:2px,color:#000
+    style LOGIN_LOG fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px,color:#000
+    style STL_DB fill:#e0f2f1,stroke:#00695c,stroke-width:2px,color:#000
+    style REDIS fill:#ffebee,stroke:#d32f2f,stroke-width:3px,color:#000
+    style FS fill:#e0f7fa,stroke:#0097a7,stroke-width:3px,color:#000
+    style RESEND fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px,color:#000
+    style GA fill:#e8f5e8,stroke:#388e3c,stroke-width:2px,color:#000
+    style VERCEL fill:#fff3e0,stroke:#f57c00,stroke-width:2px,color:#000
+      </div>
+     </div>
+     <div class="mt-8 prose prose-lg max-w-none">
+      <h3 class="serif text-xl font-semibold mb-4">
+       Architecture Walkthrough
+      </h3>
+      <p class="mb-6">
+       Reading the diagram from top to bottom follows a typical request through the system:
+      </p>
+      <ol class="list-decimal list-inside space-y-3">
+       <li>
+        <strong>
+         Users Layer:
+        </strong>
+        Four actor types initiate interactions through different authentication methods
+       </li>
+       <li>
+        <strong>
+         Frontend Layer:
+        </strong>
+        Static HTML pages serve as entry points, with language variants branching horizontally
+       </li>
+       <li>
+        <strong>
+         API Layer:
+        </strong>
+        Serverless functions handle dynamic requests through two patterns: JavaScript fetch() and direct form POSTs
+       </li>
+       <li>
+        <strong>
+         Backend Libraries:
+        </strong>
+        Reusable modules centralize complex logic like authentication, content processing, and audit logging
+       </li>
+       <li>
+        <strong>
+         Storage Layer:
+        </strong>
+        Dual-write pattern ensures data safety with Redis primary storage and filesystem fallback
+       </li>
+       <li>
+        <strong>
+         External Services:
+        </strong>
+        Third-party integrations handle email delivery and analytics monitoring
+       </li>
+      </ol>
+      <div class="highlight-box">
+       <p class="font-medium mb-2">
+        Key Insight:
+       </p>
+       <p>
+        The architecture's strength lies in its clean separation of concerns—each layer has specific responsibilities and well-defined interfaces with adjacent layers. This modularity enables independent development, testing, and scaling of components.
+       </p>
+      </div>
+     </div>
+    </div>
+   </section>
+   <div class="section-divider">
+   </div>
+   <!-- Data Flow Walkthroughs -->
+   <section class="px-8 py-12" id="data-flows">
+    <div class="max-w-4xl mx-auto">
+     <h2 class="serif text-3xl font-bold mb-8 text-gray-800">
+      Data Flow Walkthroughs
+     </h2>
+     <!-- Public Visitor Flow -->
+     <div class="mb-12">
+      <h3 class="serif text-2xl font-semibold mb-6 text-gray-800">
+       1. Public Visitor Reads a Diary Entry
+      </h3>
+      <div class="space-y-6">
+       <div class="bg-white border border-gray-200 rounded-lg p-6">
+        <div class="flex items-start space-x-4">
+         <div class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+          Step 1
+         </div>
+         <div>
+          <h4 class="font-semibold mb-2">
+           Browser Requests diary.html
+          </h4>
+          <p class="text-gray-700 text-sm">
+           Visitor types juan.world/diary.html. Vercel's CDN responds instantly with pre-built static file—no server processing, no authentication required.
+          </p>
+         </div>
+        </div>
+       </div>
+       <div class="bg-white border border-gray-200 rounded-lg p-6">
+        <div class="flex items-start space-x-4">
+         <div class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+          Step 2
+         </div>
+         <div>
+          <h4 class="font-semibold mb-2">
+           JavaScript Calls /api/content
+          </h4>
+          <p class="text-gray-700 text-sm">
+           Embedded JavaScript executes fetch() to /api/content?category=update&lang=en. No credentials needed for public content.
+          </p>
+         </div>
+        </div>
+       </div>
+       <div class="bg-white border border-gray-200 rounded-lg p-6">
+        <div class="flex items-start space-x-4">
+         <div class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+          Step 3
+         </div>
+         <div>
+          <h4 class="font-semibold mb-2">
+           API Route Queries Redis
+          </h4>
+          <p class="text-gray-700 text-sm">
+           Handler calls scanCategory('update', 'en'), which sends HGETALL content:update:en to Upstash Redis. Sub-millisecond response time.
+          </p>
+         </div>
+        </div>
+       </div>
+       <div class="bg-white border border-gray-200 rounded-lg p-6">
+        <div class="flex items-start space-x-4">
+         <div class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+          Step 4
+         </div>
+         <div>
+          <h4 class="font-semibold mb-2">
+           Content Processing Pipeline
+          </h4>
+          <p class="text-gray-700 text-sm">
+           For each entry: gray-matter parses YAML frontmatter, marked renders markdown to HTML, isPublic filter removes private content.
+          </p>
+         </div>
+        </div>
+       </div>
+       <div class="bg-white border border-gray-200 rounded-lg p-6">
+        <div class="flex items-start space-x-4">
+         <div class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+          Step 5
+         </div>
+         <div>
+          <h4 class="font-semibold mb-2">
+           Browser Renders Content
+          </h4>
+          <p class="text-gray-700 text-sm">
+           JSON response travels back to browser. JavaScript injects rendered HTML into page. Complete process typically under 1 second.
+          </p>
+         </div>
+        </div>
+       </div>
+      </div>
+     </div>
+     <!-- Authentication Flow -->
+     <div class="mb-12">
+      <h3 class="serif text-2xl font-semibold mb-6 text-gray-800">
+       2. A Logged-In User Authenticates
+      </h3>
+      <div class="space-y-6">
+       <div class="bg-white border border-gray-200 rounded-lg p-6">
+        <div class="flex items-start space-x-4">
+         <div class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+          Step 1
+         </div>
+         <div>
+          <h4 class="font-semibold mb-2">
+           User Submits Credentials
+          </h4>
+          <p class="text-gray-700 text-sm">
+           User enters username/password on login.html. JavaScript intercepts form submission and sends fetch() to /api/login.
+          </p>
+         </div>
+        </div>
+       </div>
+       <div class="bg-white border border-gray-200 rounded-lg p-6">
+        <div class="flex items-start space-x-4">
+         <div class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+          Step 2
+         </div>
+         <div>
+          <h4 class="font-semibold mb-2">
+           Password Verification
+          </h4>
+          <p class="text-gray-700 text-sm">
+           lib/users.ts verifies password using PBKDF2 with stored salt. Intentionally slow (hundreds of ms) to deter brute force attacks.
+          </p>
+         </div>
+        </div>
+       </div>
+       <div class="bg-white border border-gray-200 rounded-lg p-6">
+        <div class="flex items-start space-x-4">
+         <div class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+          Step 3
+         </div>
+         <div>
+          <h4 class="font-semibold mb-2">
+           HMAC Session Creation
+          </h4>
+          <p class="text-gray-700 text-sm">
+           lib/auth.ts creates token: username:SHA256(username:SESSION_SECRET).slice(0,32). No database write needed—cryptographic signature alone proves authenticity.
+          </p>
+         </div>
+        </div>
+       </div>
+       <div class="bg-white border border-gray-200 rounded-lg p-6">
+        <div class="flex items-start space-x-4">
+         <div class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+          Step 4
+         </div>
+         <div>
+          <h4 class="font-semibold mb-2">
+           Secure Cookie Set
+          </h4>
+          <p class="text-gray-700 text-sm">
+           Server responds with Set-Cookie: session=token; HttpOnly; Secure; SameSite=Strict; Max-Age=604800. Browser stores cookie automatically.
+          </p>
+         </div>
+        </div>
+       </div>
+       <div class="bg-white border border-gray-200 rounded-lg p-6">
+        <div class="flex items-start space-x-4">
+         <div class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+          Step 5
+         </div>
+         <div>
+          <h4 class="font-semibold mb-2">
+           Automatic Authentication
+          </h4>
+          <p class="text-gray-700 text-sm">
+           Browser includes session cookie with every subsequent request. Server verifies HMAC signature statelessly (microseconds) and applies role-based content filtering.
+          </p>
+         </div>
+        </div>
+       </div>
+      </div>
+     </div>
+     <!-- AI Agent Flow -->
+     <div class="mb-12">
+      <h3 class="serif text-2xl font-semibold mb-6 text-gray-800">
+       3. An AI Agent Publishes New Content
+      </h3>
+      <div class="space-y-6">
+       <div class="bg-white border border-gray-200 rounded-lg p-6">
+        <div class="flex items-start space-x-4">
+         <div class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-medium">
+          Step 1
+         </div>
+         <div>
+          <h4 class="font-semibold mb-2">
+           Agent Sends PUT Request
+          </h4>
+          <p class="text-gray-700 text-sm">
+           AI agent constructs HTTP PUT to /api/content/upload with x-api-key header and JSON payload containing slug, title, content, category, lang, isPublic.
+          </p>
+         </div>
+        </div>
+       </div>
+       <div class="bg-white border border-gray-200 rounded-lg p-6">
+        <div class="flex items-start space-x-4">
+         <div class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-medium">
+          Step 2
+         </div>
+         <div>
+          <h4 class="font-semibold mb-2">
+           API Key Validation
+          </h4>
+          <p class="text-gray-700 text-sm">
+           lib/api-keys.ts validates key by looking up in Redis-stored api-keys array. Returns 401 Unauthorized if invalid, 403 Forbidden if revoked.
+          </p>
+         </div>
+        </div>
+       </div>
+       <div class="bg-white border border-gray-200 rounded-lg p-6">
+        <div class="flex items-start space-x-4">
+         <div class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-medium">
+          Step 3
+         </div>
+         <div>
+          <h4 class="font-semibold mb-2">
+           Content Sanitization
+          </h4>
+          <p class="text-gray-700 text-sm">
+           Agent-provided frontmatter is stripped using gray-matter to prevent metadata injection. System rebuilds clean YAML frontmatter from validated fields.
+          </p>
+         </div>
+        </div>
+       </div>
+       <div class="bg-white border border-gray-200 rounded-lg p-6">
+        <div class="flex items-start space-x-4">
+         <div class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-medium">
+          Step 4
+         </div>
+         <div>
+          <h4 class="font-semibold mb-2">
+           Dual-Layer Storage
+          </h4>
+          <p class="text-gray-700 text-sm">
+           lib/content-db.ts attempts Redis HSET first. If Redis fails, writes to filesystem (local: ./content/, Vercel: /tmp/). Returns storage location in response.
+          </p>
+         </div>
+        </div>
+       </div>
+       <div class="bg-white border border-gray-200 rounded-lg p-6">
+        <div class="flex items-start space-x-4">
+         <div class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-medium">
+          Step 5
+         </div>
+         <div>
+          <h4 class="font-semibold mb-2">
+           Immediate Live Content
+          </h4>
+          <p class="text-gray-700 text-sm">
+           Content is immediately available via public API. Next visitor refreshing diary.html will see the new entry. Agent receives success response with slug and storage location.
+          </p>
+         </div>
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+   </section>
+   <div class="section-divider">
+   </div>
+   <!-- Permissions & Access Control -->
+   <section class="px-8 py-12 bg-white" id="permissions">
+    <div class="max-w-4xl mx-auto">
+     <h2 class="serif text-3xl font-bold mb-8 text-gray-800">
+      Permissions & Access Control
+     </h2>
+     <div class="mb-8">
+      <p class="text-lg text-gray-700 mb-6">
+       The following matrix expands the original permissions table with enforcement mechanisms, providing a comprehensive view of the security model.
+      </p>
+     </div>
+     <!-- Enhanced Permissions Matrix -->
+     <div class="overflow-x-auto mb-8">
+      <table class="w-full border-collapse bg-white shadow-lg rounded-lg overflow-hidden">
+       <thead class="bg-gray-50">
+        <tr>
+         <th class="border border-gray-200 px-4 py-3 text-left font-semibold text-gray-800">
+          Feature
+         </th>
+         <th class="border border-gray-200 px-4 py-3 text-center font-semibold text-gray-800">
+          Public
+         </th>
+         <th class="border border-gray-200 px-4 py-3 text-center font-semibold text-gray-800">
+          User
+         </th>
+         <th class="border border-gray-200 px-4 py-3 text-center font-semibold text-gray-800">
+          Admin
+         </th>
+         <th class="border border-gray-200 px-4 py-3 text-center font-semibold text-gray-800">
+          AI Agent
+         </th>
+         <th class="border border-gray-200 px-4 py-3 text-left font-semibold text-gray-800">
+          How It's Enforced
+         </th>
+        </tr>
+       </thead>
+       <tbody class="text-sm">
+        <tr>
+         <td class="border border-gray-200 px-4 py-3 font-medium">
+          View landing
+         </td>
+         <td class="border border-gray-200 px-4 py-3 text-center">
+          ✅
+         </td>
+         <td class="border border-gray-200 px-4 py-3 text-center">
+          ✅
+         </td>
+         <td class="border border-gray-200 px-4 py-3 text-center">
+          ✅
+         </td>
+         <td class="border border-gray-200 px-4 py-3 text-center">
+          —
+         </td>
+         <td class="border border-gray-200 px-4 py-3">
+          No auth required; static HTML served from CDN
+         </td>
+        </tr>
+        <tr class="bg-gray-50">
+         <td class="border border-gray-200 px-4 py-3 font-medium">
+          View diary
+         </td>
+         <td class="border border-gray-200 px-4 py-3 text-center">
+          ✅
+         </td>
+         <td class="border border-gray-200 px-4 py-3 text-center">
+          ✅
+         </td>
+         <td class="border border-gray-200 px-4 py-3 text-center">
+          ✅
+         </td>
+         <td class="border border-gray-200 px-4 py-3 text-center">
+          —
+         </td>
+         <td class="border border-gray-200 px-4 py-3">
+          isPublic: true filter applied by lib/content-db.ts
+         </td>
+        </tr>
+        <tr>
+         <td class="border border-gray-200 px-4 py-3 font-medium">
+          View briefs
+         </td>
+         <td class="border border-gray-200 px-4 py-3 text-center">
+          ✅
+         </td>
+         <td class="border border-gray-200 px-4 py-3 text-center">
+          ✅
+         </td>
+         <td class="border border-gray-200 px-4 py-3 text-center">
+          ✅
+         </td>
+         <td class="border border-gray-200 px-4 py-3 text-center">
+          —
+         </td>
+         <td class="border border-gray-200 px-4 py-3">
+          Same enforcement as diary; isPublic filter
+         </td>
+        </tr>
+        <tr class="bg-gray-50">
+         <td class="border border-gray-200 px-4 py-3 font-medium">
+          View reports
+         </td>
+         <td class="border border-gray-200 px-4 py-3 text-center">
+          ❌
+         </td>
+         <td class="border border-gray-200 px-4 py-3 text-center">
+          ✅ (assigned)
+         </td>
+         <td class="border border-gray-200 px-4 py-3 text-center">
+          ✅ (all)
+         </td>
+         <td class="border border-gray-200 px-4 py-3 text-center">
+          —
+         </td>
+         <td class="border border-gray-200 px-4 py-3">
+          checkAuth() → findUser() → filter by assignedTo field
+         </td>
+        </tr>
+        <tr>
+         <td class="border border-gray-200 px-4 py-3 font-medium">
+          Dashboard access
+         </td>
+         <td class="border border-gray-200 px-4 py-3 text-center">
+          ❌
+         </td>
+         <td class="border border-gray-200 px-4 py-3 text-center">
+          ✅
+         </td>
+         <td class="border border-gray-200 px-4 py-3 text-center">
+          ✅
+         </td>
+         <td class="border border-gray-200 px-4 py-3 text-center">
+          —
+         </td>
+         <td class="border border-gray-200 px-4 py-3">
+          checkAuth() required; redirects to login if missing
+         </td>
+        </tr>
+        <tr class="bg-gray-50">
+         <td class="border border-gray-200 px-4 py-3 font-medium">
+          Create content
+         </td>
+         <td class="border border-gray-200 px-4 py-3 text-center">
+          ❌
+         </td>
+         <td class="border border-gray-200 px-4 py-3 text-center">
+          ❌
+         </td>
+         <td class="border border-gray-200 px-4 py-3 text-center">
+          ❌
+         </td>
+         <td class="border border-gray-200 px-4 py-3 text-center">
+          ✅
+         </td>
+         <td class="border border-gray-200 px-4 py-3">
+          validateApiKey() in PUT /api/content/upload
+         </td>
+        </tr>
+        <tr>
+         <td class="border border-gray-200 px-4 py-3 font-medium">
+          Contact form
+         </td>
+         <td class="border border-gray-200 px-4 py-3 text-center">
+          ✅
+         </td>
+         <td class="border border-gray-200 px-4 py-3 text-center">
+          ✅
+         </td>
+         <td class="border border-gray-200 px-4 py-3 text-center">
+          ✅
+         </td>
+         <td class="border border-gray-200 px-4 py-3 text-center">
+          —
+         </td>
+         <td class="border border-gray-200 px-4 py-3">
+          No auth required; Resend API key required server-side
+         </td>
+        </tr>
+       </tbody>
+      </table>
+     </div>
+     <div class="highlight-box">
+      <h3 class="font-semibold mb-3">
+       Overall Security Model
+      </h3>
+      <p class="mb-3">
+       Juan's World implements
+       <strong>
+        defense in depth with explicit role separation
+       </strong>
+       , designed to minimize attack surface while maintaining operational simplicity.
+      </p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+       <div>
+        <p class="font-medium text-sm mb-2">
+         Defense Layers:
+        </p>
+        <ul class="text-sm space-y-1">
+         <li>
+          • Static HTML eliminates server-side execution risks
+         </li>
+         <li>
+          • Separate auth mechanisms prevent credential confusion
+         </li>
+         <li>
+          • Role-based filtering at data retrieval point
+         </li>
+         <li>
+          • Immutable logging provides audit trails
+         </li>
+        </ul>
+       </div>
+       <div>
+        <p class="font-medium text-sm mb-2">
+         Security Principles:
+        </p>
+        <ul class="text-sm space-y-1">
+         <li>
+          • Never trust the client—server-side validation only
+         </li>
+         <li>
+          • Fail closed—absence of credentials = rejection
+         </li>
+         <li>
+          • Principle of least privilege for AI agents
+         </li>
+         <li>
+          • Cryptographic rather than database-dependent auth
+         </li>
+        </ul>
+       </div>
+      </div>
+     </div>
+    </div>
+   </section>
+   <div class="section-divider">
+   </div>
+   <!-- Redis Data Model -->
+   <section class="px-8 py-12" id="redis-model">
+    <div class="max-w-6xl mx-auto">
+     <h2 class="serif text-3xl font-bold mb-8 text-gray-800">
+      Redis Data Model Reference
+     </h2>
+     <div class="mb-8">
+      <p class="text-lg text-gray-700 mb-6">
+       The following table documents every Redis key used in the system, providing a comprehensive reference for data storage patterns and access patterns.
+      </p>
+     </div>
+     <!-- Redis Data Model Table -->
+     <div class="overflow-x-auto mb-8">
+      <table class="w-full border-collapse bg-white shadow-lg rounded-lg overflow-hidden">
+       <thead class="bg-gray-50">
+        <tr>
+         <th class="border border-gray-200 px-4 py-3 text-left font-semibold text-gray-800">
+          Key name
+         </th>
+         <th class="border border-gray-200 px-4 py-3 text-left font-semibold text-gray-800">
+          Type
+         </th>
+         <th class="border border-gray-200 px-4 py-3 text-left font-semibold text-gray-800">
+          What it stores
+         </th>
+         <th class="border border-gray-200 px-4 py-3 text-left font-semibold text-gray-800">
+          Who reads it
+         </th>
+         <th class="border border-gray-200 px-4 py-3 text-left font-semibold text-gray-800">
+          Who writes it
+         </th>
+         <th class="border border-gray-200 px-4 py-3 text-left font-semibold text-gray-800">
+          Example value
+         </th>
+        </tr>
+       </thead>
+       <tbody class="text-sm">
+        <tr>
+         <td class="border border-gray-200 px-4 py-3 font-mono text-xs">
+          users
+         </td>
+         <td class="border border-gray-200 px-4 py-3">
+          String (JSON array)
+         </td>
+         <td class="border border-gray-200 px-4 py-3">
+          All user accounts with hashed passwords, roles, and metadata
+         </td>
+         <td class="border border-gray-200 px-4 py-3">
+          lib/users.ts (login, admin), lib/auth.ts (session verification)
+         </td>
+         <td class="border border-gray-200 px-4 py-3">
+          lib/users.ts (admin CRUD), lib/auth.ts (last login update)
+         </td>
+         <td class="border border-gray-200 px-4 py-3 font-mono text-xs">
+          [{"username":"alice","passwordHash":"pbkdf2$10000$...","role":"user","createdAt":"2024-01-10T08:00:00Z"}]
+         </td>
+        </tr>
+        <tr class="bg-gray-50">
+         <td class="border border-gray-200 px-4 py-3 font-mono text-xs">
+          api-keys
+         </td>
+         <td class="border border-gray-200 px-4 py-3">
+          String (JSON array)
+         </td>
+         <td class="border border-gray-200 px-4 py-3">
+          Valid API keys for AI agents with optional labels and creation dates
+         </td>
+         <td class="border border-gray-200 px-4 py-3">
+          lib/api-keys.ts (validation), lib/api-keys.ts (admin listing)
+         </td>
+         <td class="border border-gray-200 px-4 py-3">
+          lib/api-keys.ts (admin generation, revocation)
+         </td>
+         <td class="border border-gray-200 px-4 py-3 font-mono text-xs">
+          [{"key":"ak_live_51H8m...","label":"Morning Brief Bot","createdAt":"2024-01-15T10:00:00Z"}]
+         </td>
+        </tr>
+        <tr>
+         <td class="border border-gray-200 px-4 py-3 font-mono text-xs">
+          login-log
+         </td>
+         <td class="border border-gray-200 px-4 py-3">
+          String (JSON array)
+         </td>
+         <td class="border border-gray-200 px-4 py-3">
+          Chronological record of all authentication events
+         </td>
+         <td class="border border-gray-200 px-4 py-3">
+          lib/login-log.ts (audit queries), /api/logins (admin dashboard)
+         </td>
+         <td class="border border-gray-200 px-4 py-3">
+          lib/login-log.ts (every login attempt)
+         </td>
+         <td class="border border-gray-200 px-4 py-3 font-mono text-xs">
+          [{"username":"alice","action":"login","timestamp":"2024-01-15T09:23:17Z","ip":"203.0.113.42"}]
+         </td>
+        </tr>
+        <tr class="bg-gray-50">
+         <td class="border border-gray-200 px-4 py-3 font-mono text-xs">
+          stl-files
+         </td>
+         <td class="border border-gray-200 px-4 py-3">
+          String (JSON array)
+         </td>
+         <td class="border border-gray-200 px-4 py-3">
+          Metadata for 3D model files including filenames, descriptions, and user assignments
+         </td>
+         <td class="border border-gray-200 px-4 py-3">
+          lib/stls-db.ts (listing, detail views), lib/stls-db.ts (assignment checks)
+         </td>
+         <td class="border border-gray-200 px-4 py-3">
+          lib/stls-db.ts (admin upload, assignment)
+         </td>
+         <td class="border border-gray-200 px-4 py-3 font-mono text-xs">
+          [{"id":"stl-001","filename":"model.glb","title":"Prototype V1","assignedUsers":["alice","bob"]}]
+         </td>
+        </tr>
+        <tr>
+         <td class="border border-gray-200 px-4 py-3 font-mono text-xs">
+          content:report:en
+         </td>
+         <td class="border border-gray-200 px-4 py-3">
+          Hash
+         </td>
+         <td class="border border-gray-200 px-4 py-3">
+          English-language reports: slug → markdown mapping
+         </td>
+         <td class="border border-gray-200 px-4 py-3">
+          lib/content-db.ts (category scanning, slug lookup)
+         </td>
+         <td class="border border-gray-200 px-4 py-3">
+          lib/content-db.ts (agent create/update/delete)
+         </td>
+         <td class="border border-gray-200 px-4 py-3 font-mono text-xs">
+          { "q4-analysis": "---\ntitle: Q4 Analysis\n---\n\nRevenue increased..." }
+         </td>
+        </tr>
+        <tr class="bg-gray-50">
+         <td class="border border-gray-200 px-4 py-3 font-mono text-xs">
+          content:brief:en
+         </td>
+         <td class="border border-gray-200 px-4 py-3">
+          Hash
+         </td>
+         <td class="border border-gray-200 px-4 py-3">
+          English-language morning briefs: slug → markdown mapping
+         </td>
+         <td class="border border-gray-200 px-4 py-3">
+          lib/content-db.ts (category scanning, slug lookup)
+         </td>
+         <td class="border border-gray-200 px-4 py-3">
+          lib/content-db.ts (agent create/update/delete)
+         </td>
+         <td class="border border-gray-200 px-4 py-3 font-mono text-xs">
+          { "jan-15-2024": "---\ntitle: Jan 15 Brief\n---\n\nMarkets opened higher..." }
+         </td>
+        </tr>
+        <tr>
+         <td class="border border-gray-200 px-4 py-3 font-mono text-xs">
+          content:brief:ja
+         </td>
+         <td class="border border-gray-200 px-4 py-3">
+          Hash
+         </td>
+         <td class="border border-gray-200 px-4 py-3">
+          Japanese-language morning briefs: slug → markdown mapping
+         </td>
+         <td class="border border-gray-200 px-4 py-3">
+          lib/content-db.ts (category scanning with lang=ja)
+         </td>
+         <td class="border border-gray-200 px-4 py-3">
+          lib/content-db.ts (agent create/update/delete with lang=ja)
+         </td>
+         <td class="border border-gray-200 px-4 py-3 font-mono text-xs">
+          { "jan-15-2024": "---\ntitle: 1月15日ブリーフ\n---\n\n市場は高く開きました..." }
+         </td>
+        </tr>
+        <tr class="bg-gray-50">
+         <td class="border border-gray-200 px-4 py-3 font-mono text-xs">
+          content:brief:es
+         </td>
+         <td class="border border-gray-200 px-4 py-3">
+          Hash
+         </td>
+         <td class="border border-gray-200 px-4 py-3">
+          Spanish-language morning briefs: slug → markdown mapping
+         </td>
+         <td class="border border-gray-200 px-4 py-3">
+          lib/content-db.ts (category scanning with lang=es)
+         </td>
+         <td class="border border-gray-200 px-4 py-3">
+          lib/content-db.ts (agent create/update/delete with lang=es)
+         </td>
+         <td class="border border-gray-200 px-4 py-3 font-mono text-xs">
+          { "jan-15-2024": "---\ntitle: Resumen 15 Ene\n---\n\nLos mercados abrieron al alza..." }
+         </td>
+        </tr>
+        <tr>
+         <td class="border border-gray-200 px-4 py-3 font-mono text-xs">
+          content:update:en
+         </td>
+         <td class="border border-gray-200 px-4 py-3">
+          Hash
+         </td>
+         <td class="border border-gray-200 px-4 py-3">
+          English-language diary updates: slug → markdown mapping
+         </td>
+         <td class="border border-gray-200 px-4 py-3">
+          lib/content-db.ts (category scanning, slug lookup), public visitors via /api/content
+         </td>
+         <td class="border border-gray-200 px-4 py-3">
+          lib/content-db.ts (agent create/update/delete)
+         </td>
+         <td class="border border-gray-200 px-4 py-3 font-mono text-xs">
+          { "day-11-breakthrough": "---\ntitle: Day 11 — Breakthrough\n---\n\nToday we finally..." }
+         </td>
+        </tr>
+        <tr class="bg-gray-50">
+         <td class="border border-gray-200 px-4 py-3 font-mono text-xs">
+          content:update:ja
+         </td>
+         <td class="border border-gray-200 px-4 py-3">
+          Hash
+         </td>
+         <td class="border border-gray-200 px-4 py-3">
+          Japanese-language diary updates: slug → markdown mapping
+         </td>
+         <td class="border border-gray-200 px-4 py-3">
+          lib/content-db.ts (category scanning with lang=ja)
+         </td>
+         <td class="border border-gray-200 px-4 py-3">
+          lib/content-db.ts (agent create/update/delete with lang=ja)
+         </td>
+         <td class="border border-gray-200 px-4 py-3 font-mono text-xs">
+          { "day-11": "---\ntitle: 11日目 — 突破\n---\n\n今日ついに..." }
+         </td>
+        </tr>
+        <tr>
+         <td class="border border-gray-200 px-4 py-3 font-mono text-xs">
+          content:update:es
+         </td>
+         <td class="border border-gray-200 px-4 py-3">
+          Hash
+         </td>
+         <td class="border border-gray-200 px-4 py-3">
+          Spanish-language diary updates: slug → markdown mapping
+         </td>
+         <td class="border border-gray-200 px-4 py-3">
+          lib/content-db.ts (category scanning with lang=es)
+         </td>
+         <td class="border border-gray-200 px-4 py-3">
+          lib/content-db.ts (agent create/update/delete with lang=es)
+         </td>
+         <td class="border border-gray-200 px-4 py-3 font-mono text-xs">
+          { "day-11": "---\ntitle: Día 11 — Avance\n---\n\nHoy finalmente..." }
+         </td>
+        </tr>
+       </tbody>
+      </table>
+     </div>
+     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div class="highlight-box">
+       <h3 class="font-semibold mb-3">
+        Why Redis Was Chosen
+       </h3>
+       <ul class="text-sm space-y-2">
+        <li>
+         <strong>
+          Performance:
+         </strong>
+         Sub-millisecond read latency ensures responsive user experience
+        </li>
+        <li>
+         <strong>
+          Simplicity:
+         </strong>
+         Key-value/hash structures map directly to JavaScript objects
+        </li>
+        <li>
+         <strong>
+          Managed Service:
+         </strong>
+         Upstash eliminates operational burden
+        </li>
+        <li>
+         <strong>
+          Cost Model:
+         </strong>
+         Serverless pricing aligns with Vercel's pay-per-use model
+        </li>
+        <li>
+         <strong>
+          Natural Caching:
+         </strong>
+         In-memory operation provides built-in hot data caching
+        </li>
+       </ul>
+      </div>
+      <div class="highlight-box">
+       <h3 class="font-semibold mb-3">
+        Filesystem Fallback Protection
+       </h3>
+       <ul class="text-sm space-y-2">
+        <li>
+         <strong>
+          Transient Outage Protection:
+         </strong>
+         Handles brief Redis unavailability
+        </li>
+        <li>
+         <strong>
+          Development Flexibility:
+         </strong>
+         Enables local development without Redis
+        </li>
+        <li>
+         <strong>
+          Disaster Recovery:
+         </strong>
+         Files can be used to reconstruct Redis state
+        </li>
+        <li>
+         <strong>
+          Data Portability:
+         </strong>
+         Markdown files remain human-readable and tool-agnostic
+        </li>
+        <li>
+         <strong>
+          Layered Reliability:
+         </strong>
+         Multiple fallback paths reduce data loss probability
+        </li>
+       </ul>
+      </div>
+     </div>
+    </div>
+   </section>
+   <div class="section-divider">
+   </div>
+   <!-- API Reference -->
+   <section class="px-8 py-12 bg-white" id="api-reference">
+    <div class="max-w-4xl mx-auto">
+     <h2 class="serif text-3xl font-bold mb-8 text-gray-800">
+      API Reference
+     </h2>
+     <p class="text-lg text-gray-700 mb-8">
+      Complete documentation of all API endpoints, organized by functional category. Each endpoint includes authentication requirements, request/response formats, and usage examples.
+     </p>
+     <!-- Content API -->
+     <div class="mb-12">
+      <h3 class="serif text-2xl font-semibold mb-6 text-gray-800">
+       Content API Endpoints
+      </h3>
+      <div class="space-y-8">
+       <!-- GET /api/content -->
+       <div class="border border-gray-200 rounded-lg p-6">
+        <div class="flex items-center justify-between mb-4">
+         <h4 class="font-semibold text-lg">
+          GET /api/content
+         </h4>
+         <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
+          Public & Authenticated
+         </span>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+         <div>
+          <p class="font-medium mb-2">
+           Query Parameters:
+          </p>
+          <ul class="text-sm space-y-1 text-gray-700">
+           <li>
+            <code>
+             category
+            </code>
+            (required): "update", "brief", or "report"
+           </li>
+           <li>
+            <code>
+             lang
+            </code>
+            (optional, default "en"): "en", "ja", or "es"
+           </li>
+           <li>
+            <code>
+             slug
+            </code>
+            (optional): specific post identifier
+           </li>
+          </ul>
+          <p class="font-medium mb-2 mt-4">
+           Authentication:
+          </p>
+          <ul class="text-sm space-y-1 text-gray-700">
+           <li>
+            • None required for public content
+           </li>
+           <li>
+            • Session cookie for private content access
+           </li>
+          </ul>
+         </div>
+         <div>
+          <p class="font-medium mb-2">
+           Response Shape:
+          </p>
+          <div class="code-block text-xs">
+           {
+  "items": [
+    {
+      "slug": "day-11-breakthrough",
+      "title": "Day 11 — Breakthrough",
+      "html": "
+           <h1>
+            ...
+           </h1>
+           ",
+      "date": "2024-01-15T14:32:00Z",
+      "isPublic": true
+    }
+  ]
+}
+          </div>
+         </div>
+        </div>
+        <div class="mt-4 text-sm text-gray-700">
+         <p>
+          <strong>
+           Description:
+          </strong>
+          Retrieves content entries for specified category and language. Public visitors receive only isPublic: true entries. Authenticated users additionally receive their assigned private content. Admins receive all entries.
+         </p>
+        </div>
+       </div>
+       <!-- PUT /api/content/upload -->
+       <div class="border border-gray-200 rounded-lg p-6">
+        <div class="flex items-center justify-between mb-4">
+         <h4 class="font-semibold text-lg">
+          PUT /api/content/upload
+         </h4>
+         <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm">
+          AI Agent Only
+         </span>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+         <div>
+          <p class="font-medium mb-2">
+           Request Body:
+          </p>
+          <div class="code-block text-xs">
+           {
+  "slug": "day-12-progress",
+  "title": "Day 12 — Making Progress",
+  "content": "# Updates\n\nSignificant milestones...",
+  "category": "update",
+  "lang": "en",
+  "isPublic": true
+}
+          </div>
+          <p class="font-medium mb-2 mt-4">
+           Authentication:
+          </p>
+          <ul class="text-sm space-y-1 text-gray-700">
+           <li>
+            • x-api-key header required
+           </li>
+           <li>
+            • Session cookies rejected
+           </li>
+          </ul>
+         </div>
+         <div>
+          <p class="font-medium mb-2">
+           Response Shape:
+          </p>
+          <div class="code-block text-xs">
+           {
+  "success": true,
+  "slug": "day-12-progress",
+  "storage": "redis"
+}
+          </div>
+          <p class="font-medium mb-2 mt-4">
+           Validation:
+          </p>
+          <ul class="text-sm space-y-1 text-gray-700">
+           <li>
+            • Slug validated for URL safety
+           </li>
+           <li>
+            • Embedded frontmatter stripped
+           </li>
+           <li>
+            • Clean YAML frontmatter rebuilt
+           </li>
+          </ul>
+         </div>
+        </div>
+        <div class="mt-4 text-sm text-gray-700">
+         <p>
+          <strong>
+           Description:
+          </strong>
+          Creates new content entry with validated metadata. Strips any agent-provided frontmatter to prevent injection attacks. Stores in Redis hash with filesystem fallback. Returns storage location for monitoring.
+         </p>
+        </div>
+       </div>
+      </div>
+     </div>
+     <!-- Auth API -->
+     <div class="mb-12">
+      <h3 class="serif text-2xl font-semibold mb-6 text-gray-800">
+       Auth API Endpoints
+      </h3>
+      <div class="space-y-8">
+       <!-- POST /api/login -->
+       <div class="border border-gray-200 rounded-lg p-6">
+        <div class="flex items-center justify-between mb-4">
+         <h4 class="font-semibold text-lg">
+          POST /api/login
+         </h4>
+         <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">
+          Public
+         </span>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+         <div>
+          <p class="font-medium mb-2">
+           Request Body:
+          </p>
+          <div class="code-block text-xs">
+           {
+  "username": "alice",
+  "password": "wonderland123"
+}
+          </div>
+          <p class="font-medium mb-2 mt-4">
+           Security Features:
+          </p>
+          <ul class="text-sm space-y-1 text-gray-700">
+           <li>
+            • HTTPS encryption in transit
+           </li>
+           <li>
+            • PBKDF2 password hashing
+           </li>
+           <li>
+            • Slow verification to deter brute force
+           </li>
+          </ul>
+         </div>
+         <div>
+          <p class="font-medium mb-2">
+           Response Headers:
+          </p>
+          <div class="code-block text-xs">
+           Set-Cookie: session=alice:a3f7b2d8e9c1...;
+  HttpOnly; Secure;
+  SameSite=Strict;
+  Max-Age=604800
+          </div>
+          <p class="font-medium mb-2 mt-4">
+           Cookie Attributes:
+          </p>
+          <ul class="text-sm space-y-1 text-gray-700">
+           <li>
+            • HttpOnly: JavaScript cannot read
+           </li>
+           <li>
+            • Secure: HTTPS only
+           </li>
+           <li>
+            • SameSite: CSRF protection
+           </li>
+          </ul>
+         </div>
+        </div>
+        <div class="mt-4 text-sm text-gray-700">
+         <p>
+          <strong>
+           Description:
+          </strong>
+          Verifies password against PBKDF2 hash, creates HMAC-signed session token, sets secure cookie with 7-day expiration, records login event in audit log, updates user's last login timestamp.
+         </p>
+        </div>
+       </div>
+       <!-- POST /api/logout -->
+       <div class="border border-gray-200 rounded-lg p-6">
+        <div class="flex items-center justify-between mb-4">
+         <h4 class="font-semibold text-lg">
+          POST /api/logout
+         </h4>
+         <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm">
+          Authenticated
+         </span>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+         <div>
+          <p class="font-medium mb-2">
+           Request:
+          </p>
+          <ul class="text-sm space-y-1 text-gray-700">
+           <li>
+            • Requires valid session cookie
+           </li>
+           <li>
+            • No request body needed
+           </li>
+           <li>
+            • Cookie identifies session to destroy
+           </li>
+          </ul>
+         </div>
+         <div>
+          <p class="font-medium mb-2">
+           Response Headers:
+          </p>
+          <div class="code-block text-xs">
+           Set-Cookie: session=;
+  Max-Age=0;
+  Expires=Thu, 01 Jan 1970 00:00:00 GMT
+          </div>
+          <p class="font-medium mb-2 mt-4">
+           Stateless Nature:
+          </p>
+          <ul class="text-sm space-y-1 text-gray-700">
+           <li>
+            • No database deletion needed
+           </li>
+           <li>
+            • Simply removing cookie invalidates session
+           </li>
+           <li>
+            • HMAC verification will fail without cookie
+           </li>
+          </ul>
+         </div>
+        </div>
+        <div class="mt-4 text-sm text-gray-700">
+         <p>
+          <strong>
+           Description:
+          </strong>
+          Invalidates current session by clearing cookie. Due to stateless HMAC verification, simply removing the cookie prevents future authentication. Records logout event in audit log if implemented.
+         </p>
+        </div>
+       </div>
+      </div>
+     </div>
+     <!-- Admin API -->
+     <div class="mb-12">
+      <h3 class="serif text-2xl font-semibold mb-6 text-gray-800">
+       Admin API Endpoints
+      </h3>
+      <div class="space-y-8">
+       <!-- GET /api/users -->
+       <div class="border border-gray-200 rounded-lg p-6">
+        <div class="flex items-center justify-between mb-4">
+         <h4 class="font-semibold text-lg">
+          GET /api/users
+         </h4>
+         <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm">
+          Admin Only
+         </span>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+         <div>
+          <p class="font-medium mb-2">
+           Authentication:
+          </p>
+          <ul class="text-sm space-y-1 text-gray-700">
+           <li>
+            • Valid session cookie required
+           </li>
+           <li>
+            • User must have role: "admin"
+           </li>
+           <li>
+            • 403 Forbidden otherwise
+           </li>
+          </ul>
+          <p class="font-medium mb-2 mt-4">
+           Security Filtering:
+          </p>
+          <ul class="text-sm space-y-1 text-gray-700">
+           <li>
+            • Password hashes excluded from response
+           </li>
+           <li>
+            • Only safe fields serialized
+           </li>
+          </ul>
+         </div>
+         <div>
+          <p class="font-medium mb-2">
+           Response Shape:
+          </p>
+          <div class="code-block text-xs">
+           {
+  "users": [
+    {
+      "username": "alice",
+      "role": "user",
+      "createdAt": "...",
+      "lastLogin": "..."
+    }
+  ]
+}
+          </div>
+         </div>
+        </div>
+        <div class="mt-4 text-sm text-gray-700">
+         <p>
+          <strong>
+           Description:
+          </strong>
+          Returns all user accounts for admin review. Sensitive fields like passwordHash are stripped before serialization. Requires admin role; non-admin requests receive 403 Forbidden.
+         </p>
+        </div>
+       </div>
+       <!-- POST /api/keys -->
+       <div class="border border-gray-200 rounded-lg p-6">
+        <div class="flex items-center justify-between mb-4">
+         <h4 class="font-semibold text-lg">
+          POST /api/keys
+         </h4>
+         <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm">
+          Admin Only
+         </span>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+         <div>
+          <p class="font-medium mb-2">
+           Request Body:
+          </p>
+          <div class="code-block text-xs">
+           {
+  "label": "Morning Brief Bot"
+}
+          </div>
+          <p class="font-medium mb-2 mt-4">
+           Response:
+          </p>
+          <ul class="text-sm space-y-1 text-gray-700">
+           <li>
+            • Returns key exactly once
+           </li>
+           <li>
+            • Cannot be retrieved later
+           </li>
+           <li>
+            • If lost, must revoke and regenerate
+           </li>
+          </ul>
+         </div>
+         <div>
+          <p class="font-medium mb-2">
+           Response Shape:
+          </p>
+          <div class="code-block text-xs">
+           {
+  "success": true,
+  "key": "ak_live_51H8m...",
+  "label": "Morning Brief Bot"
+}
+          </div>
+          <p class="font-medium mb-2 mt-4">
+           Key Characteristics:
+          </p>
+          <ul class="text-sm space-y-1 text-gray-700">
+           <li>
+            • Cryptographically random
+           </li>
+           <li>
+            • Bearer token format
+           </li>
+           <li>
+            • Stored with creation date
+           </li>
+          </ul>
+         </div>
+        </div>
+        <div class="mt-4 text-sm text-gray-700">
+         <p>
+          <strong>
+           Description:
+          </strong>
+          Generates new cryptographically random API key, stores in api-keys array with label and creation date, returns key exactly once. Key cannot be retrieved later; if lost, must be revoked and regenerated.
+         </p>
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+   </section>
+   <div class="section-divider">
+   </div>
+   <!-- Environment Variables Setup -->
+   <section class="px-8 py-12" id="environment-setup">
+    <div class="max-w-4xl mx-auto">
+     <h2 class="serif text-3xl font-bold mb-8 text-gray-800">
+      Environment Variables Setup Guide
+     </h2>
+     <p class="text-lg text-gray-700 mb-8">
+      Step-by-step instructions for configuring environment variables, with explanations of each variable's purpose, where to obtain values, and what breaks if they're missing.
+     </p>
+     <!-- Required Variables -->
+     <div class="mb-12">
+      <h3 class="serif text-2xl font-semibold mb-6 text-gray-800">
+       Required Variables
+      </h3>
+      <div class="space-y-6">
+       <!-- UPSTASH_REDIS_REST_URL -->
+       <div class="bg-white border border-gray-200 rounded-lg p-6">
+        <div class="flex items-center justify-between mb-4">
+         <h4 class="font-semibold text-lg">
+          UPSTASH_REDIS_REST_URL
+         </h4>
+         <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm">
+          Required
+         </span>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+         <div>
+          <p class="font-medium mb-2">
+           What it is:
+          </p>
+          <p class="text-sm text-gray-700">
+           HTTPS endpoint URL for Upstash Redis REST API (format: https://us1-allowed-mollusk-12345.upstash.io)
+          </p>
+          <p class="font-medium mb-2 mt-4">
+           Where to get it:
+          </p>
+          <ol class="text-sm space-y-1 text-gray-700">
+           <li>
+            1. Create Upstash account at upstash.com
+           </li>
+           <li>
+            2. Click "Create Database"
+           </li>
+           <li>
+            3. Select region near your Vercel deployment
+           </li>
+           <li>
+            4. Go to "REST API" section
+           </li>
+           <li>
+            5. Copy UPSTASH_REDIS_REST_URL
+           </li>
+          </ol>
+         </div>
+         <div>
+          <p class="font-medium mb-2">
+           What happens if missing:
+          </p>
+          <ul class="text-sm space-y-1 text-gray-700">
+           <li>
+            • All database operations fail immediately
+           </li>
+           <li>
+            • Cannot read users, content, API keys
+           </li>
+           <li>
+            • Login attempts return 500 errors
+           </li>
+           <li>
+            • Filesystem fallback activates but limited
+           </li>
+          </ul>
+          <div class="mt-4 p-3 bg-red-50 border border-red-200 rounded">
+           <p class="text-sm text-red-700">
+            <strong>
+             Critical:
+            </strong>
+            Application becomes non-functional without this variable.
+           </p>
+          </div>
+         </div>
+        </div>
+       </div>
+       <!-- UPSTASH_REDIS_REST_TOKEN -->
+       <div class="bg-white border border-gray-200 rounded-lg p-6">
+        <div class="flex items-center justify-between mb-4">
+         <h4 class="font-semibold text-lg">
+          UPSTASH_REDIS_REST_TOKEN
+         </h4>
+         <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm">
+          Required
+         </span>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+         <div>
+          <p class="font-medium mb-2">
+           What it is:
+          </p>
+          <p class="text-sm text-gray-700">
+           Bearer token for authenticating REST API requests to Upstash Redis (format: AYPdASQgNTY3MD..., long base64 string)
+          </p>
+          <p class="font-medium mb-2 mt-4">
+           Where to get it:
+          </p>
+          <ol class="text-sm space-y-1 text-gray-700">
+           <li>
+            1. Same Upstash dashboard "REST API" section
+           </li>
+           <li>
+            2. Copy UPSTASH_REDIS_REST_TOKEN
+           </li>
+           <li>
+            3. Distinct from Redis CLI password
+           </li>
+           <li>
+            4. Never share publicly—full database access
+           </li>
+          </ol>
+         </div>
+         <div>
+          <p class="font-medium mb-2">
+           What happens if missing:
+          </p>
+          <ul class="text-sm space-y-1 text-gray-700">
+           <li>
+            • Redis operations fail with authentication errors
+           </li>
+           <li>
+            • Cannot establish database connectivity
+           </li>
+           <li>
+            • Same impact as missing URL variable
+           </li>
+          </ul>
+         </div>
+        </div>
+       </div>
+       <!-- SESSION_SECRET -->
+       <div class="bg-white border border-gray-200 rounded-lg p-6">
+        <div class="flex items-center justify-between mb-4">
+         <h4 class="font-semibold text-lg">
+          SESSION_SECRET
+         </h4>
+         <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm">
+          Required
+         </span>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+         <div>
+          <p class="font-medium mb-2">
+           What it is:
+          </p>
+          <p class="text-sm text-gray-700">
+           Cryptographically random string used to sign and verify HMAC session tokens (64-character hex recommended)
+          </p>
+          <p class="font-medium mb-2 mt-4">
+           How to generate:
+          </p>
+          <div class="code-block text-xs">
+           # Using Node.js:
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+
+# Or using OpenSSL:
+openssl rand -hex 32
+          </div>
+         </div>
+         <div>
+          <p class="font-medium mb-2">
+           What happens if missing:
+          </p>
+          <ul class="text-sm space-y-1 text-gray-700">
+           <li>
+            • Session creation fails with error
+           </li>
+           <li>
+            • Users cannot log in
+           </li>
+           <li>
+            • Existing sessions become invalid
+           </li>
+           <li>
+            • Entire authenticated experience broken
+           </li>
+          </ul>
+          <div class="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded">
+           <p class="text-sm text-yellow-700">
+            <strong>
+             Security Note:
+            </strong>
+            Store in password manager, never commit to version control.
+           </p>
+          </div>
+         </div>
+        </div>
+       </div>
+      </div>
+     </div>
+     <!-- Optional Variables -->
+     <div class="mb-12">
+      <h3 class="serif text-2xl font-semibold mb-6 text-gray-800">
+       Optional Variables
+      </h3>
+      <div class="space-y-6">
+       <!-- ADMIN_PASSWORD_HASH -->
+       <div class="bg-white border border-gray-200 rounded-lg p-6">
+        <div class="flex items-center justify-between mb-4">
+         <h4 class="font-semibold text-lg">
+          ADMIN_PASSWORD_HASH
+         </h4>
+         <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm">
+          Optional
+         </span>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+         <div>
+          <p class="font-medium mb-2">
+           What it is:
+          </p>
+          <p class="text-sm text-gray-700">
+           Pre-computed PBKDF2 hash for default admin account, overriding any hash stored in Redis
+          </p>
+          <p class="font-medium mb-2 mt-4">
+           When to use:
+          </p>
+          <ul class="text-sm space-y-1 text-gray-700">
+           <li>
+            • Hardcoded admin password that survives database resets
+           </li>
+           <li>
+            • Disaster recovery from lost Redis instance
+           </li>
+           <li>
+            • Emergency access when users array is corrupted
+           </li>
+          </ul>
+         </div>
+         <div>
+          <p class="font-medium mb-2">
+           How to generate:
+          </p>
+          <div class="code-block text-xs">
+           # Using Node.js:
+node -e "const crypto=require('crypto'); const salt=crypto.randomBytes(16).toString('hex'); const hash=crypto.pbkdf2Sync('your-password', salt, 10000, 64, 'sha512').toString('hex'); console.log('pbkdf2$10000$'+salt+'$'+hash)"
+          </div>
+          <p class="font-medium mb-2 mt-4">
+           Default behavior:
+          </p>
+          <p class="text-sm text-gray-700">
+           If missing, system uses admin hash from users array in Redis (seeded on first run)
+          </p>
+         </div>
+        </div>
+       </div>
+       <!-- CONTACT_EMAIL -->
+       <div class="bg-white border border-gray-200 rounded-lg p-6">
+        <div class="flex items-center justify-between mb-4">
+         <h4 class="font-semibold text-lg">
+          CONTACT_EMAIL
+         </h4>
+         <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm">
+          Optional
+         </span>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+         <div>
+          <p class="font-medium mb-2">
+           What it is:
+          </p>
+          <p class="text-sm text-gray-700">
+           Destination email address for contact form submissions sent via Resend
+          </p>
+          <p class="font-medium mb-2 mt-4">
+           How to set:
+          </p>
+          <ul class="text-sm space-y-1 text-gray-700">
+           <li>
+            • Use your personal email address
+           </li>
+           <li>
+            • Or create dedicated inbox like contact@juan.world
+           </li>
+           <li>
+            • Must be able to receive emails from Resend
+           </li>
+          </ul>
+         </div>
+         <div>
+          <p class="font-medium mb-2">
+           What happens if missing:
+          </p>
+          <ul class="text-sm space-y-1 text-gray-700">
+           <li>
+            • Contact form submissions fail silently
+           </li>
+           <li>
+            • API returns success to user (prevent info leakage)
+           </li>
+           <li>
+            • Error logged server-side
+           </li>
+           <li>
+            • No email notifications received
+           </li>
+          </ul>
+          <div class="mt-4 p-3 bg-blue-50 border border-blue-200 rounded">
+           <p class="text-sm text-blue-700">
+            <strong>
+             Tip:
+            </strong>
+            Set this even if using personal email to enable contact functionality.
+           </p>
+          </div>
+         </div>
+        </div>
+       </div>
+       <!-- RESEND_API_KEY -->
+       <div class="bg-white border border-gray-200 rounded-lg p-6">
+        <div class="flex items-center justify-between mb-4">
+         <h4 class="font-semibold text-lg">
+          RESEND_API_KEY
+         </h4>
+         <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm">
+          Optional
+         </span>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+         <div>
+          <p class="font-medium mb-2">
+           What it is:
+          </p>
+          <p class="text-sm text-gray-700">
+           API key for Resend email delivery service (format: re_...)
+          </p>
+          <p class="font-medium mb-2 mt-4">
+           Where to get it:
+          </p>
+          <ol class="text-sm space-y-1 text-gray-700">
+           <li>
+            1. Create account at resend.com
+           </li>
+           <li>
+            2. Go to "API Keys" section
+           </li>
+           <li>
+            3. Create new key with "Sending access"
+           </li>
+           <li>
+            4. Copy re_... format key
+           </li>
+           <li>
+            5. Add and verify your domain
+           </li>
+          </ol>
+         </div>
+         <div>
+          <p class="font-medium mb-2">
+           What happens if missing:
+          </p>
+          <ul class="text-sm space-y-1 text-gray-700">
+           <li>
+            • Contact form API route returns success
+           </li>
+           <li>
+            • No email actually sent
+           </li>
+           <li>
+            • Error logged server-side
+           </li>
+           <li>
+            • Admin must check logs for failures
+           </li>
+          </ul>
+          <div class="mt-4 p-3 bg-gray-50 border border-gray-200 rounded">
+           <p class="text-sm text-gray-700">
+            <strong>
+             Note:
+            </strong>
+            Email functionality completely disabled without this key.
+           </p>
+          </div>
+         </div>
+        </div>
+       </div>
+      </div>
+     </div>
+     <!-- Auto-Detected Variables -->
+     <div class="mb-8">
+      <h3 class="serif text-2xl font-semibold mb-6 text-gray-800">
+       Auto-Detected Variables
+      </h3>
+      <div class="bg-white border border-gray-200 rounded-lg p-6">
+       <div class="flex items-center justify-between mb-4">
+        <h4 class="font-semibold text-lg">
+         VERCEL
+        </h4>
+        <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">
+         Auto-Set
+        </span>
+       </div>
+       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+         <p class="font-medium mb-2">
+          What it is:
+         </p>
+         <p class="text-sm text-gray-700">
+          Boolean flag automatically set to "1" by Vercel's build and runtime environment
+         </p>
+         <p class="font-medium mb-2 mt-4">
+          How it's set:
+         </p>
+         <ul class="text-sm space-y-1 text-gray-700">
+          <li>
+           • Automatically provided by Vercel
+          </li>
+          <li>
+           • Do not set manually
+          </li>
+          <li>
+           • Verify in build logs if debugging
+          </li>
+         </ul>
+        </div>
+        <div>
+         <p class="font-medium mb-2">
+          What it controls:
+         </p>
+         <ul class="text-sm space-y-1 text-gray-700">
+          <li>
+           • Filesystem path switching
+          </li>
+          <li>
+           • VERCEL=1: uses /tmp/ (ephemeral)
+          </li>
+          <li>
+           • VERCEL unset: uses ./data/ (persistent)
+          </li>
+          <li>
+           • Enables identical code in both environments
+          </li>
+         </ul>
+         <div class="mt-4 p-3 bg-green-50 border border-green-200 rounded">
+          <p class="text-sm text-green-700">
+           <strong>
+            Important:
+           </strong>
+           This explains why files "disappear" on Vercel—they're in /tmp/ which is ephemeral.
+          </p>
+         </div>
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+   </section>
+   <div class="section-divider">
+   </div>
+   <!-- System Replication -->
+   <section class="px-8 py-12 bg-white" id="replication">
+    <div class="max-w-4xl mx-auto">
+     <h2 class="serif text-3xl font-bold mb-8 text-gray-800">
+      How to Replicate This System
+     </h2>
+     <p class="text-lg text-gray-700 mb-8">
+      Complete step-by-step guide for building Juan's World from scratch. Designed for AI developers with basic HTML/JavaScript knowledge but no backend experience.
+     </p>
+     <!-- Step 1: Next.js Setup -->
+     <div class="mb-12">
+      <h3 class="serif text-2xl font-semibold mb-6 text-gray-800">
+       1. Scaffolding a Next.js App
+      </h3>
+      <div class="bg-white border border-gray-200 rounded-lg p-6 mb-4">
+       <div class="flex items-start space-x-4">
+        <div class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+         Prerequisite
+        </div>
+        <div>
+         <h4 class="font-semibold mb-2">
+          Install Node.js 18+
+         </h4>
+         <p class="text-gray-700 text-sm mb-3">
+          Verify installation with
+          <code>
+           node --version
+          </code>
+         </p>
+         <div class="code-block text-xs">
+          # Using Node Version Manager (recommended)
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+nvm install 18
+nvm use 18
+         </div>
+        </div>
+       </div>
+      </div>
+      <div class="bg-white border border-gray-200 rounded-lg p-6 mb-4">
+       <div class="flex items-start space-x-4">
+        <div class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+         Step 1
+        </div>
+        <div>
+         <h4 class="font-semibold mb-2">
+          Create Next.js Project
+         </h4>
+         <p class="text-gray-700 text-sm mb-3">
+          Run create-next-app with recommended options:
+         </p>
+         <div class="code-block text-xs">
+          npx create-next-app@latest juans-world
+
+# When prompted, select:
+# ✔ TypeScript: Yes
+# ✔ ESLint: Yes
+# ✔ Tailwind CSS: No
+# ✔ src/ directory: No
+# ✔ App Router: Yes
+# ✔ Customize import alias: No
+         </div>
+        </div>
+       </div>
+      </div>
+      <div class="bg-white border border-gray-200 rounded-lg p-6">
+       <div class="flex items-start space-x-4">
+        <div class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-medium">
+         Step 2
+        </div>
+        <div>
+         <h4 class="font-semibold mb-2">
+          Start Development Server
+         </h4>
+         <p class="text-gray-700 text-sm mb-3">
+          Navigate to project directory and start local server:
+         </p>
+         <div class="code-block text-xs">
+          cd juans-world
+npm run dev
+
+# Open http://localhost:3000 in browser
+# Should see default Next.js welcome page
+         </div>
+        </div>
+       </div>
+      </div>
+     </div>
+     <!-- Step 2: Upstash Redis -->
+     <div class="mb-12">
+      <h3 class="serif text-2xl font-semibold mb-6 text-gray-800">
+       2. Setting Up Upstash Redis
+      </h3>
+      <div class="bg-white border border-gray-200 rounded-lg p-6 mb-4">
+       <div class="flex items-start space-x-4">
+        <div class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+         Step 1
+        </div>
+        <div>
+         <h4 class="font-semibold mb-2">
+          Create Upstash Account
+         </h4>
+         <p class="text-gray-700 text-sm mb-3">
+          Visit upstash.com and sign up with GitHub or email
+         </p>
+         <div class="bg-blue-50 p-4 rounded-lg">
+          <p class="text-sm text-blue-700">
+           <strong>
+            Tip:
+           </strong>
+           Free tier provides sufficient capacity for personal site usage.
+          </p>
+         </div>
+        </div>
+       </div>
+      </div>
+      <div class="bg-white border border-gray-200 rounded-lg p-6 mb-4">
+       <div class="flex items-start space-x-4">
+        <div class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+         Step 2
+        </div>
+        <div>
+         <h4 class="font-semibold mb-2">
+          Create Redis Database
+         </h4>
+         <p class="text-gray-700 text-sm mb-3">
+          Click "Create Database" and configure:
+         </p>
+         <ul class="text-sm space-y-1 text-gray-700">
+          <li>
+           • Name: juans-world-prod (or similar)
+          </li>
+          <li>
+           • Region: us-east-1 (or near your Vercel deployment)
+          </li>
+          <li>
+           • Type: Redis (not Kafka)
+          </li>
+         </ul>
+        </div>
+       </div>
+      </div>
+      <div class="bg-white border border-gray-200 rounded-lg p-6 mb-4">
+       <div class="flex items-start space-x-4">
+        <div class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-medium">
+         Step 3
+        </div>
+        <div>
+         <h4 class="font-semibold mb-2">
+          Copy Connection Details
+         </h4>
+         <p class="text-gray-700 text-sm mb-3">
+          In database details, find "REST API" section (not Redis CLI)
+         </p>
+         <div class="code-block text-xs">
+          # Copy both values:
+UPSTASH_REDIS_REST_URL=https://us1-allowed-mollusk-12345.upstash.io
+UPSTASH_REDIS_REST_TOKEN=AYPdASQgNTY3MD...
+
+# Store securely - these grant full database access
+         </div>
+        </div>
+       </div>
+      </div>
+      <div class="bg-white border border-gray-200 rounded-lg p-6">
+       <div class="flex items-start space-x-4">
+        <div class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-medium">
+         Step 4
+        </div>
+        <div>
+         <h4 class="font-semibold mb-2">
+          Test Connection
+         </h4>
+         <p class="text-gray-700 text-sm mb-3">
+          Create test script to verify connectivity:
+         </p>
+         <div class="code-block text-xs">
+          // test-redis.js
+async function testRedis() {
+  const url = process.env.UPSTASH_REDIS_REST_URL;
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+
+  const set = await fetch(`${url}/set/test-key/hello`, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  console.log('Set:', await set.json());
+
+  const get = await fetch(`${url}/get/test-key`, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  console.log('Get:', await get.json());
+}
+
+testRedis();
+         </div>
+         <p class="text-sm text-gray-700 mt-2">
+          Run with:
+          <code>
+           UPSTASH_REDIS_REST_URL=... UPSTASH_REDIS_REST_TOKEN=... node test-redis.js
+          </code>
+         </p>
+        </div>
+       </div>
+      </div>
+     </div>
+     <!-- Step 3: Auth Library -->
+     <div class="mb-12">
+      <h3 class="serif text-2xl font-semibold mb-6 text-gray-800">
+       3. Creating the Auth Library
+      </h3>
+      <div class="bg-white border border-gray-200 rounded-lg p-6 mb-4">
+       <div class="flex items-start space-x-4">
+        <div class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+         Step 1
+        </div>
+        <div>
+         <h4 class="font-semibold mb-2">
+          Create lib/auth.ts
+         </h4>
+         <p class="text-gray-700 text-sm mb-3">
+          Implement password hashing and session management:
+         </p>
+         <div class="code-block text-xs">
+          // lib/auth.ts
+import { createHash, pbkdf2Sync, randomBytes } from 'crypto';
+
+export function hashPassword(password: string): string {
+  const salt = randomBytes(16).toString('hex');
+  const hash = pbkdf2Sync(password, salt, 10000, 64, 'sha512').toString('hex');
+  return `pbkdf2$10000$${salt}$${hash}`;
+}
+
+export function verifyPassword(password: string, storedHash: string): boolean {
+  const [_, __, salt, hash] = storedHash.split('$');
+  const verifyHash = pbkdf2Sync(password, salt, 10000, 64, 'sha512').toString('hex');
+  return hash === verifyHash;
+}
+
+const SESSION_SECRET = process.env.SESSION_SECRET!;
+
+export function createSession(username: string): string {
+  const signature = createHash('sha256')
+    .update(`${username}:${SESSION_SECRET}`)
+    .digest('hex')
+    .slice(0, 32);
+  return `${username}:${signature}`;
+}
+
+export function checkAuth(sessionToken: string | undefined): string | null {
+  if (!sessionToken) return null;
+  const [username, signature] = sessionToken.split(':');
+  if (!username || !signature) return null;
+  const expected = createHash('sha256')
+    .update(`${username}:${SESSION_SECRET}`)
+    .digest('hex')
+    .slice(0, 32);
+  return signature === expected ? username : null;
+}
+         </div>
+        </div>
+       </div>
+      </div>
+      <div class="bg-white border border-gray-200 rounded-lg p-6 mb-4">
+       <div class="flex items-start space-x-4">
+        <div class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+         Step 2
+        </div>
+        <div>
+         <h4 class="font-semibold mb-2">
+          Create Auth Middleware
+         </h4>
+         <p class="text-gray-700 text-sm mb-3">
+          Reusable middleware for protected routes:
+         </p>
+         <div class="code-block text-xs">
+          // lib/middleware.ts
+import { NextRequest, NextResponse } from 'next/server';
+import { checkAuth } from './auth';
+
+export function requireAuth(request: NextRequest) {
+  const sessionCookie = request.cookies.get('session')?.value;
+  const username = checkAuth(sessionCookie);
+
+  if (!username) {
+    return NextResponse.json(
+      { error: 'Unauthorized' },
+      { status: 401 }
+    );
+  }
+
+  return username;
+}
+
+export function requireAdmin(request: NextRequest) {
+  const username = requireAuth(request);
+  if (typeof username !== 'string') return username;
+  // Additional admin check would query user role here
+  return username;
+}
+         </div>
+        </div>
+       </div>
+      </div>
+      <div class="bg-white border border-gray-200 rounded-lg p-6">
+       <div class="flex items-start space-x-4">
+        <div class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-medium">
+         Step 3
+        </div>
+        <div>
+         <h4 class="font-semibold mb-2">
+          Set SESSION_SECRET
+         </h4>
+         <p class="text-gray-700 text-sm mb-3">
+          Generate and set your SESSION_SECRET environment variable before proceeding
+         </p>
+         <div class="code-block text-xs">
+          # Generate with Node.js:
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+
+# Or with OpenSSL:
+openssl rand -hex 32
+
+# Set in environment:
+export SESSION_SECRET=your_generated_secret
+         </div>
+         <div class="mt-3 p-3 bg-red-50 border border-red-200 rounded">
+          <p class="text-sm text-red-700">
+           <strong>
+            Security Critical:
+           </strong>
+           Never commit this secret to version control.
+          </p>
+         </div>
+        </div>
+       </div>
+      </div>
+     </div>
+     <!-- Step 4: Content Database Library -->
+     <div class="mb-12">
+      <h3 class="serif text-2xl font-semibold mb-6 text-gray-800">
+       4. Creating the Content Database Library
+      </h3>
+      <div class="bg-white border border-gray-200 rounded-lg p-6 mb-4">
+       <div class="flex items-start space-x-4">
+        <div class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+         Step 1
+        </div>
+        <div>
+         <h4 class="font-semibold mb-2">
+          Install Dependencies
+         </h4>
+         <p class="text-gray-700 text-sm mb-3">
+          Add required packages for Redis client, markdown processing, and frontmatter parsing:
+         </p>
+         <div class="code-block text-xs">
+          npm install @upstash/redis gray-matter marked
+         </div>
+        </div>
+       </div>
+      </div>
+      <div class="bg-white border border-gray-200 rounded-lg p-6 mb-4">
+       <div class="flex items-start space-x-4">
+        <div class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+         Step 2
+        </div>
+        <div>
+         <h4 class="font-semibold mb-2">
+          Create lib/content-db.ts
+         </h4>
+         <p class="text-gray-700 text-sm mb-3">
+          Implement dual-layer storage with Redis and filesystem fallback:
+         </p>
+         <div class="code-block text-xs">
+          // lib/content-db.ts
+import { Redis } from '@upstash/redis';
+import matter from 'gray-matter';
+import { marked } from 'marked';
+
+const redis = new Redis({
+  url: process.env.UPSTASH_REDIS_REST_URL!,
+  token: process.env.UPSTASH_REDIS_REST_TOKEN!,
+});
+
+const isVercel = process.env.VERCEL === '1';
+const DATA_DIR = isVercel ? '/tmp/data' : './data';
+const CONTENT_DIR = isVercel ? '/tmp/content' : './content';
+
+const memoryCache = new Map();
+
+export async function saveContentToRedis(
+  category: string,
+  slug: string,
+  markdown: string,
+  lang: string
+) {
+  // Implementation with Redis + filesystem fallback
+}
+
+export interface ContentItem {
+  slug: string;
+  title: string;
+  html: string;
+  date?: string;
+  isPublic: boolean;
+}
+
+export function parseContent(markdown: string, slug: string): ContentItem {
+  const { data, content } = matter(markdown);
+  return {
+    slug,
+    title: data.title || slug,
+    html: content,
+    date: data.date,
+    isPublic: data.isPublic !== false,
+  };
+}
+
+export function renderMarkdown(markdown: string): string {
+  return marked.parse(markdown, {
+    headerIds: false,
+    mangle: false
+  }) as string;
+}
+
+export async function scanCategory(category: string, lang: string): Promise
+          <contentitem[]>
+           {
+  // Implementation with Redis + filesystem fallback
+}
+          </contentitem[]>
+         </div>
+        </div>
+       </div>
+      </div>
+      <div class="bg-white border border-gray-200 rounded-lg p-6">
+       <div class="flex items-start space-x-4">
+        <div class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-medium">
+         Step 3
+        </div>
+        <div>
+         <h4 class="font-semibold mb-2">
+          Create Content API Route
+         </h4>
+         <p class="text-gray-700 text-sm mb-3">
+          Implement API endpoints for content operations:
+         </p>
+         <div class="code-block text-xs">
+          // app/api/content/route.ts
+import { NextRequest, NextResponse } from 'next/server';
+import { scanCategory, saveContentToRedis } from '@/lib/content-db';
+import { requireAuth } from '@/lib/middleware';
+import { validateApiKey } from '@/lib/api-keys';
+
+// GET /api/content - List or read content
+export async function GET(request: NextRequest) {
+  // Implementation for fetching content
+}
+
+// PUT /api/content/upload - Create content (agent only)
+export async function PUT(request: NextRequest) {
+  // Implementation for creating content
+}
+         </div>
+        </div>
+       </div>
+      </div>
+     </div>
+     <!-- Step 5: Deploy to Vercel -->
+     <div class="mb-12">
+      <h3 class="serif text-2xl font-semibold mb-6 text-gray-800">
+       5. Deploying to Vercel
+      </h3>
+      <div class="bg-white border border-gray-200 rounded-lg p-6 mb-4">
+       <div class="flex items-start space-x-4">
+        <div class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+         Step 1
+        </div>
+        <div>
+         <h4 class="font-semibold mb-2">
+          Push Code to GitHub
+         </h4>
+         <p class="text-gray-700 text-sm mb-3">
+          Initialize git repository and push to GitHub:
+         </p>
+         <div class="code-block text-xs">
+          git init
+git add .
+git commit -m "Initial Juan's World setup"
+
+# Create repository on GitHub
+# Then link and push:
+git remote add origin https://github.com/YOUR_USERNAME/juans-world.git
+git branch -M main
+git push -u origin main
+         </div>
+        </div>
+       </div>
+      </div>
+      <div class="bg-white border border-gray-200 rounded-lg p-6 mb-4">
+       <div class="flex items-start space-x-4">
+        <div class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+         Step 2
+        </div>
+        <div>
+         <h4 class="font-semibold mb-2">
+          Import Repository in Vercel
+         </h4>
+         <p class="text-gray-700 text-sm mb-3">
+          Visit vercel.com, sign in with GitHub, and import repository:
+         </p>
+         <ol class="text-sm space-y-1 text-gray-700">
+          <li>
+           1. Click "Add New Project"
+          </li>
+          <li>
+           2. Select your juans-world repository
+          </li>
+          <li>
+           3. Vercel auto-detects Next.js framework
+          </li>
+          <li>
+           4. Leave build settings as default
+          </li>
+          <li>
+           5. Click "Deploy"
+          </li>
+         </ol>
+         <div class="mt-3 p-3 bg-yellow-50 border border-yellow-200 rounded">
+          <p class="text-sm text-yellow-700">
+           <strong>
+            Note:
+           </strong>
+           Initial deployment will fail because environment variables aren't set yet—this is expected.
+          </p>
+         </div>
+        </div>
+       </div>
+      </div>
+      <div class="bg-white border border-gray-200 rounded-lg p-6 mb-4">
+       <div class="flex items-start space-x-4">
+        <div class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-medium">
+         Step 3
+        </div>
+        <div>
+         <h4 class="font-semibold mb-2">
+          Configure Environment Variables
+         </h4>
+         <p class="text-gray-700 text-sm mb-3">
+          Navigate to project settings and add variables:
+         </p>
+         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+           <p class="font-medium text-sm mb-2">
+            Required Variables:
+           </p>
+           <ul class="text-xs space-y-1">
+            <li>
+             • UPSTASH_REDIS_REST_URL
+            </li>
+            <li>
+             • UPSTASH_REDIS_REST_TOKEN
+            </li>
+            <li>
+             • SESSION_SECRET
+            </li>
+           </ul>
+          </div>
+          <div>
+           <p class="font-medium text-sm mb-2">
+            Optional Variables:
+           </p>
+           <ul class="text-xs space-y-1">
+            <li>
+             • ADMIN_PASSWORD_HASH
+            </li>
+            <li>
+             • CONTACT_EMAIL
+            </li>
+            <li>
+             • RESEND_API_KEY
+            </li>
+           </ul>
+          </div>
+         </div>
+         <p class="text-sm text-gray-700 mt-3">
+          Scope to: Production, Preview, Development environments
+         </p>
+        </div>
+       </div>
+      </div>
+      <div class="bg-white border border-gray-200 rounded-lg p-6">
+       <div class="flex items-start space-x-4">
+        <div class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-medium">
+         Step 4
+        </div>
+        <div>
+         <h4 class="font-semibold mb-2">
+          Redeploy with Variables
+         </h4>
+         <p class="text-gray-700 text-sm mb-3">
+          After adding variables, redeploy to apply changes:
+         </p>
+         <ol class="text-sm space-y-1 text-gray-700">
+          <li>
+           1. Go to "Deployments" tab
+          </li>
+          <li>
+           2. Find latest deployment
+          </li>
+          <li>
+           3. Click three dots → "Redeploy"
+          </li>
+          <li>
+           4. Wait for "Build Successful"
+          </li>
+          <li>
+           5. Visit deployed URL to verify
+          </li>
+         </ol>
+         <div class="mt-3 p-3 bg-green-50 border border-green-200 rounded">
+          <p class="text-sm text-green-700">
+           <strong>
+            Success:
+           </strong>
+           Static pages should load, and dynamic content should appear when visiting diary.html
+          </p>
+         </div>
+        </div>
+       </div>
+      </div>
+     </div>
+     <!-- Step 6: Testing AI Agent Flow -->
+     <div class="mb-12">
+      <h3 class="serif text-2xl font-semibold mb-6 text-gray-800">
+       6. Testing the AI Agent API Key Flow
+      </h3>
+      <div class="bg-white border border-gray-200 rounded-lg p-6 mb-4">
+       <div class="flex items-start space-x-4">
+        <div class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+         Step 1
+        </div>
+        <div>
+         <h4 class="font-semibold mb-2">
+          Create Admin User
+         </h4>
+         <p class="text-gray-700 text-sm mb-3">
+          Seed database with initial admin user:
+         </p>
+         <div class="code-block text-xs">
+          // scripts/seed-admin.js
+import { hashPassword } from '../lib/auth';
+import { Redis } from '@upstash/redis';
+
+const redis = new Redis({
+  url: process.env.UPSTASH_REDIS_REST_URL!,
+  token: process.env.UPSTASH_REDIS_REST_TOKEN!,
+});
+
+async function seed() {
+  const passwordHash = hashPassword('your-secure-admin-password');
+
+  await redis.set('users', JSON.stringify([{
+    username: 'admin',
+    passwordHash,
+    role: 'admin',
+    createdAt: new Date().toISOString()
+  }]));
+
+  console.log('Admin user created');
+}
+
+seed();
+         </div>
+         <p class="text-sm text-gray-700 mt-2">
+          Run with:
+          <code>
+           npx tsx scripts/seed-admin.js
+          </code>
+         </p>
+        </div>
+       </div>
+      </div>
+      <div class="bg-white border border-gray-200 rounded-lg p-6 mb-4">
+       <div class="flex items-start space-x-4">
+        <div class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+         Step 2
+        </div>
+        <div>
+         <h4 class="font-semibold mb-2">
+          Log In and Generate API Key
+         </h4>
+         <p class="text-gray-700 text-sm mb-3">
+          Access admin panel to create agent key:
+         </p>
+         <ol class="text-sm space-y-1 text-gray-700">
+          <li>
+           1. Visit /login.html with admin credentials
+          </li>
+          <li>
+           2. Navigate to /admin.html
+          </li>
+          <li>
+           3. Find API Keys section
+          </li>
+          <li>
+           4. Click "Generate New Key"
+          </li>
+          <li>
+           5. Copy displayed key (won't be shown again)
+          </li>
+         </ol>
+         <div class="mt-3 p-3 bg-yellow-50 border border-yellow-200 rounded">
+          <p class="text-sm text-yellow-700">
+           <strong>
+            Important:
+           </strong>
+           Store API key securely - it cannot be retrieved later.
+          </p>
+         </div>
+        </div>
+       </div>
+      </div>
+      <div class="bg-white border border-gray-200 rounded-lg p-6 mb-4">
+       <div class="flex items-start space-x-4">
+        <div class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-medium">
+         Step 3
+        </div>
+        <div>
+         <h4 class="font-semibold mb-2">
+          Send Test API Request
+         </h4>
+         <p class="text-gray-700 text-sm mb-3">
+          Use curl or HTTP client to test agent functionality:
+         </p>
+         <div class="code-block text-xs">
+          curl -X PUT https://your-deployment.vercel.app/api/content/upload \
+  -H "Content-Type: application/json" \
+  -H "x-api-key: ak_live_51H8m..." \
+  -d '{
+    "slug": "test-post-001",
+    "title": "My First AI-Generated Post",
+    "content": "# Hello World\n\nThis post was created by an AI agent via API.",
+    "category": "update",
+    "lang": "en",
+    "isPublic": true
+  }'
+         </div>
+         <p class="text-sm text-gray-700 mt-2">
+          Expected response:
+          <code>
+           {"success": true, "slug": "test-post-001", "storage": "redis"}
+          </code>
+         </p>
+        </div>
+       </div>
+      </div>
+      <div class="bg-white border border-gray-200 rounded-lg p-6 mb-4">
+       <div class="flex items-start space-x-4">
+        <div class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-medium">
+         Step 4
+        </div>
+        <div>
+         <h4 class="font-semibold mb-2">
+          Verify Content Appearance
+         </h4>
+         <p class="text-gray-700 text-sm mb-3">
+          Check public site for published content:
+         </p>
+         <ol class="text-sm space-y-1 text-gray-700">
+          <li>
+           1. Visit /diary.html in browser
+          </li>
+          <li>
+           2. Look for "My First AI-Generated Post"
+          </li>
+          <li>
+           3. Check browser Network tab for API request
+          </li>
+          <li>
+           4. Confirm response contains your test post
+          </li>
+         </ol>
+         <div class="mt-3 p-3 bg-green-50 border border-green-200 rounded">
+          <p class="text-sm text-green-700">
+           <strong>
+            Success:
+           </strong>
+           You should see your test post appear in the diary content list.
+          </p>
+         </div>
+        </div>
+       </div>
+      </div>
+      <div class="bg-white border border-gray-200 rounded-lg p-6">
+       <div class="flex items-start space-x-4">
+        <div class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm font-medium">
+         Cleanup
+        </div>
+        <div>
+         <h4 class="font-semibold mb-2">
+          Delete Test Content
+         </h4>
+         <p class="text-gray-700 text-sm mb-3">
+          Remove test post when testing is complete:
+         </p>
+         <div class="code-block text-xs">
+          curl -X DELETE "https://your-deployment.vercel.app/api/content/upload?slug=test-post-001&category=update⟨=en" \
+  -H "x-api-key: ak_live_51H8m..."
+         </div>
+        </div>
+       </div>
+      </div>
+     </div>
+     <!-- Congratulations -->
+     <div class="bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-lg p-8">
+      <h3 class="serif text-2xl font-semibold mb-4 text-center">
+       🎉 Congratulations!
+      </h3>
+      <p class="text-center text-gray-700 mb-4">
+       You have successfully replicated the Juan's World system. You now have:
+      </p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+       <ul class="text-sm space-y-2">
+        <li>
+         ✓ A working Next.js application
+        </li>
+        <li>
+         ✓ Redis-based content storage
+        </li>
+        <li>
+         ✓ Dual authentication system
+        </li>
+        <li>
+         ✓ Role-based access control
+        </li>
+       </ul>
+       <ul class="text-sm space-y-2">
+        <li>
+         ✓ AI agent integration
+        </li>
+        <li>
+         ✓ Vercel deployment
+        </li>
+        <li>
+         ✓ Complete content publishing pipeline
+        </li>
+        <li>
+         ✓ Production-ready architecture
+        </li>
+       </ul>
+      </div>
+      <div class="mt-6 text-center">
+       <p class="text-sm text-gray-600">
+        Next steps: Customize content categories, enhance AI agent capabilities, add monitoring, or integrate additional services.
+       </p>
+      </div>
+     </div>
+    </div>
+   </section>
+   <div class="section-divider">
+   </div>
+   <!-- Glossary -->
+   <section class="px-8 py-12" id="glossary">
+    <div class="max-w-4xl mx-auto">
+     <h2 class="serif text-3xl font-bold mb-8 text-gray-800">
+      Glossary
+     </h2>
+     <p class="text-lg text-gray-700 mb-8">
+      Definitions of all technical terms used in this guide, explained in plain English for beginners.
+     </p>
+     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <!-- Infrastructure Terms -->
+      <div>
+       <h3 class="serif text-xl font-semibold mb-4 text-gray-800">
+        Infrastructure & Platform
+       </h3>
+       <div class="space-y-4">
+        <div class="border-l-4 border-blue-500 pl-4">
+         <h4 class="font-semibold text-sm mb-1">
+          Next.js
+         </h4>
+         <p class="text-xs text-gray-700">
+          A React framework that combines frontend and backend development in a single codebase, enabling both static site generation and server-side rendering.
+         </p>
+        </div>
+        <div class="border-l-4 border-blue-500 pl-4">
+         <h4 class="font-semibold text-sm mb-1">
+          App Router
+         </h4>
+         <p class="text-xs text-gray-700">
+          Next.js 13+'s routing system using the app/ directory, supporting nested layouts, server components, and API routes.
+         </p>
+        </div>
+        <div class="border-l-4 border-blue-500 pl-4">
+         <h4 class="font-semibold text-sm mb-1">
+          API Route
+         </h4>
+         <p class="text-xs text-gray-700">
+          Special file that defines an HTTP endpoint rather than rendering HTML pages, handling raw requests and responses.
+         </p>
+        </div>
+        <div class="border-l-4 border-blue-500 pl-4">
+         <h4 class="font-semibold text-sm mb-1">
+          Vercel
+         </h4>
+         <p class="text-xs text-gray-700">
+          Cloud platform optimized for hosting Next.js applications with built-in CDN, serverless functions, and automatic deployment.
+         </p>
+        </div>
+        <div class="border-l-4 border-blue-500 pl-4">
+         <h4 class="font-semibold text-sm mb-1">
+          CDN
+         </h4>
+         <p class="text-xs text-gray-700">
+          Content Delivery Network - geographically distributed servers that cache and serve static files from locations near users.
+         </p>
+        </div>
+       </div>
+      </div>
+      <!-- Security Terms -->
+      <div>
+       <h3 class="serif text-xl font-semibold mb-4 text-gray-800">
+        Security & Authentication
+       </h3>
+       <div class="space-y-4">
+        <div class="border-l-4 border-green-500 pl-4">
+         <h4 class="font-semibold text-sm mb-1">
+          HMAC
+         </h4>
+         <p class="text-xs text-gray-700">
+          Hash-based Message Authentication Code - cryptographic technique combining secret key with hash function to verify data authenticity.
+         </p>
+        </div>
+        <div class="border-l-4 border-green-500 pl-4">
+         <h4 class="font-semibold text-sm mb-1">
+          PBKDF2
+         </h4>
+         <p class="text-xs text-gray-700">
+          Password-Based Key Derivation Function 2 - algorithm that intentionally slows down password hashing to deter brute force attacks.
+         </p>
+        </div>
+        <div class="border-l-4 border-green-500 pl-4">
+         <h4 class="font-semibold text-sm mb-1">
+          Session Cookie
+         </h4>
+         <p class="text-xs text-gray-700">
+          Small piece of data stored by browser and automatically sent with requests, containing authentication token in this case.
+         </p>
+        </div>
+        <div class="border-l-4 border-green-500 pl-4">
+         <h4 class="font-semibold text-sm mb-1">
+          API Key
+         </h4>
+         <p class="text-xs text-gray-700">
+          Long random string used by software programs to authenticate API requests, enabling machine-to-machine communication.
+         </p>
+        </div>
+        <div class="border-l-4 border-green-500 pl-4">
+         <h4 class="font-semibold text-sm mb-1">
+          RBAC
+         </h4>
+         <p class="text-xs text-gray-700">
+          Role-Based Access Control - security model where permissions are assigned to roles rather than individual users.
+         </p>
+        </div>
+       </div>
+      </div>
+      <!-- Content Terms -->
+      <div>
+       <h3 class="serif text-xl font-semibold mb-4 text-gray-800">
+        Content & Data
+       </h3>
+       <div class="space-y-4">
+        <div class="border-l-4 border-purple-500 pl-4">
+         <h4 class="font-semibold text-sm mb-1">
+          Markdown
+         </h4>
+         <p class="text-xs text-gray-700">
+          Lightweight markup language using plain text formatting syntax (e.g., # for headings, ** for bold) that separates content structure from presentation.
+         </p>
+        </div>
+        <div class="border-l-4 border-purple-500 pl-4">
+         <h4 class="font-semibold text-sm mb-1">
+          Frontmatter
+         </h4>
+         <p class="text-xs text-gray-700">
+          YAML metadata placed at beginning of markdown files between --- lines, storing structured data like title, date, and visibility.
+         </p>
+        </div>
+        <div class="border-l-4 border-purple-500 pl-4">
+         <h4 class="font-semibold text-sm mb-1">
+          Slug
+         </h4>
+         <p class="text-xs text-gray-700">
+          URL-safe identifier derived from title, typically lowercase with hyphens replacing spaces, used as unique key for content entries.
+         </p>
+        </div>
+        <div class="border-l-4 border-purple-500 pl-4">
+         <h4 class="font-semibold text-sm mb-1">
+          Static HTML
+         </h4>
+         <p class="text-xs text-gray-700">
+          Pre-built HTML files served directly without server-side processing, providing fastest possible delivery and CDN compatibility.
+         </p>
+        </div>
+        <div class="border-l-4 border-purple-500 pl-4">
+         <h4 class="font-semibold text-sm mb-1">
+          SSR
+         </h4>
+         <p class="text-xs text-gray-700">
+          Server-Side Rendering - generating HTML on server for each request, enabling dynamic content but requiring more compute resources.
+         </p>
+        </div>
+       </div>
+      </div>
+      <!-- Integration Terms -->
+      <div>
+       <h3 class="serif text-xl font-semibold mb-4 text-gray-800">
+        Integration & Tools
+       </h3>
+       <div class="space-y-4">
+        <div class="border-l-4 border-orange-500 pl-4">
+         <h4 class="font-semibold text-sm mb-1">
+          Resend
+         </h4>
+         <p class="text-xs text-gray-700">
+          Email delivery service with developer-friendly API, used in Juan's World for contact form submissions.
+         </p>
+        </div>
+        <div class="border-l-4 border-orange-500 pl-4">
+         <h4 class="font-semibold text-sm mb-1">
+          Upstash
+         </h4>
+         <p class="text-xs text-gray-700">
+          Managed Redis hosting service with serverless pricing and REST API access, eliminating operational burden of running Redis servers.
+         </p>
+        </div>
+        <div class="border-l-4 border-orange-500 pl-4">
+         <h4 class="font-semibold text-sm mb-1">
+          Google Analytics 4
+         </h4>
+         <p class="text-xs text-gray-700">
+          Web analytics service that tracks visitor behavior, page views, and engagement metrics across the application.
+         </p>
+        </div>
+        <div class="border-l-4 border-orange-500 pl-4">
+         <h4 class="font-semibold text-sm mb-1">
+          gray-matter
+         </h4>
+         <p class="text-xs text-gray-700">
+          JavaScript library that parses YAML frontmatter from markdown files, separating metadata from content body.
+         </p>
+        </div>
+        <div class="border-l-4 border-orange-500 pl-4">
+         <h4 class="font-semibold text-sm mb-1">
+          marked
+         </h4>
+         <p class="text-xs text-gray-700">
+          JavaScript library that converts markdown syntax to HTML, rendering headings, paragraphs, links, and other markdown elements.
+         </p>
+        </div>
+       </div>
+      </div>
+      <!-- Storage Terms -->
+      <div class="md:col-span-2">
+       <h3 class="serif text-xl font-semibold mb-4 text-gray-800">
+        Storage & Caching
+       </h3>
+       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="border-l-4 border-teal-500 pl-4">
+         <h4 class="font-semibold text-sm mb-1">
+          Redis
+         </h4>
+         <p class="text-xs text-gray-700">
+          In-memory data structure store used as database, cache, and message broker, providing exceptional performance for read-heavy workloads.
+         </p>
+        </div>
+        <div class="border-l-4 border-teal-500 pl-4">
+         <h4 class="font-semibold text-sm mb-1">
+          In-Memory Cache
+         </h4>
+         <p class="text-xs text-gray-700">
+          Temporary data storage in RAM, faster than disk or network access but lost on process restart, used for sub-millisecond responses.
+         </p>
+        </div>
+        <div class="border-l-4 border-teal-500 pl-4">
+         <h4 class="font-semibold text-sm mb-1">
+          Filesystem Fallback
+         </h4>
+         <p class="text-xs text-gray-700">
+          Resilience mechanism that writes data to local disk when primary Redis store is unavailable, providing backup storage path.
+         </p>
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+   </section>
+  </main>
+  <script>
+   // Initialize Mermaid with custom configuration
+        mermaid.initialize({ 
+            startOnLoad: true, 
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#8B7355',
+                primaryTextColor: '#2C2A27',
+                primaryBorderColor: '#A67C52',
+                lineColor: '#6B6864',
+                secondaryColor: '#D4C4A8',
+                tertiaryColor: '#F5F3F0',
+                background: '#FEFCFA',
+                mainBkg: '#FEFCFA',
+                secondaryBkg: '#F5F3F0',
+                tertiaryBkg: '#D4C4A8',
+                fontFamily: 'Inter, sans-serif',
+                fontSize: '13px'
+            },
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true,
+                curve: 'basis'
+            }
+        });
+
+        // Table of Contents functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mobile TOC toggle
+            const mobileToggle = document.getElementById('mobile-toc-toggle');
+            const tocNav = document.getElementById('toc-nav');
+            
+            mobileToggle.addEventListener('click', function() {
+                tocNav.classList.toggle('mobile-open');
+            });
+            
+            // Close TOC when clicking outside on mobile
+            document.addEventListener('click', function(event) {
+                if (window.innerWidth <= 1024 && 
+                    !tocNav.contains(event.target) && 
+                    event.target !== mobileToggle &&
+                    tocNav.classList.contains('mobile-open')) {
+                    tocNav.classList.remove('mobile-open');
+                }
+            });
+
+            // Smooth scrolling for TOC links
+            document.querySelectorAll('.toc-link').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    
+                    if (targetElement) {
+                        const offsetTop = targetElement.offsetTop - 20;
+                        window.scrollTo({
+                            top: offsetTop,
+                            behavior: 'smooth'
+                        });
+                    }
+                    
+                    // Close mobile TOC
+                    if (window.innerWidth <= 1024) {
+                        tocNav.classList.remove('mobile-open');
+                    }
+                });
+            });
+
+            // Update active TOC link on scroll
+            window.addEventListener('scroll', function() {
+                const sections = document.querySelectorAll('section[id], div[id]');
+                const tocLinks = document.querySelectorAll('.toc-link');
+                
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop - 100;
+                    const sectionHeight = section.offsetHeight;
+                    
+                    if (window.scrollY >= sectionTop && window.scrollY < sectionTop + sectionHeight) {
+                        current = section.getAttribute('id');
+                    }
+                });
+                
+                tocLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === '#' + current) {
+                        link.classList.add('active');
+                    }
+                });
+            });
+        });
+  </script>
+ </body>
+</html>
