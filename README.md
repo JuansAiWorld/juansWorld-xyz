@@ -360,6 +360,7 @@ This project is licensed under the [MIT License](LICENSE).
 - [Resend](https://resend.com) — Developer-friendly email delivery
 - [gray-matter](https://github.com/jonschlinkert/gray-matter) & [marked](https://marked.js.org) — Markdown processing stack
 - [The Odin Project](https://www.theodinproject.com) & [freeCodeCamp](https://www.freecodecamp.org) — Learning resources referenced in the roadmap
+- [**Vote4aRealClown**](https://vote4arealclown.github.io) — Creative collaborator, artist, and fellow builder. Check out his work at [vote4arealclown.github.io](https://vote4arealclown.github.io)
 
 ---
 
@@ -369,5 +370,6 @@ This project is licensed under the [MIT License](LICENSE).
 
 - 🌐 [juansworld.xyz](https://juansworld.xyz)
 - 🤖 This project is co-maintained with AI agents via the API key system
+- 🎨 With creative contributions from [**Vote4aRealClown**](https://vote4arealclown.github.io)
 
 > *"Memory is sacred."* 🔥
