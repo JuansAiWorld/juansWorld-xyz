@@ -284,6 +284,7 @@
 
         <div class="calendar-bar" id="calendar-bar">
             <button class="calendar-btn active" id="btn-latest" onclick="jumpToDay('latest')">Más reciente</button>
+            <button class="calendar-btn" data-day="10" onclick="jumpToDay('day-10')">Day 10</button>
             <button class="calendar-btn" data-day="9" onclick="jumpToDay('day-9')">Day 9</button>
             <button class="calendar-btn" data-day="8" onclick="jumpToDay('day-8')">Day 8</button>
             <button class="calendar-btn" data-day="7" onclick="jumpToDay('day-7')">Day 7</button>
@@ -291,16 +292,47 @@
             <button class="calendar-btn" data-day="5" onclick="jumpToDay('day-5')">Day 5</button>
             <button class="calendar-btn" data-day="4" onclick="jumpToDay('day-4')">Day 4</button>
             <button class="calendar-btn" data-day="3" onclick="jumpToDay('day-3')">Day 3</button>
-            <button class="calendar-btn" data-day="2" onclick="jumpToDay('day-2')">Day 2</button>
         </div>
 
 
-        <div class="diary-entry expanded" id="day-9" >
+        <div class="diary-entry expanded" id="day-10" >
+            <div class="entry-header" onclick="toggleEntry('day-10')">
+                <div class="entry-title-row">
+                    <h2>Day 10 — Primera Impresión</h2>
+                </div>
+                <span class="entry-toggle">−</span>
+            </div>
+            <div class="entry-body">
+                <p>
+            Llegó esta mañana. Una caja más grande de lo que esperaba, más pesada de lo que esperaba. La Bambu A1, en casa, bajo control, en horarios que funcionan para nosotros.
+        </p>
+
+        <p>
+            La configuración tomó dos horas. Desempacar, ensamblar, cargar filamento, calibrar. La primera impresión falló — problemas de adherencia a la cama, el Benchy se soltó a mitad de camino. La segunda tuvo hilos. La tercera... funcionó. Un cubo simple, 20mm, líneas de capa perfectas. Lo sostuve en mi mano y sentí que algo cambiaba. Esto no es solo una impresora. Es la capacidad de hacer cosas físicas a partir de ideas digitales.
+        </p>
+
+        <p>
+            Ya está bocetando diseños. Soportes para teléfono, organizadores de cables, piezas personalizadas para el prototipo de la app del establo. La máquina está silenciosa ahora, enfriándose, pero la casa se siente diferente. Hay una nueva capacidad aquí. Un nuevo idioma que aprender: temperaturas, velocidades, alturas de capa, patrones de relleno.
+        </p>
+
+        <p>
+            Day 10. La máquina está comprada. La primera impresión está hecha. La brecha entre idea y objeto acaba de hacerse mucho más pequeña.
+        </p>
+
+        <p style="color: #fff; margin-top: 2rem;">
+            — Juan <span style="color: #00ff88;">🖤</span>
+        </p>
+
+        <hr>
+            </div>
+        </div>
+
+        <div class="diary-entry " id="day-9" >
             <div class="entry-header" onclick="toggleEntry('day-9')">
                 <div class="entry-title-row">
                     <h2>Day 9 — Compra la Máquina</h2>
                 </div>
-                <span class="entry-toggle">−</span>
+                <span class="entry-toggle">+</span>
             </div>
             <div class="entry-body">
                 <p>
@@ -667,6 +699,7 @@
         <div class="archive-header">
             <h3>Archivo</h3>
             <div class="archive-calendar">
+                <button class="calendar-btn archive" data-day="2" onclick="jumpToDay('day-2')">Day 2</button>
                 <button class="calendar-btn archive" data-day="1" onclick="jumpToDay('day-1')">Day 1</button>
             <button class="calendar-btn archive" data-day="0" onclick="jumpToDay('day-0')">Day 0</button>
             </div>
@@ -768,15 +801,21 @@
                 const response = await fetch('/api/content?category=update&lang=es', { credentials: 'same-origin' });
                 if (!response.ok) return;
                 const data = await response.json();
-                const updates = data.items || [];
+                let updates = data.items || [];
                 const container = document.getElementById('live-updates');
+
+                // DEDUPLICATION: skip live updates whose slug matches an existing static entry
+                const existingIds = new Set();
+                document.querySelectorAll('.diary-entry[id]').forEach(el => existingIds.add(el.id));
+                updates = updates.filter(u => u.slug && !existingIds.has(u.slug));
+
                 if (updates.length === 0) {
                     container.style.display = 'none';
                     return;
                 }
                 container.innerHTML = updates.map(u => `
-                    <div class="diary-entry expanded live-entry">
-                        <div class="entry-header" onclick="toggleEntry(this.parentElement.id)">
+                    <div class="diary-entry expanded live-entry" id="${escapeHtml(u.slug)}">
+                        <div class="entry-header" onclick="toggleEntry('${escapeHtml(u.slug)}')">
                             <div class="entry-title-row">
                                 <h2>${escapeHtml(u.title)}</h2>
                                 <span class="entry-date live-badge">Live</span>
@@ -788,7 +827,6 @@
                             — Juan <span style="color: #00ff88;">🖤</span>
                         </p>
                         <hr>
-                        
                     </div>
                 `).join('');
             } catch (e) {
