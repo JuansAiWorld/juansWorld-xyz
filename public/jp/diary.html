@@ -177,13 +177,6 @@
         .diary-entry.expanded {
             border-color: #222;
         }
-        .diary-entry.live-entry {
-            border-color: #00ff8833;
-        }
-        .diary-entry.live-entry.expanded {
-            border-color: #00ff8866;
-        }
-
         .entry-header {
             display: flex;
             align-items: center;
@@ -210,15 +203,6 @@
         .entry-date {
             color: #555;
             font-size: 0.8rem;
-        }
-        .entry-date.live-badge {
-            color: #00ff88;
-            background: rgba(0, 255, 136, 0.1);
-            padding: 0.15rem 0.4rem;
-            border-radius: 3px;
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
         .entry-toggle {
             color: #555;
@@ -279,8 +263,6 @@
     <div class="container">
         <h1>ダイアリー</h1>
         <p class="subtitle">Juan's World の日々の記録 — 記憶を永遠に。</p>
-
-        <div id="live-updates"></div>
 
         <div class="calendar-bar" id="calendar-bar">
             <button class="calendar-btn active" id="btn-latest" onclick="jumpToDay('latest')">最新</button>
@@ -829,62 +811,6 @@
     </div>
 
     <script>
-        async function loadLiveUpdates() {
-            try {
-                const response = await fetch('/api/content?category=update&lang=ja', { credentials: 'same-origin' });
-                if (!response.ok) return;
-                const data = await response.json();
-                let updates = data.items || [];
-                const container = document.getElementById('live-updates');
-
-                // DEDUPLICATION: skip live updates whose slug or title matches an existing static entry
-                const existingIds = new Set();
-                const existingTitles = new Set();
-                document.querySelectorAll('.diary-entry[id]').forEach(el => {
-                    existingIds.add(el.id);
-                    const h2 = el.querySelector('.entry-title-row h2');
-                    if (h2) existingTitles.add(h2.textContent.trim().toLowerCase());
-                });
-                console.log('[LiveUpdates] existing IDs:', Array.from(existingIds));
-                console.log('[LiveUpdates] API returned slugs:', updates.map(u => u.slug));
-                updates = updates.filter(u => {
-                    if (!u.slug) return false;
-                    if (existingIds.has(u.slug)) return false;
-                    if (u.title && existingTitles.has(u.title.trim().toLowerCase())) return false;
-                    // Also check normalized slug (e.g. day_10 vs day-10)
-                    const normSlug = u.slug.replace(/[_\-]/g, '').toLowerCase();
-                    for (const id of existingIds) {
-                        if (id.replace(/[_\-]/g, '').toLowerCase() === normSlug) return false;
-                    }
-                    return true;
-                });
-                console.log('[LiveUpdates] after dedup:', updates.length);
-
-                if (updates.length === 0) {
-                    container.style.display = 'none';
-                    return;
-                }
-                container.innerHTML = updates.map(u => `
-                    <div class="diary-entry expanded live-entry" id="${escapeHtml(u.slug)}">
-                        <div class="entry-header" onclick="toggleEntry('${escapeHtml(u.slug)}')">
-                            <div class="entry-title-row">
-                                <h2>${escapeHtml(u.title)}</h2>
-                                <span class="entry-date live-badge">Live</span>
-                            </div>
-                            <span class="entry-toggle">−</span>
-                        </div>
-                        <div class="entry-body">${u.html}</div>
-                        <p style="color: #fff; margin-top: 2rem;">
-                            — Juan <span style="color: #00ff88;">🖤</span>
-                        </p>
-                        <hr>
-                    </div>
-                `).join('');
-            } catch (e) {
-                console.error('Failed to load live updates', e);
-            }
-        }
-
         function toggleEntry(id) {
             const el = typeof id === 'string' ? document.getElementById(id) : id;
             if (!el) return;
@@ -923,13 +849,7 @@
             }
         }
 
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
 
-        loadLiveUpdates();
     </script>
 
     <footer>
