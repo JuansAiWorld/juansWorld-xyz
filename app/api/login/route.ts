@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { createSession, hashPassword } from '@/lib/auth';
-import { verifyUserPassword, updateUserLastLogin, getUsers, updateUser } from '@/lib/users';
+import { verifyUserPassword, updateUserLastLogin, getUsers, updateUser, findUser } from '@/lib/users';
 import { recordLoginEvent } from '@/lib/login-log';
 
 export async function POST(request: Request) {
@@ -55,7 +55,8 @@ export async function POST(request: Request) {
       }),
     ]);
 
-    return NextResponse.json({ success: true, username });
+    const userRecord = await findUser(username);
+    return NextResponse.json({ success: true, username, role: userRecord?.role || 'user' });
   } catch {
     return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
   }

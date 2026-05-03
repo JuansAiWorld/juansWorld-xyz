@@ -1,10 +1,14 @@
 // Authentication utilities
 const API_BASE = '/api';
 
-// Check if user is authenticated
+let cachedUser = null;
+let cachedAt = 0;
+const CACHE_TTL_MS = 30000; // 30 seconds
+
+// Check if user is authenticated and return basic status
 async function checkAuth() {
     try {
-        const response = await fetch(`${API_BASE}/reports`, {
+        const response = await fetch(`${API_BASE}/auth/me`, {
             credentials: 'same-origin'
         });
         return response.ok;
@@ -13,14 +17,68 @@ async function checkAuth() {
     }
 }
 
+// Get current user info (with short-term caching)
+async function getCurrentUser() {
+    const now = Date.now();
+    if (cachedUser && cachedAt + CACHE_TTL_MS > now) {
+        return cachedUser;
+    }
+    try {
+        const response = await fetch(`${API_BASE}/auth/me`, {
+            credentials: 'same-origin'
+        });
+        if (!response.ok) {
+            cachedUser = null;
+            return null;
+        }
+        const data = await response.json();
+        cachedUser = data;
+        cachedAt = now;
+        return data;
+    } catch (e) {
+        cachedUser = null;
+        return null;
+    }
+}
+
+// Clear cached user (call after login/logout)
+function clearAuthCache() {
+    cachedUser = null;
+    cachedAt = 0;
+}
+
 // Redirect to login if not authenticated
 async function requireAuth() {
-    const isAuthed = await checkAuth();
-    if (!isAuthed) {
-        window.location.href = '/login.html';
+    const user = await getCurrentUser();
+    if (!user || !user.authenticated) {
+        const currentPath = window.location.pathname + window.location.search;
+        const redirectUrl = currentPath !== '/login.html' ? `?redirect=${encodeURIComponent(currentPath)}` : '';
+        window.location.href = '/login.html' + redirectUrl;
         return false;
     }
     return true;
+}
+
+// Update all elements that should show the current username
+async function updateUserDisplay() {
+    const user = await getCurrentUser();
+    const username = user?.user || 'Guest';
+    const role = user?.role || 'user';
+
+    document.querySelectorAll('[data-username]').forEach(el => {
+        el.textContent = username;
+    });
+
+    document.querySelectorAll('[data-role]').forEach(el => {
+        el.textContent = role;
+    });
+
+    // Show admin links for admins
+    if (role === 'admin') {
+        document.querySelectorAll('[data-admin-only]').forEach(el => {
+            el.style.display = '';
+        });
+    }
 }
 
 // Login form handler
@@ -45,9 +103,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 const data = await response.json();
                 
                 if (response.ok) {
+                    clearAuthCache();
                     const params = new URLSearchParams(window.location.search);
                     const redirect = params.get('redirect');
-                    window.location.href = redirect || '/flowpace/';
+                    // Smart redirect: admin -> dashboard, others -> reports
+                    let destination = redirect;
+                    if (!destination) {
+                        destination = data.role === 'admin' ? '/dashboard.html' : '/reports.html';
+                    }
+                    window.location.href = destination;
                 } else {
                     errorDiv.textContent = data.error || 'Login failed';
                     errorDiv.style.display = 'block';
@@ -74,7 +138,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Ignore errors
             }
             
+            clearAuthCache();
             window.location.href = '/login.html';
         });
     }
+
+    // Update user display on pages that have user elements
+    updateUserDisplay();
 });
