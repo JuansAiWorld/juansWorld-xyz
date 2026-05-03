@@ -1,6 +1,6 @@
-const CACHE_NAME = 'flowpace-v1';
+const CACHE_NAME = 'flowpace-v2';
 const STATIC_ASSETS = [
-  '/flowpace/',
+  '/flowpace',
   '/flowpace/css/style.css',
   '/flowpace/js/db.js',
   '/flowpace/js/app.js',
@@ -39,11 +39,17 @@ self.addEventListener('fetch', (e) => {
     return;
   }
 
-  // Static assets: cache first
+  // Static assets: cache first, but never cache or serve redirect responses
   e.respondWith(
     caches.match(request).then((cached) => {
-      if (cached) return cached;
+      if (cached && !cached.redirected) {
+        return cached;
+      }
       return fetch(request).then((response) => {
+        // Don't cache redirect responses
+        if (response.status >= 300 && response.status < 400) {
+          return response;
+        }
         const clone = response.clone();
         caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
         return response;

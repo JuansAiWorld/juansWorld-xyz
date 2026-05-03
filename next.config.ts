@@ -7,6 +7,10 @@ const nextConfig: NextConfig = {
         source: '/flowpace',
         destination: '/flowpace/index.html',
       },
+      {
+        source: '/flowpace/',
+        destination: '/flowpace/index.html',
+      },
     ];
   },
 };
