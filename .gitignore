@@ -7,3 +7,5 @@ juansworld-xyz-site-update-2026-04-17.tar.gz
 /data/
 .env*
 tsconfig.tsbuildinfo
+__pycache__/
+*.pyc

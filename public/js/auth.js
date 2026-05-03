@@ -45,7 +45,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 const data = await response.json();
                 
                 if (response.ok) {
-                    window.location.href = '/dashboard.html';
+                    const params = new URLSearchParams(window.location.search);
+                    const redirect = params.get('redirect');
+                    window.location.href = redirect || '/flowpace/';
                 } else {
                     errorDiv.textContent = data.error || 'Login failed';
                     errorDiv.style.display = 'block';
