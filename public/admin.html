@@ -254,8 +254,7 @@
         <header>
             <h1>Juan's World — Admin</h1>
             <div class="user-menu">
-                <span data-username="">Loading...</span>
-                <a href="/dashboard.html">Dashboard</a>
+                <span id="admin-username"></span>
                 <a href="#" id="logout-link">Logout</a>
             </div>
         </header>
@@ -323,16 +322,19 @@
         let allUsers = [];
 
         async function requireAdmin() {
-            const user = await getCurrentUser();
-            if (!user || !user.authenticated) {
-                window.location.href = '/login.html?redirect=' + encodeURIComponent(window.location.pathname);
+            const ok = await requireAuth();
+            if (!ok) return false;
+            // Verify admin by hitting users endpoint
+            try {
+                const res = await fetch(`${API_BASE}/users`, { credentials: 'same-origin' });
+                if (res.status === 403) {
+                    window.location.href = '/reports.html';
+                    return false;
+                }
+                return res.ok;
+            } catch {
                 return false;
             }
-            if (user.role !== 'admin') {
-                window.location.href = '/reports.html';
-                return false;
-            }
-            return true;
         }
 
         async function loadUsers() {
