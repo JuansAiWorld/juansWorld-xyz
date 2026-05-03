@@ -11,8 +11,12 @@ async function checkAuth() {
         const response = await fetch(`${API_BASE}/auth/me`, {
             credentials: 'same-origin'
         });
+        if (!response.ok) {
+            console.log('[auth] checkAuth:', response.status, 'not authenticated');
+        }
         return response.ok;
     } catch (e) {
+        console.error('[auth] checkAuth error:', e);
         return false;
     }
 }
@@ -28,6 +32,7 @@ async function getCurrentUser() {
             credentials: 'same-origin'
         });
         if (!response.ok) {
+            console.log('[auth] getCurrentUser:', response.status, 'not authenticated');
             cachedUser = null;
             return null;
         }
@@ -36,6 +41,7 @@ async function getCurrentUser() {
         cachedAt = now;
         return data;
     } catch (e) {
+        console.error('[auth] getCurrentUser error:', e);
         cachedUser = null;
         return null;
     }
@@ -111,12 +117,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (!destination) {
                         destination = data.role === 'admin' ? '/dashboard.html' : '/reports.html';
                     }
+                    // DEBUG: log redirect for troubleshooting
+                    console.log('[auth] login success, redirecting to:', destination, 'role:', data.role);
                     window.location.href = destination;
                 } else {
-                    errorDiv.textContent = data.error || 'Login failed';
+                    console.error('[auth] login failed:', response.status, data);
+                    errorDiv.textContent = data.error || `Login failed (${response.status})`;
                     errorDiv.style.display = 'block';
                 }
             } catch (err) {
+                console.error('[auth] login error:', err);
                 errorDiv.textContent = 'Network error. Please try again.';
                 errorDiv.style.display = 'block';
             }
