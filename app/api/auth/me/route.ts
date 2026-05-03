@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { checkAuth } from '@/lib/auth';
 import { findUser } from '@/lib/users';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   const username = await checkAuth();
   if (!username) {

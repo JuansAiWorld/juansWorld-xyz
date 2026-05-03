@@ -32,7 +32,6 @@ const PUBLIC_PATHS = [
   '/api/contact',
   '/api/keys',
   '/api/content',
-  '/',
   '/index.html',
   '/about.html',
   '/devops.html',
@@ -41,13 +40,16 @@ const PUBLIC_PATHS = [
   '/terms.html',
   '/sitemap.html',
   '/ask-juan.html',
-  '/jp/',
-  '/mx/',
   '/css/',
   '/js/',
   '/images/',
   '/favicon',
   '/_next/',
+];
+
+const PUBLIC_PREFIXES = [
+  '/jp/',
+  '/mx/',
 ];
 
 const PROTECTED_PATHS = [
@@ -70,10 +72,14 @@ const PROTECTED_PATHS = [
 ];
 
 function isProtectedPath(pathname: string): boolean {
-  if (PUBLIC_PATHS.some((p) => pathname.startsWith(p))) {
+  if (pathname === '/') return false;
+  if (PUBLIC_PATHS.some((p) => pathname === p || pathname.startsWith(p))) {
     return false;
   }
-  return PROTECTED_PATHS.some((p) => pathname.startsWith(p));
+  if (PUBLIC_PREFIXES.some((p) => pathname.startsWith(p))) {
+    return false;
+  }
+  return PROTECTED_PATHS.some((p) => pathname === p || pathname.startsWith(p + '/'));
 }
 
 export async function middleware(request: NextRequest) {
