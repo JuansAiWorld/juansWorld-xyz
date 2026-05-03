@@ -24,70 +24,8 @@ async function hmacSha256(message: string): Promise<string> {
   return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
 }
 
-const PUBLIC_PATHS = [
-  '/login.html',
-  '/api/login',
-  '/api/logout',
-  '/api/auth/me',
-  '/api/contact',
-  '/api/keys',
-  '/api/content',
-  '/index.html',
-  '/about.html',
-  '/devops.html',
-  '/legal.html',
-  '/privacy.html',
-  '/terms.html',
-  '/sitemap.html',
-  '/ask-juan.html',
-  '/css/',
-  '/js/',
-  '/images/',
-  '/favicon',
-  '/_next/',
-];
-
-const PUBLIC_PREFIXES = [
-  '/jp/',
-  '/mx/',
-];
-
-const PROTECTED_PATHS = [
-  '/flowpace',
-  '/api/flowpace',
-  '/admin.html',
-  '/reports.html',
-  '/report.html',
-  '/dashboard.html',
-  '/stl.html',
-  '/stls.html',
-  '/diary.html',
-  '/api/reports',
-  '/api/report',
-  '/api/content/upload',
-  '/api/stls',
-  '/api/keys',
-  '/api/users',
-  '/api/logins',
-];
-
-function isProtectedPath(pathname: string): boolean {
-  if (pathname === '/') return false;
-  if (PUBLIC_PATHS.some((p) => pathname === p || pathname.startsWith(p))) {
-    return false;
-  }
-  if (PUBLIC_PREFIXES.some((p) => pathname.startsWith(p))) {
-    return false;
-  }
-  return PROTECTED_PATHS.some((p) => pathname === p || pathname.startsWith(p + '/'));
-}
-
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-
-  if (!isProtectedPath(pathname)) {
-    return NextResponse.next();
-  }
 
   const sessionToken = request.cookies.get('session')?.value;
   const username = sessionToken ? await verifySession(sessionToken) : null;
@@ -102,23 +40,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    '/flowpace/:path*',
-    '/api/flowpace/:path*',
-    '/admin.html',
-    '/reports.html',
-    '/report.html',
-    '/dashboard.html',
-    '/stl.html',
-    '/stls.html',
-    '/diary.html',
-    '/api/reports/:path*',
-    '/api/report/:path*',
-    '/api/content/upload/:path*',
-    '/api/stls/:path*',
-    '/api/keys/:path*',
-    '/api/users/:path*',
-    '/api/logins/:path*',
-    '/api/auth/:path*',
-  ],
+  matcher: ['/flowpace/:path*', '/api/flowpace/:path*'],
 };
