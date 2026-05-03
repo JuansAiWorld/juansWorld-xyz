@@ -1,7 +1,7 @@
 import { cookies } from 'next/headers';
 import crypto from 'crypto';
 
-const SESSION_SECRET = process.env.SESSION_SECRET || crypto.randomBytes(32).toString('hex');
+const SESSION_SECRET = process.env.SESSION_SECRET || 'juansworld-local-dev-secret-key-do-not-use-in-prod';
 export const ADMIN_PASSWORD_HASH = process.env.ADMIN_PASSWORD_HASH || '';
 
 export function hashPassword(password: string, salt?: string): { salt: string; hash: string } {

@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-const SESSION_SECRET = process.env.SESSION_SECRET || '';
+const SESSION_SECRET = process.env.SESSION_SECRET || 'juansworld-local-dev-secret-key-do-not-use-in-prod';
 
 async function verifySession(token: string): Promise<string | null> {
   const parts = token.split(':');

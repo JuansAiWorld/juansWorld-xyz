@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { createSession } from '@/lib/auth';
-import { verifyUserPassword, updateUserLastLogin } from '@/lib/users';
+import { verifyUserPassword, updateUserLastLogin, getUsers } from '@/lib/users';
 import { recordLoginEvent } from '@/lib/login-log';
 
 export async function POST(request: Request) {
@@ -13,6 +13,9 @@ export async function POST(request: Request) {
     if (!username || !password) {
       return NextResponse.json({ error: 'Username and password required' }, { status: 400 });
     }
+
+    // Ensure default users exist (noop if already seeded)
+    await getUsers();
 
     const valid = await verifyUserPassword(username, password);
     if (!valid) {

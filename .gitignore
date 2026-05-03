@@ -9,3 +9,4 @@ juansworld-xyz-site-update-2026-04-17.tar.gz
 tsconfig.tsbuildinfo
 __pycache__/
 *.pyc
+.vercel
