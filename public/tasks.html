@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Log — Juan's World</title>
-    <meta name="description" content="Field notes from the build. The mess, the pivots, the breakthroughs — all part of the record.">
+    <title>Tasks — Juan's World</title>
+    <meta name="description" content="Articles about tasks, projects, and work that comes through the system.">
     <link rel="stylesheet" href="css/main.css">
 </head>
 <body>
@@ -13,36 +13,36 @@
     <a href="index.html" class="logo">Juan's<span>.</span>World</a>
     <div class="links">
         <a href="index.html">Tao</a>
-        <a href="log.html" class="active">Log</a>
-        <a href="tasks.html">Tasks</a>
+        <a href="log.html">Log</a>
+        <a href="tasks.html" class="active">Tasks</a>
         <a href="ask-juan.html">Ask Juan</a>
     </div>
 </nav>
 
 <div class="container">
     <div class="page-header">
-        <h1>Field Notes</h1>
-        <p>Curated entries from the build log. Process over polish. This is what it actually looks like to build in public.</p>
+        <h1>Task Articles</h1>
+        <p>Work that comes through the door — documented, tracked, and built in public. Every task is a story.</p>
     </div>
 
-    <div id="fieldnotes-container">
-        <p style="color: var(--text-faint); text-align: center; padding: 4rem 0;">Loading field notes...</p>
+    <div id="tasks-container">
+        <p style="color: var(--text-faint); text-align: center; padding: 4rem 0;">Loading tasks...</p>
     </div>
 </div>
 
 <footer>
-    <span class="mark">Juan's World</span> — Process over polish. Always.
+    <span class="mark">Juan's World</span> — Work in the open. Always.
 </footer>
 
 <script>
 (async function() {
-    const container = document.getElementById('fieldnotes-container');
+    const container = document.getElementById('tasks-container');
     try {
-        const response = await fetch('/api/content?category=fieldnote');
+        const response = await fetch('/api/content?category=task');
         const data = await response.json();
         const items = data.items || [];
         if (items.length === 0) {
-            container.innerHTML = '<p style="color: var(--text-faint); text-align: center; padding: 4rem 0;">No field notes yet. Check back tomorrow.</p>';
+            container.innerHTML = '<p style="color: var(--text-faint); text-align: center; padding: 4rem 0;">No task articles yet.</p>';
             return;
         }
         container.innerHTML = items.map(item => {
@@ -59,7 +59,7 @@
             `;
         }).join('');
     } catch (e) {
-        container.innerHTML = '<p style="color: var(--text-faint); text-align: center; padding: 4rem 0;">Could not load field notes.</p>';
+        container.innerHTML = '<p style="color: var(--text-faint); text-align: center; padding: 4rem 0;">Could not load tasks.</p>';
     }
 })();
 </script>

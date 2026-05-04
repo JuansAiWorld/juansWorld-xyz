@@ -42,8 +42,8 @@ export async function GET(request: Request) {
   // Filter by visibility and permissions
   const now = new Date();
   const visible = merged.filter((item) => {
-    // Public content (briefs) is visible to everyone
-    if (item.category === 'brief' || (item as any).isPublic) {
+    // Public content (briefs, fieldnotes, tasks) is visible to everyone
+    if (item.category === 'brief' || item.category === 'fieldnote' || item.category === 'task' || (item as any).isPublic) {
       return isContentVisible(item, now);
     }
 

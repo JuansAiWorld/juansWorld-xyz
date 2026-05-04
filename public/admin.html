@@ -316,6 +316,56 @@
             </div>
             <p id="keys-empty" style="display: none; color: #666; font-size: 0.9rem;">No API keys yet.</p>
         </div>
+
+        <div class="section">
+            <h2>Field Notes Editor</h2>
+            <div id="fieldnotes-loading" style="color:#666;margin-bottom:1rem;">Loading...</div>
+            <div class="table-wrap" id="fieldnotes-list-wrap" style="display:none;">
+                <table id="fieldnotes-table" style="margin-bottom:1.5rem;">
+                    <thead>
+                        <tr><th>Date</th><th>Title</th><th>Actions</th></tr>
+                    </thead>
+                    <tbody id="fieldnotes-body"></tbody>
+                </table>
+            </div>
+            <p id="fieldnotes-empty" style="display:none;color:#666;font-size:0.9rem;margin-bottom:1.5rem;">No field notes yet.</p>
+            <div style="background:#111;border:1px solid #222;border-radius:4px;padding:1rem;">
+                <div class="form-row">
+                    <input type="text" id="fn-slug" placeholder="slug (e.g., day-1)" style="flex:1;">
+                    <input type="text" id="fn-title" placeholder="Title" style="flex:2;">
+                </div>
+                <textarea id="fn-content" placeholder="Markdown content..." style="width:100%;min-height:160px;background:#0a0a0a;border:1px solid #333;border-radius:4px;color:#e0e0e0;padding:0.75rem;font-family:inherit;font-size:0.9rem;margin-bottom:0.75rem;"></textarea>
+                <div class="form-row" style="margin-bottom:0;">
+                    <button class="btn-small" onclick="saveFieldNote()">Save Field Note</button>
+                    <button class="btn-small" onclick="clearFieldNoteForm()" style="margin-left:auto;">New</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Task Articles Editor</h2>
+            <div id="tasks-loading" style="color:#666;margin-bottom:1rem;">Loading...</div>
+            <div class="table-wrap" id="tasks-list-wrap" style="display:none;">
+                <table id="tasks-table" style="margin-bottom:1.5rem;">
+                    <thead>
+                        <tr><th>Date</th><th>Title</th><th>Actions</th></tr>
+                    </thead>
+                    <tbody id="tasks-body"></tbody>
+                </table>
+            </div>
+            <p id="tasks-empty" style="display:none;color:#666;font-size:0.9rem;margin-bottom:1.5rem;">No task articles yet.</p>
+            <div style="background:#111;border:1px solid #222;border-radius:4px;padding:1rem;">
+                <div class="form-row">
+                    <input type="text" id="task-slug" placeholder="slug (e.g., build-fence)" style="flex:1;">
+                    <input type="text" id="task-title" placeholder="Title" style="flex:2;">
+                </div>
+                <textarea id="task-content" placeholder="Markdown content..." style="width:100%;min-height:160px;background:#0a0a0a;border:1px solid #333;border-radius:4px;color:#e0e0e0;padding:0.75rem;font-family:inherit;font-size:0.9rem;margin-bottom:0.75rem;"></textarea>
+                <div class="form-row" style="margin-bottom:0;">
+                    <button class="btn-small" onclick="saveTask()">Save Task Article</button>
+                    <button class="btn-small" onclick="clearTaskForm()" style="margin-left:auto;">New</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script src="/js/auth.js"></script>
@@ -558,11 +608,130 @@
             }
         }
 
+        /* ─── Content Editors ─── */
+        async function loadContentList(category, tableId, bodyId, loadingId, emptyId, wrapId) {
+            document.getElementById(loadingId).style.display = 'block';
+            try {
+                const response = await fetch(`${API_BASE}/content?category=${category}`, { credentials: 'same-origin' });
+                if (!response.ok) throw new Error('Failed to load');
+                const data = await response.json();
+                const items = data.items || [];
+                document.getElementById(loadingId).style.display = 'none';
+                const tbody = document.getElementById(bodyId);
+                if (items.length === 0) {
+                    document.getElementById(emptyId).style.display = 'block';
+                    document.getElementById(wrapId).style.display = 'none';
+                } else {
+                    document.getElementById(emptyId).style.display = 'none';
+                    document.getElementById(wrapId).style.display = 'block';
+                    tbody.innerHTML = items.map(item => `
+                        <tr>
+                            <td>${escapeHtml(item.date_formatted || item.date)}</td>
+                            <td>${escapeHtml(item.title)}</td>
+                            <td>
+                                <button class="btn-small" onclick="editContent('${category}', '${escapeHtml(item.slug)}', '${category === 'fieldnote' ? 'fn' : 'task'}')">Edit</button>
+                                <button class="btn-small btn-danger" onclick="deleteContent('${category}', '${escapeHtml(item.slug)}')">Delete</button>
+                            </td>
+                        </tr>
+                    `).join('');
+                }
+            } catch (e) {
+                document.getElementById(loadingId).textContent = 'Error loading content';
+            }
+        }
+
+        async function editContent(category, slug, prefix) {
+            try {
+                const response = await fetch(`${API_BASE}/content?category=${category}&slug=${encodeURIComponent(slug)}`, { credentials: 'same-origin' });
+                if (!response.ok) throw new Error('Failed to load');
+                const data = await response.json();
+                const item = data.item;
+                if (!item) return;
+                document.getElementById(`${prefix}-slug`).value = item.slug;
+                document.getElementById(`${prefix}-title`).value = item.title;
+                document.getElementById(`${prefix}-content`).value = item.content || '';
+            } catch (e) {
+                showMessage('Failed to load content for editing', 'error');
+            }
+        }
+
+        async function saveContent(category, slugId, titleId, contentId, listFn) {
+            const slug = document.getElementById(slugId).value.trim().replace(/[^a-zA-Z0-9_-]/g, '_');
+            const title = document.getElementById(titleId).value.trim();
+            const content = document.getElementById(contentId).value.trim();
+            if (!slug || !title || !content) {
+                showMessage('Slug, title, and content are required', 'error');
+                return;
+            }
+            try {
+                const method = 'PUT';
+                const response = await fetch(`${API_BASE}/content/upload`, {
+                    method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ slug, title, content, category }),
+                    credentials: 'same-origin'
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    showMessage('Saved successfully', 'success');
+                    document.getElementById(slugId).value = '';
+                    document.getElementById(titleId).value = '';
+                    document.getElementById(contentId).value = '';
+                    listFn();
+                } else {
+                    showMessage(data.error || 'Save failed', 'error');
+                }
+            } catch (e) {
+                showMessage('Network error', 'error');
+            }
+        }
+
+        async function deleteContent(category, slug) {
+            if (!confirm(`Delete ${category} "${slug}"?`)) return;
+            try {
+                const response = await fetch(`${API_BASE}/content/upload?category=${category}&slug=${encodeURIComponent(slug)}`, {
+                    method: 'DELETE',
+                    credentials: 'same-origin'
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    showMessage('Deleted', 'success');
+                    loadFieldNotes();
+                    loadTasks();
+                } else {
+                    showMessage(data.error || 'Delete failed', 'error');
+                }
+            } catch (e) {
+                showMessage('Network error', 'error');
+            }
+        }
+
+        function loadFieldNotes() {
+            loadContentList('fieldnote', 'fieldnotes-table', 'fieldnotes-body', 'fieldnotes-loading', 'fieldnotes-empty', 'fieldnotes-list-wrap');
+        }
+        function loadTasks() {
+            loadContentList('task', 'tasks-table', 'tasks-body', 'tasks-loading', 'tasks-empty', 'tasks-list-wrap');
+        }
+        function saveFieldNote() { saveContent('fieldnote', 'fn-slug', 'fn-title', 'fn-content', loadFieldNotes); }
+        function saveTask() { saveContent('task', 'task-slug', 'task-title', 'task-content', loadTasks); }
+        function clearFieldNoteForm() {
+            document.getElementById('fn-slug').value = '';
+            document.getElementById('fn-title').value = '';
+            document.getElementById('fn-content').value = '';
+        }
+        function clearTaskForm() {
+            document.getElementById('task-slug').value = '';
+            document.getElementById('task-title').value = '';
+            document.getElementById('task-content').value = '';
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             requireAdmin().then(ok => {
                 if (ok) {
                     loadUsers();
                     loadApiKeys();
+                    loadFieldNotes();
+                    loadTasks();
                 }
             });
         });

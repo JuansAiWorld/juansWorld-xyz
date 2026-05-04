@@ -3,6 +3,8 @@ import { writeFile, unlink } from 'fs/promises';
 import path from 'path';
 import matter from 'gray-matter';
 import { validateApiKey } from '@/lib/api-keys';
+import { checkAuth } from '@/lib/auth';
+import { findUser } from '@/lib/users';
 import {
   ensureContentDir,
   getContentDir,
@@ -18,16 +20,23 @@ function yamlValue(value: string): string {
   return value;
 }
 
+async function isAuthorized(request: Request): Promise<boolean> {
+  const apiKey = request.headers.get('x-api-key');
+  if (apiKey) {
+    return validateApiKey(apiKey);
+  }
+  // Fall back to admin session
+  const username = await checkAuth();
+  if (!username) return false;
+  const user = await findUser(username);
+  return user?.role === 'admin';
+}
+
 /* ─── CREATE ─── */
 export async function PUT(request: Request) {
-  const apiKey = request.headers.get('x-api-key');
-  if (!apiKey) {
-    return NextResponse.json({ error: 'API key required' }, { status: 401 });
-  }
-
-  const valid = await validateApiKey(apiKey);
-  if (!valid) {
-    return NextResponse.json({ error: 'Invalid API key' }, { status: 403 });
+  const authorized = await isAuthorized(request);
+  if (!authorized) {
+    return NextResponse.json({ error: 'API key or admin session required' }, { status: 403 });
   }
 
   try {
@@ -51,9 +60,9 @@ export async function PUT(request: Request) {
       );
     }
 
-    if (!['report', 'brief', 'update'].includes(category)) {
+    if (!['report', 'brief', 'update', 'fieldnote', 'task'].includes(category)) {
       return NextResponse.json(
-        { error: 'category must be report, brief, or update' },
+        { error: 'category must be report, brief, update, fieldnote, or task' },
         { status: 400 }
       );
     }
@@ -76,15 +85,15 @@ export async function PUT(request: Request) {
     const fileContent = `${frontmatterLines.join('\n')}\n\n${cleanContent}\n`;
 
     const savedRedis = await saveContentToRedis(
-      category as 'report' | 'brief' | 'update',
+      category as 'report' | 'brief' | 'update' | 'fieldnote' | 'task',
       safeSlug,
       fileContent,
       lang
     );
 
     if (!savedRedis) {
-      const dir = getContentDir(category as 'report' | 'brief' | 'update', lang);
-      await ensureContentDir(category as 'report' | 'brief' | 'update', lang);
+      const dir = getContentDir(category as 'report' | 'brief' | 'update' | 'fieldnote' | 'task', lang);
+      await ensureContentDir(category as 'report' | 'brief' | 'update' | 'fieldnote' | 'task', lang);
       const filePath = path.join(dir, `${safeSlug}.md`);
       await writeFile(filePath, fileContent, 'utf-8');
       return NextResponse.json({ success: true, slug: safeSlug, category, lang, path: filePath });
@@ -98,14 +107,9 @@ export async function PUT(request: Request) {
 
 /* ─── UPDATE ─── */
 export async function PATCH(request: Request) {
-  const apiKey = request.headers.get('x-api-key');
-  if (!apiKey) {
-    return NextResponse.json({ error: 'API key required' }, { status: 401 });
-  }
-
-  const valid = await validateApiKey(apiKey);
-  if (!valid) {
-    return NextResponse.json({ error: 'Invalid API key' }, { status: 403 });
+  const authorized = await isAuthorized(request);
+  if (!authorized) {
+    return NextResponse.json({ error: 'API key or admin session required' }, { status: 403 });
   }
 
   try {
@@ -130,7 +134,7 @@ export async function PATCH(request: Request) {
 
     // Read existing content
     const raw = await getRawContentFromRedis(
-      category as 'report' | 'brief' | 'update',
+      category as 'report' | 'brief' | 'update' | 'fieldnote' | 'task',
       safeSlug,
       lang
     );
@@ -164,15 +168,15 @@ export async function PATCH(request: Request) {
     const fileContent = `${frontmatterLines.join('\n')}\n\n${newContent}\n`;
 
     const savedRedis = await saveContentToRedis(
-      category as 'report' | 'brief' | 'update',
+      category as 'report' | 'brief' | 'update' | 'fieldnote' | 'task',
       safeSlug,
       fileContent,
       lang
     );
 
     if (!savedRedis) {
-      const dir = getContentDir(category as 'report' | 'brief' | 'update', lang);
-      await ensureContentDir(category as 'report' | 'brief' | 'update', lang);
+      const dir = getContentDir(category as 'report' | 'brief' | 'update' | 'fieldnote' | 'task', lang);
+      await ensureContentDir(category as 'report' | 'brief' | 'update' | 'fieldnote' | 'task', lang);
       const filePath = path.join(dir, `${safeSlug}.md`);
       await writeFile(filePath, fileContent, 'utf-8');
       return NextResponse.json({ success: true, slug: safeSlug, category, lang, action: 'updated', path: filePath });
@@ -186,14 +190,9 @@ export async function PATCH(request: Request) {
 
 /* ─── DELETE ─── */
 export async function DELETE(request: Request) {
-  const apiKey = request.headers.get('x-api-key');
-  if (!apiKey) {
-    return NextResponse.json({ error: 'API key required' }, { status: 401 });
-  }
-
-  const valid = await validateApiKey(apiKey);
-  if (!valid) {
-    return NextResponse.json({ error: 'Invalid API key' }, { status: 403 });
+  const authorized = await isAuthorized(request);
+  if (!authorized) {
+    return NextResponse.json({ error: 'API key or admin session required' }, { status: 403 });
   }
 
   try {
@@ -210,14 +209,14 @@ export async function DELETE(request: Request) {
 
     // Delete from Redis
     await deleteContentFromRedis(
-      category as 'report' | 'brief' | 'update',
+      category as 'report' | 'brief' | 'update' | 'fieldnote' | 'task',
       safeSlug,
       lang
     );
 
     // Delete from filesystem if present
     try {
-      const dir = getContentDir(category as 'report' | 'brief' | 'update', lang);
+      const dir = getContentDir(category as 'report' | 'brief' | 'update' | 'fieldnote' | 'task', lang);
       const filePath = path.join(dir, `${safeSlug}.md`);
       await unlink(filePath);
     } catch {

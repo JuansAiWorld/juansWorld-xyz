@@ -25,6 +25,12 @@ const CONTENT_DIRS: Record<string, Record<string, string>> = {
     ja: path.join(process.cwd(), 'content', 'updates-jp'),
     es: path.join(process.cwd(), 'content', 'updates-mx'),
   },
+  fieldnote: {
+    en: path.join(process.cwd(), 'content', 'fieldnotes'),
+  },
+  task: {
+    en: path.join(process.cwd(), 'content', 'tasks'),
+  },
 };
 
 export interface ContentItem {
@@ -34,7 +40,7 @@ export interface ContentItem {
   date_formatted: string;
   path: string;
   type: 'markdown';
-  category: 'report' | 'brief' | 'update';
+  category: 'report' | 'brief' | 'update' | 'fieldnote' | 'task';
   publishAt?: string;
   expireAt?: string;
   assignedUsers?: string[];
@@ -71,7 +77,7 @@ function dateLocale(lang: string): string {
 async function parseMarkdownItem(
   slug: string,
   raw: string,
-  category: 'report' | 'brief' | 'update',
+  category: 'report' | 'brief' | 'update' | 'fieldnote' | 'task',
   filePath?: string,
   lang: string = 'en'
 ): Promise<ContentItem> {
@@ -117,7 +123,7 @@ function redisKey(category: string, lang: string = 'en'): string {
 }
 
 async function scanRedisCategory(
-  category: 'report' | 'brief' | 'update',
+  category: 'report' | 'brief' | 'update' | 'fieldnote' | 'task',
   lang: string = 'en'
 ): Promise<ContentItem[]> {
   if (!redis) return [];
@@ -137,7 +143,7 @@ async function scanRedisCategory(
 }
 
 export async function saveContentToRedis(
-  category: 'report' | 'brief' | 'update',
+  category: 'report' | 'brief' | 'update' | 'fieldnote' | 'task',
   slug: string,
   rawMarkdown: string,
   lang: string = 'en'
@@ -152,7 +158,7 @@ export async function saveContentToRedis(
 }
 
 export async function getRawContentFromRedis(
-  category: 'report' | 'brief' | 'update',
+  category: 'report' | 'brief' | 'update' | 'fieldnote' | 'task',
   slug: string,
   lang: string = 'en'
 ): Promise<string | null> {
@@ -166,7 +172,7 @@ export async function getRawContentFromRedis(
 }
 
 export async function deleteContentFromRedis(
-  category: 'report' | 'brief' | 'update',
+  category: 'report' | 'brief' | 'update' | 'fieldnote' | 'task',
   slug: string,
   lang: string = 'en'
 ): Promise<boolean> {
@@ -182,7 +188,7 @@ export async function deleteContentFromRedis(
 /* ─── Filesystem content storage ─── */
 
 async function scanFilesystemCategory(
-  category: 'report' | 'brief' | 'update',
+  category: 'report' | 'brief' | 'update' | 'fieldnote' | 'task',
   lang: string = 'en'
 ): Promise<ContentItem[]> {
   const dir = CONTENT_DIRS[category][lang] || CONTENT_DIRS[category]['en'];
@@ -214,7 +220,7 @@ async function scanFilesystemCategory(
 /* ─── Unified scan ─── */
 
 async function scanCategory(
-  category: 'report' | 'brief' | 'update',
+  category: 'report' | 'brief' | 'update' | 'fieldnote' | 'task',
   lang: string = 'en'
 ): Promise<ContentItem[]> {
   const [redisItems, fileItems] = await Promise.all([
@@ -231,12 +237,14 @@ async function scanCategory(
 }
 
 export async function getAllContent(lang?: string): Promise<ContentItem[]> {
-  const [reports, briefs, updates] = await Promise.all([
+  const [reports, briefs, updates, fieldnotes, tasks] = await Promise.all([
     scanCategory('report', 'en'),
     scanCategory('brief', lang || 'en'),
     scanCategory('update', lang || 'en'),
+    scanCategory('fieldnote', 'en'),
+    scanCategory('task', 'en'),
   ]);
-  return [...briefs, ...updates, ...reports].sort(
+  return [...briefs, ...updates, ...reports, ...fieldnotes, ...tasks].sort(
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
   );
 }
@@ -250,7 +258,7 @@ export async function getContentBySlug(
 }
 
 export async function getContentByCategory(
-  category: 'report' | 'brief' | 'update',
+  category: 'report' | 'brief' | 'update' | 'fieldnote' | 'task',
   lang?: string
 ): Promise<ContentItem[]> {
   return scanCategory(category, lang);
@@ -267,7 +275,7 @@ export function isContentVisible(
   return true;
 }
 
-export async function ensureContentDir(category: 'report' | 'brief' | 'update', lang: string = 'en'): Promise<void> {
+export async function ensureContentDir(category: 'report' | 'brief' | 'update' | 'fieldnote' | 'task', lang: string = 'en'): Promise<void> {
   try {
     const dir = CONTENT_DIRS[category][lang] || CONTENT_DIRS[category]['en'];
     await fs.mkdir(dir, { recursive: true });
@@ -276,6 +284,6 @@ export async function ensureContentDir(category: 'report' | 'brief' | 'update', 
   }
 }
 
-export function getContentDir(category: 'report' | 'brief' | 'update', lang: string = 'en'): string {
+export function getContentDir(category: 'report' | 'brief' | 'update' | 'fieldnote' | 'task', lang: string = 'en'): string {
   return CONTENT_DIRS[category][lang] || CONTENT_DIRS[category]['en'];
 }
