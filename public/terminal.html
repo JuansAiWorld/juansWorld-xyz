@@ -9,9 +9,9 @@
         @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
 
         :root {
-            --phosphor: #ff6b35;
-            --phosphor-dim: #cc5522;
-            --phosphor-glow: rgba(255, 107, 53, 0.4);
+            --phosphor: #33ff33;
+            --phosphor-dim: #22aa22;
+            --phosphor-glow: rgba(51, 255, 51, 0.35);
             --bg: #0a0a0a;
             --bg-screen: #0d0d0d;
         }
@@ -24,7 +24,6 @@
             overflow: hidden;
         }
 
-        /* CRT container */
         .crt-frame {
             width: 100vw;
             height: 100vh;
@@ -51,15 +50,14 @@
                 0 20px 60px rgba(0,0,0,0.6);
         }
 
-        /* Scanlines */
         .crt-screen::before {
             content: '';
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
             background: repeating-linear-gradient(
                 0deg,
-                rgba(0,0,0,0.15) 0px,
-                rgba(0,0,0,0.15) 1px,
+                rgba(0,0,0,0.12) 0px,
+                rgba(0,0,0,0.12) 1px,
                 transparent 1px,
                 transparent 2px
             );
@@ -67,12 +65,11 @@
             z-index: 10;
         }
 
-        /* Screen glow */
         .crt-screen::after {
             content: '';
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.4) 100%);
+            background: radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.45) 100%);
             pointer-events: none;
             z-index: 11;
         }
@@ -85,30 +82,59 @@
             font-size: 1.15rem;
             line-height: 1.4;
             color: var(--phosphor);
-            text-shadow: 0 0 4px var(--phosphor-glow), 0 0 8px var(--phosphor-glow);
+            text-shadow: 0 0 3px var(--phosphor-glow), 0 0 6px var(--phosphor-glow);
             overflow-y: auto;
             position: relative;
             z-index: 5;
+            cursor: text;
         }
 
-        .terminal::-webkit-scrollbar { width: 8px; }
+        .terminal::-webkit-scrollbar { width: 6px; }
         .terminal::-webkit-scrollbar-track { background: transparent; }
-        .terminal::-webkit-scrollbar-thumb { background: var(--phosphor-dim); border-radius: 4px; }
+        .terminal::-webkit-scrollbar-thumb { background: var(--phosphor-dim); border-radius: 3px; }
 
-        .line { min-height: 1.4em; white-space: pre-wrap; word-break: break-word; }
+        .line {
+            min-height: 1.4em;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
         .line.output { color: var(--phosphor); }
-        .line.error { color: #ff3333; text-shadow: 0 0 4px rgba(255,51,51,0.4); }
-        .line.prompt-line { display: flex; align-items: baseline; }
-        .prompt { color: var(--phosphor-dim); margin-right: 0.5rem; flex-shrink: 0; }
-        .input { flex: 1; outline: none; white-space: pre-wrap; word-break: break-word; }
+        .line.error { color: #ff5555; text-shadow: 0 0 4px rgba(255,85,85,0.35); }
+        .line.boot { color: var(--phosphor-dim); }
+        .boot-ok { color: #33ff33; text-shadow: 0 0 4px rgba(51,255,51,0.25); }
 
-        /* Blinking cursor */
+        .prompt-line {
+            display: flex;
+            align-items: baseline;
+            min-height: 1.4em;
+        }
+
+        .prompt {
+            color: var(--phosphor-dim);
+            margin-right: 0.5rem;
+            flex-shrink: 0;
+        }
+
+        .input-area {
+            flex: 1;
+            display: flex;
+            align-items: baseline;
+            position: relative;
+        }
+
+        .input-text {
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
         .cursor {
             display: inline-block;
             width: 8px;
-            height: 1.1em;
+            height: 1.15em;
             background: var(--phosphor);
-            animation: blink 1s step-end infinite;
+            box-shadow: 0 0 4px var(--phosphor-glow);
+            animation: blink 1.1s step-end infinite;
             vertical-align: text-bottom;
             margin-left: 1px;
         }
@@ -118,11 +144,6 @@
             50% { opacity: 0; }
         }
 
-        /* Boot text styling */
-        .boot { color: var(--phosphor-dim); }
-        .boot-ok { color: #00ff88; text-shadow: 0 0 4px rgba(0,255,136,0.3); }
-
-        /* Close button */
         .close-btn {
             position: absolute;
             top: 20px;
@@ -156,7 +177,7 @@
 <div class="crt-frame">
     <div class="crt-screen">
         <a href="index.html" class="close-btn">[X] EXIT</a>
-        <div class="terminal" id="terminal" tabindex="0"></div>
+        <div class="terminal" id="terminal"></div>
     </div>
 </div>
 
@@ -186,7 +207,7 @@ learning, and remembering on the open internet.
 
 Three Core Principles:
   1. Memory is Sacred
-  2. Show Your Work  
+  2. Show Your Work
   3. Build in Public
 
 Type 'help' for available commands.`,
@@ -575,45 +596,60 @@ Status: Live. Continuous iteration.`
         terminal.scrollTop = terminal.scrollHeight;
     }
 
-    function renderPrompt() {
-        const existing = terminal.querySelector('.prompt-line.current');
-        if (existing) existing.remove();
+    // ─── Prompt with stable cursor ───
+    let promptLine = null;
+    let inputSpan = null;
+    let cursorEl = null;
 
-        const line = document.createElement('div');
-        line.className = 'line prompt-line current';
+    function createPrompt() {
+        promptLine = document.createElement('div');
+        promptLine.className = 'line prompt-line';
 
         const prompt = document.createElement('span');
         prompt.className = 'prompt';
         prompt.textContent = `guest@juansworld:${currentDir}$ `;
 
-        const inputSpan = document.createElement('span');
-        inputSpan.className = 'input';
-        inputSpan.id = 'active-input';
-        inputSpan.textContent = currentInput;
+        const inputArea = document.createElement('span');
+        inputArea.className = 'input-area';
 
-        const cursor = document.createElement('span');
-        cursor.className = 'cursor';
+        inputSpan = document.createElement('span');
+        inputSpan.className = 'input-text';
+        inputSpan.textContent = '';
 
-        line.appendChild(prompt);
-        line.appendChild(inputSpan);
-        line.appendChild(cursor);
-        terminal.appendChild(line);
+        cursorEl = document.createElement('span');
+        cursorEl.className = 'cursor';
+
+        inputArea.appendChild(inputSpan);
+        inputArea.appendChild(cursorEl);
+        promptLine.appendChild(prompt);
+        promptLine.appendChild(inputArea);
+        terminal.appendChild(promptLine);
         scrollToBottom();
     }
 
-    function updateInput() {
-        const input = document.getElementById('active-input');
-        if (input) input.textContent = currentInput;
+    function updatePrompt() {
+        if (inputSpan) inputSpan.textContent = currentInput;
+        if (promptLine) {
+            const prompt = promptLine.querySelector('.prompt');
+            if (prompt) prompt.textContent = `guest@juansworld:${currentDir}$ `;
+        }
         scrollToBottom();
+    }
+
+    function freezePrompt() {
+        if (cursorEl) {
+            cursorEl.style.animation = 'none';
+            cursorEl.style.opacity = '0';
+        }
     }
 
     function removePrompt() {
-        const current = terminal.querySelector('.prompt-line.current');
-        if (current) {
-            current.classList.remove('current');
-            const cursor = current.querySelector('.cursor');
-            if (cursor) cursor.remove();
+        if (promptLine && promptLine.parentNode) {
+            promptLine.parentNode.removeChild(promptLine);
         }
+        promptLine = null;
+        inputSpan = null;
+        cursorEl = null;
     }
 
     function bootSequence() {
@@ -643,8 +679,7 @@ Status: Live. Continuous iteration.`
         function next() {
             if (i >= lines.length) {
                 bootComplete = true;
-                renderPrompt();
-                terminal.focus();
+                createPrompt();
                 return;
             }
             const item = lines[i++];
@@ -792,10 +827,10 @@ NAVIGATION:
                 print(`${command}: command not found. Type "help" for available commands.`, 'error');
         }
 
-        renderPrompt();
+        createPrompt();
     }
 
-    // Keyboard input
+    // ─── Keyboard input ───
     document.addEventListener('keydown', (e) => {
         if (!bootComplete) {
             e.preventDefault();
@@ -809,42 +844,51 @@ NAVIGATION:
                 history.push(cmd);
                 historyIndex = history.length;
             }
+            freezePrompt();
+            // Clone the prompt line as static output
+            const staticLine = document.createElement('div');
+            staticLine.className = 'line output';
+            staticLine.textContent = `guest@juansworld:${currentDir}$ ${currentInput}`;
+            terminal.insertBefore(staticLine, promptLine);
             removePrompt();
-            print(`guest@juansworld:${currentDir}$ ${currentInput}`);
             currentInput = '';
             execute(cmd);
         } else if (e.key === 'Backspace') {
             e.preventDefault();
             if (currentInput.length > 0) {
                 currentInput = currentInput.slice(0, -1);
-                updateInput();
+                updatePrompt();
             }
         } else if (e.key === 'ArrowUp') {
             e.preventDefault();
             if (historyIndex > 0) {
                 historyIndex--;
                 currentInput = history[historyIndex] || '';
-                updateInput();
+                updatePrompt();
             }
         } else if (e.key === 'ArrowDown') {
             e.preventDefault();
             if (historyIndex < history.length - 1) {
                 historyIndex++;
                 currentInput = history[historyIndex] || '';
-                updateInput();
+                updatePrompt();
             } else {
                 historyIndex = history.length;
                 currentInput = '';
-                updateInput();
+                updatePrompt();
             }
         } else if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
             currentInput += e.key;
-            updateInput();
+            updatePrompt();
         }
     });
 
-    // Click to focus
-    terminal.addEventListener('click', () => terminal.focus());
+    // Click anywhere to focus (capture keys)
+    document.addEventListener('click', () => {
+        if (bootComplete) {
+            // Just ensure we can receive keys — no visual focus needed
+        }
+    });
 
     // Start boot
     bootSequence();
