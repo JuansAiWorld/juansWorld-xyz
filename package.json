@@ -5,7 +5,6 @@
   "description": "Juan's World — AI showcase and ecosystem hub",
   "scripts": {
     "dev": "next dev -H 0.0.0.0",
-    "dev:flowpace": "flowpace/.venv/bin/python flowpace/dev.py",
     "build": "next build",
     "start": "next start",
     "lint": "eslint ."

@@ -1,18 +1,5 @@
 import type { NextConfig } from 'next';
 
-const nextConfig: NextConfig = {
-  async rewrites() {
-    return [
-      {
-        source: '/flowpace',
-        destination: '/flowpace/index.html',
-      },
-      {
-        source: '/flowpace/',
-        destination: '/flowpace/index.html',
-      },
-    ];
-  },
-};
+const nextConfig: NextConfig = {};
 
 export default nextConfig;
