@@ -1,6 +1,8 @@
 import { getUsers, updateUserRole, deleteUser } from '../actions'
 import { revalidatePath } from 'next/cache'
 
+export const dynamic = 'force-dynamic'
+
 export default async function AdminUsersPage() {
   const users = await getUsers()
 

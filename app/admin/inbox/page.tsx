@@ -1,6 +1,8 @@
 import Link from 'next/link'
 import { getCases } from '@/lib/hermes/db'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata = {
   title: 'Inbox — Admin',
 }

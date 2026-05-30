@@ -3,6 +3,8 @@ import { getCaseById, getCaseMessages } from '@/lib/hermes/db'
 import { ReplyForm } from './reply-form'
 import { StatusButtons } from './status-buttons'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata = {
   title: 'Case — Admin',
 }
