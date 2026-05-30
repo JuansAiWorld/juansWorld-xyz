@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { Resend } from 'resend'
-
-const resend = new Resend(process.env.RESEND_API_KEY)
+import { sendEmail } from '@/lib/email/send'
 
 export async function POST(request: NextRequest) {
   const referer = request.headers.get('referer') || ''
@@ -31,16 +29,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    if (!process.env.RESEND_API_KEY) {
-      console.error('RESEND_API_KEY env var is not set')
-      return NextResponse.redirect(
-        new URL(`${redirectBase}?error=config`, request.url),
-        303
-      )
-    }
-
-    const { data, error } = await resend.emails.send({
-      from: 'Juan\'s World <onboarding@resend.dev>',
+    const { id, error } = await sendEmail({
       to,
       subject: `New message from ${name} — ${reason}`,
       text: `From: ${name} <${email}>\nReason: ${reason}\n\n${message}`,
@@ -48,15 +37,15 @@ export async function POST(request: NextRequest) {
     })
 
     if (error) {
-      console.error('Resend error:', error)
-      const errMsg = encodeURIComponent(String(error.message || 'unknown'))
+      console.error('Send email error:', error)
+      const errMsg = encodeURIComponent(error.message || 'unknown')
       return NextResponse.redirect(
         new URL(`${redirectBase}?error=resend&msg=${errMsg}`, request.url),
         303
       )
     }
 
-    console.log('Email sent:', data?.id)
+    console.log('Email sent:', id)
     return NextResponse.redirect(
       new URL(`${redirectBase}?sent=1`, request.url),
       303

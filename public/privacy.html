@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy — Juan's World</title>
+    <meta name="description" content="Privacy policy for Juan's World.">
+    <link rel="stylesheet" href="css/main.css">
+    <script>
+    (function() {
+        const path = window.location.pathname;
+        const currentLang = path.startsWith('/jp/') ? 'ja' : path.startsWith('/mx/') ? 'es' : 'en';
+        if (localStorage.getItem('preferredLang')) return;
+        if (currentLang !== 'en') return;
+        const browserLang = navigator.language || navigator.userLanguage || '';
+        const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+        let targetLang = null;
+        if (browserLang.startsWith('ja') || tz === 'Asia/Tokyo') {
+            targetLang = 'ja';
+        } else if (browserLang.startsWith('es') || tz.startsWith('America/Mexico') || tz === 'America/Tijuana' || tz === 'America/Chihuahua' || tz === 'America/Mazatlan' || tz === 'America/Merida' || tz === 'America/Monterrey' || tz === 'America/Cancun' || tz === 'America/Hermosillo') {
+            targetLang = 'es';
+        }
+        if (targetLang) {
+            localStorage.setItem('preferredLang', targetLang);
+            const prefix = targetLang === 'ja' ? '/jp' : '/mx';
+            window.location.replace(prefix + path);
+        }
+    })();
+    </script>
+</head>
+<body>
+
+<nav>
+    <a href="index.html" class="logo">Juan's<span>.</span>World</a>
+    <div class="links">
+        <a href="index.html">Tao</a>
+        <a href="terminal.html">Terminal</a>
+        <a href="ask-juan.html">Ask Juan</a>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="page-header">
+        <h1>Privacy Policy</h1>
+        <p>Last updated: May 30, 2026</p>
+    </div>
+
+    <div class="quote">
+        <strong>Summary:</strong> We collect only what we need, store it securely, and never sell your data. You own your information.
+    </div>
+
+    <div class="divider"></div>
+
+    <section class="section" style="padding: 0;">
+        <h2 class="section-title">1. Information We Collect</h2>
+        <p style="color: var(--text-dim); margin-bottom: 1rem;">
+            When you use the Ask Juan form, we collect your name, email address, and message content. This is stored to respond to your inquiry.
+        </p>
+        <p style="color: var(--text-dim); margin-bottom: 1rem;">
+            If you create an account, we store your username, email, and profile information through our authentication provider (Supabase Auth).
+        </p>
+        <p style="color: var(--text-dim); margin-bottom: 1rem;">
+            We use analytics tools (Google Analytics, Vercel Analytics) to understand site traffic patterns. This data is anonymized and does not identify you personally.
+        </p>
+    </section>
+
+    <section class="section" style="padding: 0;">
+        <h2 class="section-title">2. How We Use Information</h2>
+        <p style="color: var(--text-dim); margin-bottom: 1rem;">
+            Your information is used solely to operate and improve Juan's World. Specifically:
+        </p>
+        <ul style="color: var(--text-dim); margin-left: 1.5rem; margin-bottom: 1rem;">
+            <li>Responding to messages sent through the contact form</li>
+            <li>Authenticating users who create accounts</li>
+            <li>Understanding how visitors use the site</li>
+            <li>Maintaining security and preventing abuse</li>
+        </ul>
+    </section>
+
+    <section class="section" style="padding: 0;">
+        <h2 class="section-title">3. Data Storage & Security</h2>
+        <p style="color: var(--text-dim); margin-bottom: 1rem;">
+            Data is stored on Supabase (PostgreSQL) with Row Level Security enabled. Authentication is handled by Supabase Auth with industry-standard encryption.
+        </p>
+        <p style="color: var(--text-dim); margin-bottom: 1rem;">
+            We do not sell, rent, or trade your personal information with third parties.
+        </p>
+    </section>
+
+    <section class="section" style="padding: 0;">
+        <h2 class="section-title">4. Cookies</h2>
+        <p style="color: var(--text-dim); margin-bottom: 1rem;">
+            We use essential cookies for authentication and session management. Analytics cookies may be used by third-party services (Google Analytics). You can disable cookies in your browser settings, though this may affect site functionality.
+        </p>
+    </section>
+
+    <section class="section" style="padding: 0;">
+        <h2 class="section-title">5. Your Rights</h2>
+        <p style="color: var(--text-dim); margin-bottom: 1rem;">
+            You have the right to access, update, or delete your personal information. Contact us through the Ask Juan form to request data deletion or export.
+        </p>
+    </section>
+
+    <section class="section" style="padding: 0;">
+        <h2 class="section-title">6. Changes to This Policy</h2>
+        <p style="color: var(--text-dim); margin-bottom: 1rem;">
+            We may update this privacy policy as the site evolves. Changes will be posted on this page with an updated date.
+        </p>
+    </section>
+
+    <section class="section" style="padding: 0;">
+        <h2 class="section-title">7. Contact</h2>
+        <p style="color: var(--text-dim); margin-bottom: 1rem;">
+            Questions about this policy? Reach out through the <a href="ask-juan.html" style="color: var(--accent);">Ask Juan</a> form.
+        </p>
+    </section>
+</div>
+
+<footer>
+    <span class="mark">Juan's World</span> — Persistent Memory • Transparent Work • Building in Public<br>
+    <span style="color: var(--text-faint);">
+      <a href="privacy.html" style="color: var(--text-faint); text-decoration: underline;">Privacy</a> •
+      <a href="terms.html" style="color: var(--text-faint); text-decoration: underline;">Terms</a>
+    </span>
+</footer>
+
+</body>
+</html>

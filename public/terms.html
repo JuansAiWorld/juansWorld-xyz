@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms of Service — Juan's World</title>
+    <meta name="description" content="Terms of service for Juan's World.">
+    <link rel="stylesheet" href="css/main.css">
+    <script>
+    (function() {
+        const path = window.location.pathname;
+        const currentLang = path.startsWith('/jp/') ? 'ja' : path.startsWith('/mx/') ? 'es' : 'en';
+        if (localStorage.getItem('preferredLang')) return;
+        if (currentLang !== 'en') return;
+        const browserLang = navigator.language || navigator.userLanguage || '';
+        const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+        let targetLang = null;
+        if (browserLang.startsWith('ja') || tz === 'Asia/Tokyo') {
+            targetLang = 'ja';
+        } else if (browserLang.startsWith('es') || tz.startsWith('America/Mexico') || tz === 'America/Tijuana' || tz === 'America/Chihuahua' || tz === 'America/Mazatlan' || tz === 'America/Merida' || tz === 'America/Monterrey' || tz === 'America/Cancun' || tz === 'America/Hermosillo') {
+            targetLang = 'es';
+        }
+        if (targetLang) {
+            localStorage.setItem('preferredLang', targetLang);
+            const prefix = targetLang === 'ja' ? '/jp' : '/mx';
+            window.location.replace(prefix + path);
+        }
+    })();
+    </script>
+</head>
+<body>
+
+<nav>
+    <a href="index.html" class="logo">Juan's<span>.</span>World</a>
+    <div class="links">
+        <a href="index.html">Tao</a>
+        <a href="terminal.html">Terminal</a>
+        <a href="ask-juan.html">Ask Juan</a>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="page-header">
+        <h1>Terms of Service</h1>
+        <p>Last updated: May 30, 2026</p>
+    </div>
+
+    <div class="quote">
+        <strong>Summary:</strong> Be respectful. Don't abuse the site. Everything here is provided as-is. We're building in public — things break, evolve, and improve.
+    </div>
+
+    <div class="divider"></div>
+
+    <section class="section" style="padding: 0;">
+        <h2 class="section-title">1. Acceptance of Terms</h2>
+        <p style="color: var(--text-dim); margin-bottom: 1rem;">
+            By accessing or using Juan's World, you agree to these Terms of Service. If you don't agree, please don't use the site.
+        </p>
+    </section>
+
+    <section class="section" style="padding: 0;">
+        <h2 class="section-title">2. Use of the Site</h2>
+        <p style="color: var(--text-dim); margin-bottom: 1rem;">
+            Juan's World is an experimental AI showcase and ecosystem hub. You're welcome to explore, read, and interact with the site.
+        </p>
+        <p style="color: var(--text-dim); margin-bottom: 1rem;">
+            You agree not to:
+        </p>
+        <ul style="color: var(--text-dim); margin-left: 1.5rem; margin-bottom: 1rem;">
+            <li>Use the site for illegal purposes</li>
+            <li>Attempt to gain unauthorized access to any part of the system</li>
+            <li>Interfere with the site's operation or other users' access</li>
+            <li>Scrape, harvest, or collect data without permission</li>
+            <li>Upload malicious code or content</li>
+        </ul>
+    </section>
+
+    <section class="section" style="padding: 0;">
+        <h2 class="section-title">3. Content & Intellectual Property</h2>
+        <p style="color: var(--text-dim); margin-bottom: 1rem;">
+            The code for this site is open source and available on GitHub. You're free to inspect, fork, and learn from it.
+        </p>
+        <p style="color: var(--text-dim); margin-bottom: 1rem;">
+            Written content, design, and original media on this site are the property of Juan's World unless otherwise noted. Attribution is appreciated if you reference our work.
+        </p>
+    </section>
+
+    <section class="section" style="padding: 0;">
+        <h2 class="section-title">4. User Accounts</h2>
+        <p style="color: var(--text-dim); margin-bottom: 1rem;">
+            If you create an account, you're responsible for maintaining the security of your credentials. We reserve the right to suspend or terminate accounts that violate these terms.
+        </p>
+    </section>
+
+    <section class="section" style="padding: 0;">
+        <h2 class="section-title">5. Disclaimer</h2>
+        <p style="color: var(--text-dim); margin-bottom: 1rem;">
+            This site is provided "as is" without warranties of any kind. We're building in public — things break, evolve, and improve. We don't guarantee availability, accuracy, or fitness for any particular purpose.
+        </p>
+    </section>
+
+    <section class="section" style="padding: 0;">
+        <h2 class="section-title">6. Limitation of Liability</h2>
+        <p style="color: var(--text-dim); margin-bottom: 1rem;">
+            To the maximum extent permitted by law, Juan's World shall not be liable for any indirect, incidental, or consequential damages arising from your use of the site.
+        </p>
+    </section>
+
+    <section class="section" style="padding: 0;">
+        <h2 class="section-title">7. Changes to These Terms</h2>
+        <p style="color: var(--text-dim); margin-bottom: 1rem;">
+            We may update these terms as the project evolves. Continued use of the site after changes constitutes acceptance of the new terms.
+        </p>
+    </section>
+
+    <section class="section" style="padding: 0;">
+        <h2 class="section-title">8. Governing Law</h2>
+        <p style="color: var(--text-dim); margin-bottom: 1rem;">
+            These terms are governed by the laws of Canada and the Province of Alberta, without regard to conflict of law principles.
+        </p>
+    </section>
+
+    <section class="section" style="padding: 0;">
+        <h2 class="section-title">9. Contact</h2>
+        <p style="color: var(--text-dim); margin-bottom: 1rem;">
+            Questions about these terms? Reach out through the <a href="ask-juan.html" style="color: var(--accent);">Ask Juan</a> form.
+        </p>
+    </section>
+</div>
+
+<footer>
+    <span class="mark">Juan's World</span> — Persistent Memory • Transparent Work • Building in Public<br>
+    <span style="color: var(--text-faint);">
+      <a href="privacy.html" style="color: var(--text-faint); text-decoration: underline;">Privacy</a> •
+      <a href="terms.html" style="color: var(--text-faint); text-decoration: underline;">Terms</a>
+    </span>
+</footer>
+
+</body>
+</html>
