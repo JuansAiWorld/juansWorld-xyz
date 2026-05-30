@@ -5,22 +5,31 @@ import { createClient as createServerClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 
 export async function getCurrentAdmin() {
-  const supabase = await createServerClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  try {
+    const supabase = await createServerClient()
+    const { data, error } = await supabase.auth.getUser()
 
-  if (!user) return null
+    if (error || !data.user) {
+      console.log('getCurrentAdmin: no user', error?.message)
+      return null
+    }
 
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', user.id)
-    .single()
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', data.user.id)
+      .single()
 
-  if (!profile || profile.role !== 'admin') return null
+    if (!profile || profile.role !== 'admin') {
+      console.log('getCurrentAdmin: not admin', profile?.role)
+      return null
+    }
 
-  return { user, profile }
+    return { user: data.user, profile }
+  } catch (err: any) {
+    console.error('getCurrentAdmin error:', err)
+    return null
+  }
 }
 
 export async function getUsers() {
@@ -94,25 +103,30 @@ export async function getStats() {
 
   const supabase = createAdminClient()
 
-  const [
-    { count: userCount },
-    { count: contentCount },
-    { count: publishedCount },
-    { count: apiKeyCount },
-  ] = await Promise.all([
-    supabase.from('profiles').select('*', { count: 'exact', head: true }),
-    supabase.from('content').select('*', { count: 'exact', head: true }),
-    supabase
-      .from('content')
-      .select('*', { count: 'exact', head: true })
-      .eq('status', 'published'),
-    supabase.from('api_keys').select('*', { count: 'exact', head: true }),
-  ])
+  try {
+    const [usersRes, contentRes, publishedRes, apiKeysRes] = await Promise.all([
+      supabase.from('profiles').select('*', { count: 'exact', head: true }),
+      supabase.from('content').select('*', { count: 'exact', head: true }),
+      supabase
+        .from('content')
+        .select('*', { count: 'exact', head: true })
+        .eq('status', 'published'),
+      supabase.from('api_keys').select('*', { count: 'exact', head: true }),
+    ])
 
-  return {
-    users: userCount ?? 0,
-    content: contentCount ?? 0,
-    published: publishedCount ?? 0,
-    apiKeys: apiKeyCount ?? 0,
+    if (usersRes.error) console.error('getStats users error:', usersRes.error)
+    if (contentRes.error) console.error('getStats content error:', contentRes.error)
+    if (publishedRes.error) console.error('getStats published error:', publishedRes.error)
+    if (apiKeysRes.error) console.error('getStats apiKeys error:', apiKeysRes.error)
+
+    return {
+      users: usersRes.count ?? 0,
+      content: contentRes.count ?? 0,
+      published: publishedRes.count ?? 0,
+      apiKeys: apiKeysRes.count ?? 0,
+    }
+  } catch (err: any) {
+    console.error('getStats unexpected error:', err)
+    return { users: 0, content: 0, published: 0, apiKeys: 0 }
   }
 }
