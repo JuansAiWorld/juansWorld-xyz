@@ -13,8 +13,14 @@ export default async function AdminLayout({
     data: { user },
   } = await supabase.auth.getUser()
 
+  // If no user, render login page without sidebar
+  // (middleware already redirects unauth users to /admin/login)
   if (!user) {
-    redirect('/admin/login')
+    return (
+      <div style={{ minHeight: '100vh', background: '#0a0a0a' }}>
+        {children}
+      </div>
+    )
   }
 
   const { data: profile } = await supabase
