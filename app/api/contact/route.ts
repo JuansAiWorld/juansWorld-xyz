@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { sendEmail } from '@/lib/email/send'
+import { processInboundEmail } from '@/lib/hermes/agent'
 
 export async function POST(request: NextRequest) {
   const referer = request.headers.get('referer') || ''
@@ -29,6 +30,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // 1. Send notification email to admin
     const { id, error } = await sendEmail({
       to,
       subject: `New message from ${name} — ${reason}`,
@@ -45,7 +47,18 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    console.log('Email sent:', id)
+    console.log('Contact email sent:', id)
+
+    // 2. Pipe into Hermes workflow
+    const hermesResult = await processInboundEmail({
+      from: email,
+      to: process.env.RESEND_FROM_EMAIL || to,
+      subject: `Contact form: ${reason} — from ${name}`,
+      text: `Name: ${name}\nEmail: ${email}\nReason: ${reason}\n\n${message}`,
+    })
+
+    console.log('Hermes case created:', hermesResult?.caseId, 'autoReplied:', hermesResult?.autoReplied)
+
     return NextResponse.redirect(
       new URL(`${redirectBase}?sent=1`, request.url),
       303
