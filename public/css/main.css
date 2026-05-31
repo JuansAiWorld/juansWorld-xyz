@@ -465,3 +465,505 @@ footer .mark {
   nav .links a { font-size: 0.8rem; }
   .principles { grid-template-columns: 1fr; }
 }
+
+/* ========================================
+   WORLD EXPLORER — HOMEPAGE STYLES
+   ======================================== */
+
+/* ---- Hero World Section ---- */
+.world-hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: radial-gradient(ellipse at center, #111111 0%, #0a0a0a 60%, #050505 100%);
+}
+
+#starfield {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+}
+
+.world-container {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 900px;
+  height: 600px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ---- Central World ---- */
+.world-core {
+  position: relative;
+  width: 220px;
+  height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: default;
+}
+
+.world-atmosphere {
+  position: absolute;
+  width: 280px;
+  height: 280px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,107,53,0.08) 0%, transparent 70%);
+  animation: worldPulse 4s ease-in-out infinite;
+}
+
+.world-surface {
+  position: absolute;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #ff6b35 0%, #cc4411 30%, #661a00 70%, #1a0800 100%);
+  box-shadow:
+    0 0 60px rgba(255,107,53,0.25),
+    0 0 120px rgba(255,107,53,0.1),
+    inset -20px -20px 40px rgba(0,0,0,0.6),
+    inset 10px 10px 30px rgba(255,150,80,0.2);
+  animation: worldRotate 60s linear infinite;
+}
+
+.world-inner {
+  position: absolute;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, rgba(255,180,100,0.15) 0%, transparent 60%);
+}
+
+.world-label {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  pointer-events: none;
+}
+
+.world-title {
+  display: block;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.08em;
+  text-shadow: 0 2px 20px rgba(0,0,0,0.8), 0 0 40px rgba(255,107,53,0.3);
+}
+
+.world-subtitle {
+  display: block;
+  font-size: 0.65rem;
+  color: rgba(255,255,255,0.5);
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  margin-top: 0.25rem;
+}
+
+@keyframes worldPulse {
+  0%, 100% { transform: scale(1); opacity: 0.6; }
+  50% { transform: scale(1.08); opacity: 1; }
+}
+
+@keyframes worldRotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ---- Orbiting Nodes ---- */
+.orbit {
+  position: absolute;
+}
+
+.orbit-1 { animation: orbit1 25s linear infinite; }
+.orbit-2 { animation: orbit2 32s linear infinite; }
+.orbit-3 { animation: orbit3 20s linear infinite; }
+.orbit-4 { animation: orbit4 28s linear infinite; }
+.orbit-5 { animation: orbit5 35s linear infinite; }
+
+.world-loaded .orbit-1 { animation-play-state: running; }
+.world-loaded .orbit-2 { animation-play-state: running; }
+.world-loaded .orbit-3 { animation-play-state: running; }
+.world-loaded .orbit-4 { animation-play-state: running; }
+.world-loaded .orbit-5 { animation-play-state: running; }
+
+@keyframes orbit1 {
+  0% { transform: translate(-260px, 0) rotate(0deg); }
+  100% { transform: translate(-260px, 0) rotate(360deg); }
+}
+@keyframes orbit2 {
+  0% { transform: translate(240px, -60px) rotate(0deg); }
+  100% { transform: translate(240px, -60px) rotate(-360deg); }
+}
+@keyframes orbit3 {
+  0% { transform: translate(-140px, 200px) rotate(0deg); }
+  100% { transform: translate(-140px, 200px) rotate(360deg); }
+}
+@keyframes orbit4 {
+  0% { transform: translate(180px, 180px) rotate(0deg); }
+  100% { transform: translate(180px, 180px) rotate(-360deg); }
+}
+@keyframes orbit5 {
+  0% { transform: translate(0, -240px) rotate(0deg); }
+  100% { transform: translate(0, -240px) rotate(360deg); }
+}
+
+.node {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  text-decoration: none;
+  color: var(--text-dim);
+  transition: all 0.3s ease;
+  animation: counterRotate 25s linear infinite;
+}
+
+.orbit-2 .node { animation: counterRotate2 32s linear infinite; }
+.orbit-3 .node { animation: counterRotate3 20s linear infinite; }
+.orbit-4 .node { animation: counterRotate4 28s linear infinite; }
+.orbit-5 .node { animation: counterRotate5 35s linear infinite; }
+
+@keyframes counterRotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(-360deg); }
+}
+@keyframes counterRotate2 {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+@keyframes counterRotate3 {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(-360deg); }
+}
+@keyframes counterRotate4 {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+@keyframes counterRotate5 {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(-360deg); }
+}
+
+.node-glow {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,107,53,0.2) 0%, transparent 70%);
+  position: absolute;
+  top: -8px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.node-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  transition: all 0.3s ease;
+}
+
+.node-label {
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  opacity: 0.7;
+  transition: all 0.3s ease;
+}
+
+.node:hover .node-glow {
+  opacity: 1;
+}
+
+.node:hover .node-icon {
+  border-color: var(--accent);
+  background: rgba(255,107,53,0.1);
+  box-shadow: 0 0 20px rgba(255,107,53,0.2);
+  transform: scale(1.15);
+}
+
+.node:hover .node-label {
+  color: var(--accent);
+  opacity: 1;
+}
+
+/* ---- Tooltip ---- */
+.world-tooltip {
+  position: absolute;
+  z-index: 10;
+  background: rgba(17,17,17,0.95);
+  border: 1px solid var(--border-hover);
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  max-width: 220px;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: all 0.2s ease;
+  backdrop-filter: blur(8px);
+}
+
+.world-tooltip.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.tooltip-title {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 0.25rem;
+}
+
+.tooltip-desc {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  line-height: 1.4;
+}
+
+/* ---- Scroll Invite ---- */
+.scroll-invite {
+  position: absolute;
+  bottom: 2.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  z-index: 2;
+  animation: scrollBounce 2s ease-in-out infinite;
+}
+
+.scroll-text {
+  font-size: 0.7rem;
+  color: var(--text-faint);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.scroll-arrow {
+  font-size: 1.2rem;
+  color: var(--accent);
+  opacity: 0.6;
+}
+
+@keyframes scrollBounce {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(8px); }
+}
+
+/* ---- World Timer ---- */
+.world-timer {
+  position: absolute;
+  top: 6rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  z-index: 2;
+  font-size: 0.75rem;
+  color: var(--text-faint);
+  letter-spacing: 0.05em;
+}
+
+.world-timer .live-dot {
+  width: 6px;
+  height: 6px;
+  background: #22c55e;
+  border-radius: 50%;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* ---- Section Region Markers ---- */
+.region-marker {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+  border: 1px solid rgba(255,107,53,0.3);
+  padding: 0.25rem 0.6rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.tao-section {
+  background: linear-gradient(180deg, #0a0a0a 0%, #0d0d0d 100%);
+  border-top: 1px solid var(--border);
+}
+
+.tao-manifesto {
+  max-width: 680px;
+  margin: 0 auto 2rem;
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: var(--text);
+  text-align: center;
+}
+
+.tao-manifesto strong {
+  color: var(--accent);
+}
+
+.tao-divider {
+  text-align: center;
+  font-size: 1.5rem;
+  color: var(--accent);
+  opacity: 0.4;
+  margin: 2rem 0;
+  letter-spacing: 1rem;
+}
+
+.tao-body {
+  max-width: 640px;
+  margin: 0 auto;
+  color: var(--text-dim);
+  line-height: 1.8;
+  font-size: 0.95rem;
+}
+
+/* ---- Principles Redesign ---- */
+.principles-section {
+  background: linear-gradient(180deg, #0d0d0d 0%, #0a0a0a 100%);
+}
+
+.principle-number {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 0.15em;
+  margin-bottom: 0.75rem;
+  opacity: 0.6;
+}
+
+/* ---- Cards Redesign ---- */
+.cards-section {
+  background: linear-gradient(180deg, #0a0a0a 0%, #0d0d0d 100%);
+}
+
+.card-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: rgba(255,107,53,0.08);
+  border: 1px solid rgba(255,107,53,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  color: var(--accent);
+}
+
+/* ---- Quote Section ---- */
+.quote-section {
+  background: #0a0a0a;
+  padding: 6rem 2rem;
+  text-align: center;
+}
+
+.quote-section blockquote {
+  max-width: 600px;
+  margin: 0 auto;
+  border: none;
+  padding: 0;
+}
+
+.quote-section blockquote p {
+  font-size: 1.5rem;
+  font-style: italic;
+  color: var(--text-dim);
+  line-height: 1.5;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 768px) {
+  .world-container {
+    height: 500px;
+    transform: scale(0.75);
+  }
+
+  .world-core {
+    width: 160px;
+    height: 160px;
+  }
+
+  .world-atmosphere {
+    width: 200px;
+    height: 200px;
+  }
+
+  .world-surface {
+    width: 160px;
+    height: 160px;
+  }
+
+  .world-title {
+    font-size: 1.1rem;
+  }
+
+  .orbit-1 { animation: orbit1 20s linear infinite; }
+  .orbit-2 { animation: orbit2 26s linear infinite; }
+  .orbit-3 { animation: orbit3 18s linear infinite; }
+  .orbit-4 { animation: orbit4 22s linear infinite; }
+  .orbit-5 { animation: orbit5 28s linear infinite; }
+
+  @keyframes orbit1 {
+    0% { transform: translate(-180px, 0) rotate(0deg); }
+    100% { transform: translate(-180px, 0) rotate(360deg); }
+  }
+  @keyframes orbit2 {
+    0% { transform: translate(160px, -40px) rotate(0deg); }
+    100% { transform: translate(160px, -40px) rotate(-360deg); }
+  }
+  @keyframes orbit3 {
+    0% { transform: translate(-100px, 140px) rotate(0deg); }
+    100% { transform: translate(-100px, 140px) rotate(360deg); }
+  }
+  @keyframes orbit4 {
+    0% { transform: translate(120px, 120px) rotate(0deg); }
+    100% { transform: translate(120px, 120px) rotate(-360deg); }
+  }
+  @keyframes orbit5 {
+    0% { transform: translate(0, -160px) rotate(0deg); }
+    100% { transform: translate(0, -160px) rotate(360deg); }
+  }
+}
+
+@media (max-width: 480px) {
+  .world-container {
+    transform: scale(0.6);
+    height: 400px;
+  }
+
+  .tao-manifesto {
+    font-size: 0.95rem;
+  }
+
+  .quote-section blockquote p {
+    font-size: 1.1rem;
+  }
+}
