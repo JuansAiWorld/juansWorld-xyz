@@ -93,6 +93,9 @@ export default async function AdminLayout({
           <NavLink href="/admin" icon="📊">
             Dashboard
           </NavLink>
+          <NavLink href="/admin/content" icon="📝">
+            Content
+          </NavLink>
           <NavLink href="/admin/inbox" icon="📬">
             Inbox
           </NavLink>
@@ -217,7 +220,7 @@ function LogoutButton() {
     const { createClient } = await import('@/lib/supabase/client')
     const supabase = createClient()
     await supabase.auth.signOut()
-    window.location.href = '/admin/login'
+    window.location.href = '/login'
   }
   return (
     <button
