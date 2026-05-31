@@ -1,10 +1,62 @@
-import { getUsers, updateUserRole, deleteUser } from '../actions'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { revalidatePath } from 'next/cache'
 
 export const dynamic = 'force-dynamic'
 
+async function getUsersDirect() {
+  const supabase = createAdminClient()
+
+  const { data: profiles, error: profilesError } = await supabase
+    .from('profiles')
+    .select('*')
+    .order('created_at', { ascending: false })
+
+  if (profilesError) throw profilesError
+
+  const { data: authUsers, error: authError } =
+    await supabase.auth.admin.listUsers()
+
+  if (authError) throw authError
+
+  const users = (profiles || []).map((p: Record<string, unknown>) => {
+    const authUser = authUsers.users.find((u) => u.id === p.id)
+    return {
+      ...p,
+      email: authUser?.email ?? '—',
+      email_confirmed_at: authUser?.email_confirmed_at ?? null,
+    }
+  })
+
+  return users
+}
+
+async function updateUserRole(userId: string, role: 'user' | 'admin') {
+  'use server'
+  const supabase = createAdminClient()
+  const { error } = await supabase
+    .from('profiles')
+    .update({ role })
+    .eq('id', userId)
+
+  if (error) throw error
+
+  revalidatePath('/admin/users')
+  return { success: true }
+}
+
+async function deleteUser(userId: string) {
+  'use server'
+  const supabase = createAdminClient()
+  const { error } = await supabase.auth.admin.deleteUser(userId)
+
+  if (error) throw error
+
+  revalidatePath('/admin/users')
+  return { success: true }
+}
+
 export default async function AdminUsersPage() {
-  const users = await getUsers()
+  const users = await getUsersDirect()
 
   async function handleRoleChange(formData: FormData) {
     'use server'
@@ -42,7 +94,13 @@ export default async function AdminUsersPage() {
           >
             Users
           </h1>
-          <p style={{ color: '#a3a3a3', marginTop: '0.25rem', fontSize: '0.875rem' }}>
+          <p
+            style={{
+              color: '#a3a3a3',
+              marginTop: '0.25rem',
+              fontSize: '0.875rem',
+            }}
+          >
             Manage user accounts and roles
           </p>
         </div>
@@ -56,7 +114,13 @@ export default async function AdminUsersPage() {
           overflow: 'hidden',
         }}
       >
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.875rem' }}>
+        <table
+          style={{
+            width: '100%',
+            borderCollapse: 'collapse',
+            fontSize: '0.875rem',
+          }}
+        >
           <thead>
             <tr style={{ borderBottom: '1px solid #262626' }}>
               <th
@@ -108,7 +172,13 @@ export default async function AdminUsersPage() {
                 style={{ borderBottom: '1px solid #1f1f1f' }}
               >
                 <td style={{ padding: '0.875rem 1rem' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.75rem',
+                    }}
+                  >
                     <div
                       style={{
                         width: '32px',
@@ -123,7 +193,11 @@ export default async function AdminUsersPage() {
                         color: '#d4d4d4',
                       }}
                     >
-                      {(user.full_name?.[0] ?? user.username?.[0] ?? '?').toUpperCase()}
+                      {(
+                        user.full_name?.[0] ??
+                        user.username?.[0] ??
+                        '?'
+                      ).toUpperCase()}
                     </div>
                     <div>
                       <p
@@ -169,16 +243,27 @@ export default async function AdminUsersPage() {
                     </select>
                   </form>
                 </td>
-                <td style={{ padding: '0.875rem 1rem', color: '#a3a3a3' }}>
+                <td
+                  style={{ padding: '0.875rem 1rem', color: '#a3a3a3' }}
+                >
                   {new Date(user.created_at).toLocaleDateString()}
                 </td>
-                <td style={{ padding: '0.875rem 1rem', textAlign: 'right' }}>
+                <td
+                  style={{
+                    padding: '0.875rem 1rem',
+                    textAlign: 'right',
+                  }}
+                >
                   <form action={handleDelete}>
                     <input type="hidden" name="userId" value={user.id} />
                     <button
                       type="submit"
                       onClick={(e) => {
-                        if (!confirm('Delete this user? This cannot be undone.')) {
+                        if (
+                          !confirm(
+                            'Delete this user? This cannot be undone.'
+                          )
+                        ) {
                           e.preventDefault()
                         }
                       }}

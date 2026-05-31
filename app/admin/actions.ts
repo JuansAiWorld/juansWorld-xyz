@@ -1,41 +1,9 @@
 'use server'
 
 import { createAdminClient } from '@/lib/supabase/admin'
-import { createClientFromHeaders } from '@/lib/supabase/server-headers'
 import { revalidatePath } from 'next/cache'
 
-export async function getCurrentAdmin() {
-  try {
-    const supabase = await createClientFromHeaders()
-    const { data, error } = await supabase.auth.getUser()
-
-    if (error || !data.user) {
-      console.log('getCurrentAdmin: no user', error?.message)
-      return null
-    }
-
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', data.user.id)
-      .single()
-
-    if (!profile || profile.role !== 'admin') {
-      console.log('getCurrentAdmin: not admin', profile?.role)
-      return null
-    }
-
-    return { user: data.user, profile }
-  } catch (err: any) {
-    console.error('getCurrentAdmin error:', err)
-    return null
-  }
-}
-
 export async function getUsers() {
-  const admin = await getCurrentAdmin()
-  if (!admin) throw new Error('Unauthorized')
-
   const supabase = createAdminClient()
 
   const { data: profiles, error: profilesError } = await supabase
@@ -45,14 +13,13 @@ export async function getUsers() {
 
   if (profilesError) throw profilesError
 
-  // Also fetch auth users for email info
   const { data: authUsers, error: authError } =
     await supabase.auth.admin.listUsers()
 
   if (authError) throw authError
 
-  const users = profiles.map((p: Record<string, unknown>) => {
-    const authUser = authUsers.users.find((u) => u.id === p.id)
+  const users = (profiles || []).map((p: Record<string, unknown>) => {
+    const authUser = authUsers.users.find((u: any) => u.id === p.id)
     return {
       ...p,
       email: authUser?.email ?? '—',
@@ -64,9 +31,6 @@ export async function getUsers() {
 }
 
 export async function updateUserRole(userId: string, role: 'user' | 'admin') {
-  const admin = await getCurrentAdmin()
-  if (!admin) throw new Error('Unauthorized')
-
   const supabase = createAdminClient()
   const { error } = await supabase
     .from('profiles')
@@ -80,14 +44,6 @@ export async function updateUserRole(userId: string, role: 'user' | 'admin') {
 }
 
 export async function deleteUser(userId: string) {
-  const admin = await getCurrentAdmin()
-  if (!admin) throw new Error('Unauthorized')
-
-  // Prevent self-deletion
-  if (userId === admin.user.id) {
-    throw new Error('Cannot delete yourself')
-  }
-
   const supabase = createAdminClient()
   const { error } = await supabase.auth.admin.deleteUser(userId)
 
@@ -98,9 +54,6 @@ export async function deleteUser(userId: string) {
 }
 
 export async function getStats() {
-  const admin = await getCurrentAdmin()
-  if (!admin) throw new Error('Unauthorized')
-
   const supabase = createAdminClient()
 
   try {

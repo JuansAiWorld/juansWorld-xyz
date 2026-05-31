@@ -1,40 +1,43 @@
-import { getStats } from './actions'
+import { createAdminClient } from '@/lib/supabase/admin'
 
 export const dynamic = 'force-dynamic'
 
-export default async function AdminDashboardPage() {
-  let stats: { users: number; content: number; published: number; apiKeys: number } | null = null
-  let error: string | null = null
+async function getStatsDirect() {
+  const supabase = createAdminClient()
 
   try {
-    stats = await getStats()
-  } catch (err: any) {
-    error = err?.message || String(err)
-    console.error('Dashboard stats error:', err)
-  }
+    const [usersRes, contentRes, publishedRes, apiKeysRes] = await Promise.all([
+      supabase.from('profiles').select('*', { count: 'exact', head: true }),
+      supabase.from('content').select('*', { count: 'exact', head: true }),
+      supabase
+        .from('content')
+        .select('*', { count: 'exact', head: true })
+        .eq('status', 'published'),
+      supabase.from('api_keys').select('*', { count: 'exact', head: true }),
+    ])
 
-  if (error) {
-    return (
-      <div>
-        <h1 style={{ fontSize: '1.75rem', fontWeight: 700, color: '#fafafa', marginBottom: '0.5rem' }}>
-          Dashboard
-        </h1>
-        <div
-          style={{
-            background: '#450a0a',
-            border: '1px solid #7f1d1d',
-            borderRadius: '12px',
-            padding: '1.5rem',
-            color: '#fca5a5',
-            fontSize: '0.875rem',
-          }}
-        >
-          <strong>Error loading stats:</strong>
-          <pre style={{ marginTop: '0.5rem', whiteSpace: 'pre-wrap' }}>{error}</pre>
-        </div>
-      </div>
-    )
+    if (usersRes.error) console.error('getStats users error:', usersRes.error)
+    if (contentRes.error)
+      console.error('getStats content error:', contentRes.error)
+    if (publishedRes.error)
+      console.error('getStats published error:', publishedRes.error)
+    if (apiKeysRes.error)
+      console.error('getStats apiKeys error:', apiKeysRes.error)
+
+    return {
+      users: usersRes.count ?? 0,
+      content: contentRes.count ?? 0,
+      published: publishedRes.count ?? 0,
+      apiKeys: apiKeysRes.count ?? 0,
+    }
+  } catch (err: any) {
+    console.error('getStats unexpected error:', err)
+    return { users: 0, content: 0, published: 0, apiKeys: 0 }
   }
+}
+
+export default async function AdminDashboardPage() {
+  const stats = await getStatsDirect()
 
   return (
     <div>
@@ -48,7 +51,13 @@ export default async function AdminDashboardPage() {
       >
         Dashboard
       </h1>
-      <p style={{ color: '#a3a3a3', marginBottom: '2rem', fontSize: '0.875rem' }}>
+      <p
+        style={{
+          color: '#a3a3a3',
+          marginBottom: '2rem',
+          fontSize: '0.875rem',
+        }}
+      >
         Overview of your site
       </p>
 
@@ -60,10 +69,10 @@ export default async function AdminDashboardPage() {
           marginBottom: '2rem',
         }}
       >
-        <StatCard label="Users" value={stats?.users ?? 0} />
-        <StatCard label="Total Content" value={stats?.content ?? 0} />
-        <StatCard label="Published" value={stats?.published ?? 0} />
-        <StatCard label="API Keys" value={stats?.apiKeys ?? 0} />
+        <StatCard label="Users" value={stats.users} />
+        <StatCard label="Total Content" value={stats.content} />
+        <StatCard label="Published" value={stats.published} />
+        <StatCard label="API Keys" value={stats.apiKeys} />
       </div>
 
       <div
@@ -84,7 +93,9 @@ export default async function AdminDashboardPage() {
         >
           Quick Links
         </h2>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+        <div
+          style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}
+        >
           <QuickLink href="/admin/users" label="Manage Users" />
           <QuickLink href="/admin/inbox" label="Hermes Inbox" />
           <QuickLink href="/" label="View Site" />

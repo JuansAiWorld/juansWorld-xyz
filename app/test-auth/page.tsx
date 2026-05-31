@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { createClientManual } from '@/lib/supabase/server-manual'
 import { createClientFromHeaders } from '@/lib/supabase/server-headers'
+import { testServerAction } from './action'
 import { cookies, headers } from 'next/headers'
 
 export const dynamic = 'force-dynamic'
@@ -11,6 +12,7 @@ export default async function TestAuthPage() {
   let headersResult: any = { status: 'checking' }
   let cookieNames: string[] = []
   let rawCookieHeader: string | null = null
+  let serverActionResult: any = { status: 'checking' }
 
   try {
     const cookieStore = await cookies()
@@ -24,6 +26,13 @@ export default async function TestAuthPage() {
     rawCookieHeader = h.get('cookie')
   } catch (e: any) {
     rawCookieHeader = 'error: ' + e.message
+  }
+
+  // Test Server Action
+  try {
+    serverActionResult = await testServerAction()
+  } catch (err: any) {
+    serverActionResult = { status: 'exception', message: err?.message || String(err) }
   }
 
   // Test @supabase/ssr
@@ -92,27 +101,19 @@ export default async function TestAuthPage() {
     >
       <h1>Auth Test — Server Component</h1>
 
-      <h2>cookies().getAll() names:</h2>
-      <pre
-        style={{
-          background: '#141414',
-          padding: '1rem',
-          borderRadius: '8px',
-        }}
-      >
+      <h2>Server Component: cookies().getAll() names:</h2>
+      <pre style={{ background: '#141414', padding: '1rem', borderRadius: '8px' }}>
         {JSON.stringify(cookieNames, null, 2)}
       </pre>
 
-      <h2>headers().get('cookie'):</h2>
-      <pre
-        style={{
-          background: '#141414',
-          padding: '1rem',
-          borderRadius: '8px',
-          wordBreak: 'break-all',
-        }}
-      >
+      <h2>Server Component: headers().get('cookie'):</h2>
+      <pre style={{ background: '#141414', padding: '1rem', borderRadius: '8px', wordBreak: 'break-all' }}>
         {rawCookieHeader || '(null)'}
+      </pre>
+
+      <h2>Server Action: cookies + headers:</h2>
+      <pre style={{ background: '#141414', padding: '1rem', borderRadius: '8px' }}>
+        {JSON.stringify(serverActionResult, null, 2)}
       </pre>
 
       {[
@@ -127,8 +128,7 @@ export default async function TestAuthPage() {
               background: '#141414',
               padding: '1rem',
               borderRadius: '8px',
-              color:
-                result.status === 'authenticated' ? '#4ade80' : '#f87171',
+              color: result.status === 'authenticated' ? '#4ade80' : '#f87171',
             }}
           >
             {JSON.stringify(result, null, 2)}
