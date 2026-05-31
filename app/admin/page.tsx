@@ -3,7 +3,38 @@ import { getStats } from './actions'
 export const dynamic = 'force-dynamic'
 
 export default async function AdminDashboardPage() {
-  const stats = await getStats()
+  let stats: { users: number; content: number; published: number; apiKeys: number } | null = null
+  let error: string | null = null
+
+  try {
+    stats = await getStats()
+  } catch (err: any) {
+    error = err?.message || String(err)
+    console.error('Dashboard stats error:', err)
+  }
+
+  if (error) {
+    return (
+      <div>
+        <h1 style={{ fontSize: '1.75rem', fontWeight: 700, color: '#fafafa', marginBottom: '0.5rem' }}>
+          Dashboard
+        </h1>
+        <div
+          style={{
+            background: '#450a0a',
+            border: '1px solid #7f1d1d',
+            borderRadius: '12px',
+            padding: '1.5rem',
+            color: '#fca5a5',
+            fontSize: '0.875rem',
+          }}
+        >
+          <strong>Error loading stats:</strong>
+          <pre style={{ marginTop: '0.5rem', whiteSpace: 'pre-wrap' }}>{error}</pre>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div>
@@ -29,10 +60,10 @@ export default async function AdminDashboardPage() {
           marginBottom: '2rem',
         }}
       >
-        <StatCard label="Users" value={stats.users} />
-        <StatCard label="Total Content" value={stats.content} />
-        <StatCard label="Published" value={stats.published} />
-        <StatCard label="API Keys" value={stats.apiKeys} />
+        <StatCard label="Users" value={stats?.users ?? 0} />
+        <StatCard label="Total Content" value={stats?.content ?? 0} />
+        <StatCard label="Published" value={stats?.published ?? 0} />
+        <StatCard label="API Keys" value={stats?.apiKeys ?? 0} />
       </div>
 
       <div
@@ -55,6 +86,7 @@ export default async function AdminDashboardPage() {
         </h2>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
           <QuickLink href="/admin/users" label="Manage Users" />
+          <QuickLink href="/admin/inbox" label="Hermes Inbox" />
           <QuickLink href="/" label="View Site" />
         </div>
       </div>
