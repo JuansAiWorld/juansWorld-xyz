@@ -10,10 +10,19 @@ export default async function AdminLayout({
 }) {
   let headerError: string | null = null
   let cookieHeader: string | null = null
+  let headerType: string = 'unknown'
 
   try {
-    const h = await headers()
-    cookieHeader = h.get('cookie')
+    headerType = typeof headers
+    const h = headers()
+    headerType += ', result: ' + typeof h
+    if (h && typeof h.get === 'function') {
+      cookieHeader = h.get('cookie')
+    } else if (h && typeof h.then === 'function') {
+      // It's a promise
+      const resolved = await h
+      cookieHeader = resolved.get('cookie')
+    }
   } catch (err: any) {
     headerError = err?.message || String(err)
   }
@@ -22,9 +31,12 @@ export default async function AdminLayout({
     <div style={{ display: 'flex', minHeight: '100vh', background: '#0a0a0a', color: '#e5e5e5', fontFamily: 'monospace' }}>
       <aside style={{ width: '300px', background: '#141414', borderRight: '1px solid #262626', padding: '1.5rem' }}>
         <h2 style={{ fontSize: '1rem', fontWeight: 700, color: '#fafafa', margin: 0 }}>Admin</h2>
+        <div style={{ marginTop: '1rem', fontSize: '0.75rem', color: '#a3a3a3' }}>
+          headers type: {headerType}
+        </div>
         {headerError && (
           <div style={{ color: '#ef4444', marginTop: '1rem', fontSize: '0.75rem' }}>
-            headers() ERROR: {headerError}
+            ERROR: {headerError}
           </div>
         )}
         {cookieHeader && (
