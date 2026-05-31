@@ -1,5 +1,6 @@
 import { createAdminClient } from '@/lib/supabase/admin'
-import { revalidatePath } from 'next/cache'
+import { UserActions } from './user-actions'
+import { deleteUser } from './actions'
 
 export const dynamic = 'force-dynamic'
 
@@ -19,7 +20,7 @@ async function getUsersDirect() {
   if (authError) throw authError
 
   const users = (profiles || []).map((p: Record<string, unknown>) => {
-    const authUser = authUsers.users.find((u) => u.id === p.id)
+    const authUser = authUsers.users.find((u: any) => u.id === p.id)
     return {
       ...p,
       email: authUser?.email ?? '—',
@@ -30,48 +31,8 @@ async function getUsersDirect() {
   return users
 }
 
-async function updateUserRole(userId: string, role: 'user' | 'admin') {
-  'use server'
-  const supabase = createAdminClient()
-  const { error } = await supabase
-    .from('profiles')
-    .update({ role })
-    .eq('id', userId)
-
-  if (error) throw error
-
-  revalidatePath('/admin/users')
-  return { success: true }
-}
-
-async function deleteUser(userId: string) {
-  'use server'
-  const supabase = createAdminClient()
-  const { error } = await supabase.auth.admin.deleteUser(userId)
-
-  if (error) throw error
-
-  revalidatePath('/admin/users')
-  return { success: true }
-}
-
 export default async function AdminUsersPage() {
   const users = await getUsersDirect()
-
-  async function handleRoleChange(formData: FormData) {
-    'use server'
-    const userId = formData.get('userId') as string
-    const role = formData.get('role') as 'user' | 'admin'
-    await updateUserRole(userId, role)
-    revalidatePath('/admin/users')
-  }
-
-  async function handleDelete(formData: FormData) {
-    'use server'
-    const userId = formData.get('userId') as string
-    await deleteUser(userId)
-    revalidatePath('/admin/users')
-  }
 
   return (
     <div>
@@ -222,26 +183,10 @@ export default async function AdminUsersPage() {
                   </div>
                 </td>
                 <td style={{ padding: '0.875rem 1rem' }}>
-                  <form action={handleRoleChange}>
-                    <input type="hidden" name="userId" value={user.id} />
-                    <select
-                      name="role"
-                      defaultValue={user.role}
-                      onChange={(e) => e.target.form?.requestSubmit()}
-                      style={{
-                        background: '#0a0a0a',
-                        border: '1px solid #404040',
-                        borderRadius: '6px',
-                        color: '#e5e5e5',
-                        padding: '0.375rem 0.625rem',
-                        fontSize: '0.875rem',
-                        cursor: 'pointer',
-                      }}
-                    >
-                      <option value="user">user</option>
-                      <option value="admin">admin</option>
-                    </select>
-                  </form>
+                  <UserActions
+                    userId={user.id}
+                    currentRole={user.role}
+                  />
                 </td>
                 <td
                   style={{ padding: '0.875rem 1rem', color: '#a3a3a3' }}
@@ -254,38 +199,9 @@ export default async function AdminUsersPage() {
                     textAlign: 'right',
                   }}
                 >
-                  <form action={handleDelete}>
+                  <form action={deleteUser}>
                     <input type="hidden" name="userId" value={user.id} />
-                    <button
-                      type="submit"
-                      onClick={(e) => {
-                        if (
-                          !confirm(
-                            'Delete this user? This cannot be undone.'
-                          )
-                        ) {
-                          e.preventDefault()
-                        }
-                      }}
-                      style={{
-                        background: 'transparent',
-                        border: '1px solid #7f1d1d',
-                        color: '#fca5a5',
-                        padding: '0.375rem 0.75rem',
-                        borderRadius: '6px',
-                        fontSize: '0.75rem',
-                        fontWeight: 500,
-                        cursor: 'pointer',
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.background = '#450a0a'
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.background = 'transparent'
-                      }}
-                    >
-                      Delete
-                    </button>
+                    <DeleteButton />
                   </form>
                 </td>
               </tr>
@@ -307,5 +223,25 @@ export default async function AdminUsersPage() {
         )}
       </div>
     </div>
+  )
+}
+
+function DeleteButton() {
+  return (
+    <button
+      type="submit"
+      style={{
+        background: 'transparent',
+        border: '1px solid #7f1d1d',
+        color: '#fca5a5',
+        padding: '0.375rem 0.75rem',
+        borderRadius: '6px',
+        fontSize: '0.75rem',
+        fontWeight: 500,
+        cursor: 'pointer',
+      }}
+    >
+      Delete
+    </button>
   )
 }
