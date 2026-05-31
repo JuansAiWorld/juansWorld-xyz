@@ -1,6 +1,7 @@
 import { createAdminClient } from '@/lib/supabase/admin'
 import { UserActions } from './user-actions'
-import { deleteUser } from './actions'
+import { DeleteButton } from './delete-button'
+import { AddUserButton } from './add-user-form'
 
 export const dynamic = 'force-dynamic'
 
@@ -65,6 +66,7 @@ export default async function AdminUsersPage() {
             Manage user accounts and roles
           </p>
         </div>
+        <AddUserButton />
       </div>
 
       <div
@@ -199,10 +201,7 @@ export default async function AdminUsersPage() {
                     textAlign: 'right',
                   }}
                 >
-                  <form action={deleteUser}>
-                    <input type="hidden" name="userId" value={user.id} />
-                    <DeleteButton />
-                  </form>
+                  <DeleteButton userId={user.id} />
                 </td>
               </tr>
             ))}
@@ -223,25 +222,5 @@ export default async function AdminUsersPage() {
         )}
       </div>
     </div>
-  )
-}
-
-function DeleteButton() {
-  return (
-    <button
-      type="submit"
-      style={{
-        background: 'transparent',
-        border: '1px solid #7f1d1d',
-        color: '#fca5a5',
-        padding: '0.375rem 0.75rem',
-        borderRadius: '6px',
-        fontSize: '0.75rem',
-        fontWeight: 500,
-        cursor: 'pointer',
-      }}
-    >
-      Delete
-    </button>
   )
 }
