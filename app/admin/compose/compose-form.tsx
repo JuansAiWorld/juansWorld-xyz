@@ -15,7 +15,7 @@ function markdownToHtml(md: string): string {
     .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" style="color:#ff6b35;text-decoration:none;">$1</a>')
     .replace(/^\- (.*$)/gim, '<li>$1</li>')
     .replace(/^\d+\. (.*$)/gim, '<li>$1</li>')
-    .replace(/(<li>.*<\/li>)/s, '<ul style="padding-left:1.5rem;margin:0.5rem 0;">$1</ul>')
+    .replace(/(<li>.*<\/li>)/, '<ul style="padding-left:1.5rem;margin:0.5rem 0;">$1</ul>')
     .replace(/\n/g, '<br>')
 }
 
