@@ -1,7 +1,6 @@
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { createClient } from '@/lib/supabase/server'
-import { createClientManual } from '@/lib/supabase/server-manual'
+import { createClientFromHeaders } from '@/lib/supabase/server-headers'
 
 export const dynamic = 'force-dynamic'
 
@@ -12,42 +11,21 @@ export default async function AdminLayout({
 }) {
   let user = null
   let profile = null
-  let authError = null
 
-  // Try @supabase/ssr first, fallback to manual extraction
   try {
-    const supabase = await createClient()
+    const supabase = await createClientFromHeaders()
     const { data, error } = await supabase.auth.getUser()
-    if (error) authError = error.message
-    else user = data.user
-  } catch (err: any) {
-    authError = err?.message || String(err)
-  }
-
-  // Fallback to manual cookie extraction
-  if (!user) {
-    try {
-      const supabase = await createClientManual()
-      const { data, error } = await supabase.auth.getUser()
-      if (error) authError = error.message
-      else user = data.user
-    } catch (err: any) {
-      authError = err?.message || String(err)
-    }
-  }
-
-  if (user) {
-    try {
-      const supabase = await createClientManual()
+    if (!error && data.user) {
+      user = data.user
       const { data: p } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', user.id)
         .single()
       profile = p
-    } catch (err: any) {
-      console.error('Profile fetch error:', err)
     }
+  } catch (err: any) {
+    console.error('Admin layout auth error:', err)
   }
 
   // Not logged in — render login without sidebar

@@ -1,12 +1,12 @@
 'use server'
 
 import { createAdminClient } from '@/lib/supabase/admin'
-import { createClient as createServerClient } from '@/lib/supabase/server'
+import { createClientFromHeaders } from '@/lib/supabase/server-headers'
 import { revalidatePath } from 'next/cache'
 
 export async function getCurrentAdmin() {
   try {
-    const supabase = await createServerClient()
+    const supabase = await createClientFromHeaders()
     const { data, error } = await supabase.auth.getUser()
 
     if (error || !data.user) {
