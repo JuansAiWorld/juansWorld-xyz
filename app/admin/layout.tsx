@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
+import { createClientManual } from '@/lib/supabase/server-manual'
 
 export const dynamic = 'force-dynamic'
 
@@ -13,23 +14,40 @@ export default async function AdminLayout({
   let profile = null
   let authError = null
 
+  // Try @supabase/ssr first, fallback to manual extraction
   try {
     const supabase = await createClient()
     const { data, error } = await supabase.auth.getUser()
     if (error) authError = error.message
     else user = data.user
+  } catch (err: any) {
+    authError = err?.message || String(err)
+  }
 
-    if (user) {
+  // Fallback to manual cookie extraction
+  if (!user) {
+    try {
+      const supabase = await createClientManual()
+      const { data, error } = await supabase.auth.getUser()
+      if (error) authError = error.message
+      else user = data.user
+    } catch (err: any) {
+      authError = err?.message || String(err)
+    }
+  }
+
+  if (user) {
+    try {
+      const supabase = await createClientManual()
       const { data: p } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', user.id)
         .single()
       profile = p
+    } catch (err: any) {
+      console.error('Profile fetch error:', err)
     }
-  } catch (err: any) {
-    authError = err?.message || String(err)
-    console.error('Admin layout auth error:', err)
   }
 
   // Not logged in — render login without sidebar
@@ -68,30 +86,101 @@ export default async function AdminLayout({
         }}
       >
         <div style={{ marginBottom: '2rem' }}>
-          <h2 style={{ fontSize: '1.125rem', fontWeight: 700, color: '#fafafa', margin: 0 }}>
+          <h2
+            style={{
+              fontSize: '1.125rem',
+              fontWeight: 700,
+              color: '#fafafa',
+              margin: 0,
+            }}
+          >
             Juan&apos;s World
           </h2>
-          <p style={{ fontSize: '0.75rem', color: '#737373', marginTop: '0.25rem' }}>
+          <p
+            style={{
+              fontSize: '0.75rem',
+              color: '#737373',
+              marginTop: '0.25rem',
+            }}
+          >
             Admin Dashboard
           </p>
         </div>
 
-        <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-          <NavLink href="/admin" icon="📊">Dashboard</NavLink>
-          <NavLink href="/admin/inbox" icon="📬">Inbox</NavLink>
-          <NavLink href="/admin/users" icon="👥">Users</NavLink>
+        <nav
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '0.25rem',
+          }}
+        >
+          <NavLink href="/admin" icon="📊">
+            Dashboard
+          </NavLink>
+          <NavLink href="/admin/inbox" icon="📬">
+            Inbox
+          </NavLink>
+          <NavLink href="/admin/users" icon="👥">
+            Users
+          </NavLink>
         </nav>
 
-        <div style={{ marginTop: 'auto', paddingTop: '1.5rem', borderTop: '1px solid #262626' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
-            <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#262626', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.875rem', fontWeight: 600, color: '#d4d4d4' }}>
-              {(profile?.full_name?.[0] ?? profile?.username?.[0] ?? 'A').toUpperCase()}
+        <div
+          style={{
+            marginTop: 'auto',
+            paddingTop: '1.5rem',
+            borderTop: '1px solid #262626',
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.75rem',
+              marginBottom: '1rem',
+            }}
+          >
+            <div
+              style={{
+                width: '32px',
+                height: '32px',
+                borderRadius: '50%',
+                background: '#262626',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '0.875rem',
+                fontWeight: 600,
+                color: '#d4d4d4',
+              }}
+            >
+              {(
+                profile?.full_name?.[0] ??
+                profile?.username?.[0] ??
+                'A'
+              ).toUpperCase()}
             </div>
             <div style={{ overflow: 'hidden' }}>
-              <p style={{ fontSize: '0.875rem', fontWeight: 500, color: '#fafafa', margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              <p
+                style={{
+                  fontSize: '0.875rem',
+                  fontWeight: 500,
+                  color: '#fafafa',
+                  margin: 0,
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                }}
+              >
                 {profile?.full_name ?? profile?.username ?? 'Admin'}
               </p>
-              <p style={{ fontSize: '0.75rem', color: '#737373', margin: 0 }}>
+              <p
+                style={{
+                  fontSize: '0.75rem',
+                  color: '#737373',
+                  margin: 0,
+                }}
+              >
                 {profile?.role}
               </p>
             </div>
@@ -107,13 +196,38 @@ export default async function AdminLayout({
   )
 }
 
-function NavLink({ href, icon, children }: { href: string; icon: string; children: React.ReactNode }) {
+function NavLink({
+  href,
+  icon,
+  children,
+}: {
+  href: string
+  icon: string
+  children: React.ReactNode
+}) {
   return (
     <Link
       href={href}
-      style={{ display: 'flex', alignItems: 'center', gap: '0.625rem', padding: '0.5rem 0.75rem', borderRadius: '8px', color: '#a3a3a3', textDecoration: 'none', fontSize: '0.875rem', fontWeight: 500, transition: 'all 0.15s' }}
-      onMouseEnter={(e) => { e.currentTarget.style.background = '#1f1f1f'; e.currentTarget.style.color = '#fafafa' }}
-      onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#a3a3a3' }}
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '0.625rem',
+        padding: '0.5rem 0.75rem',
+        borderRadius: '8px',
+        color: '#a3a3a3',
+        textDecoration: 'none',
+        fontSize: '0.875rem',
+        fontWeight: 500,
+        transition: 'all 0.15s',
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.background = '#1f1f1f'
+        e.currentTarget.style.color = '#fafafa'
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.background = 'transparent'
+        e.currentTarget.style.color = '#a3a3a3'
+      }}
     >
       <span style={{ fontSize: '1rem' }}>{icon}</span>
       {children}
@@ -132,9 +246,26 @@ function LogoutButton() {
   return (
     <button
       onClick={handleLogout}
-      style={{ width: '100%', padding: '0.5rem 0.75rem', background: 'transparent', border: '1px solid #404040', borderRadius: '8px', color: '#a3a3a3', fontSize: '0.875rem', fontWeight: 500, cursor: 'pointer', textAlign: 'left' }}
-      onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#525252'; e.currentTarget.style.color = '#fafafa' }}
-      onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#404040'; e.currentTarget.style.color = '#a3a3a3' }}
+      style={{
+        width: '100%',
+        padding: '0.5rem 0.75rem',
+        background: 'transparent',
+        border: '1px solid #404040',
+        borderRadius: '8px',
+        color: '#a3a3a3',
+        fontSize: '0.875rem',
+        fontWeight: 500,
+        cursor: 'pointer',
+        textAlign: 'left',
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.borderColor = '#525252'
+        e.currentTarget.style.color = '#fafafa'
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.borderColor = '#404040'
+        e.currentTarget.style.color = '#a3a3a3'
+      }}
     >
       🚪 Sign out
     </button>
