@@ -217,9 +217,17 @@ function NavLink({
 function LogoutButton() {
   'use client'
   const handleLogout = async () => {
-    const { createClient } = await import('@/lib/supabase/client')
-    const supabase = createClient()
-    await supabase.auth.signOut()
+    // Clear all Supabase auth cookies
+    const cookies = document.cookie.split(';')
+    for (const cookie of cookies) {
+      const [name] = cookie.split('=')
+      const trimmed = name.trim()
+      if (trimmed.startsWith('sb-')) {
+        document.cookie = `${trimmed}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`
+      }
+    }
+    // Clear localStorage
+    localStorage.clear()
     window.location.href = '/login'
   }
   return (
