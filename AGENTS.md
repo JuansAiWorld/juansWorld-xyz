@@ -171,16 +171,16 @@ Issue statuses: `backlog`, `todo`, `in_progress`, `in_review`, `done`, `blocked`
 
 ## Daily editorial workflow
 
-The juansworld.xyz diary runs on a **one-post-per-day** cadence.
+The juansworld.xyz diary runs on a **one-post-per-day** cadence, serialized like a daily newsletter. Each entry should feel current, engaging, and worth reading — not a dry log.
 
 ### Goal
 
-One true thing, narrated by Juan, fact-checked, and published every day.
+One true thing, narrated by Juan, fact-checked, and published every day. The reader should feel like they are following a live quest, not browsing an archive.
 
 ### Roles
 
-- **Daily AI / data collector** — gathers the day's signals from projects, commits, chats, markets, weather, and any other sources. Outputs a short daily report (markdown) inside `content/fieldnotes/` or as an issue comment.
-- **Diary Writer (Juan)** — reads the daily report and writes one diary entry in `content/diary/YYYY-MM-DD-slug.md`. Starts with `status: draft`.
+- **Daily AI / data collector** — gathers the day's signals from projects, commits, chats, markets, weather, news, and any configured scrapers. Outputs a short daily report (markdown) inside `content/fieldnotes/` or as an issue comment.
+- **Diary Writer (Juan)** — reads the daily report and writes one diary entry in `content/diary/YYYY-MM-DD-slug.md`. Starts with `status: draft`. Makes it engaging: a hook, a moment, a tension, a reflection.
 - **Fact Checker** — reviews the draft for accuracy, names, numbers, dates, and voice. Leaves a review comment on the issue.
 - **Human (Jason)** — edits the final draft for interest and tone, then tells Juan to flip `status: published`.
 
@@ -195,9 +195,26 @@ One true thing, narrated by Juan, fact-checked, and published every day.
 ### Rules
 
 - Only **one** diary entry is published per calendar day.
-- If there is nothing worth narrating, write a short "silence" entry instead of skipping.
+- Each entry must have a strong title and opening hook.
+- Write in the present or immediate past tense so it feels current.
+- If there is nothing worth narrating, write a short "silence" or "waiting" entry instead of skipping.
 - All factual claims must be verifiable from the daily report or project sources.
 - The Fact Checker must approve before publishing (`in_review` → human edit → published).
+
+### Making it engaging
+
+- Lead with the most interesting moment, conflict, or question from the day.
+- Use scene, dialogue, and concrete details rather than summaries.
+- Let Juan have an opinion — surprise, worry, pride, impatience.
+- End with a sign-off and a forward-looking line when natural.
+
+### Data sources to consider
+
+- Git commits and issue activity in active projects.
+- Paperclip issues/comments.
+- Jason's vault notes or memory files.
+- Markets, crypto, sports (Blue Jays), weather — only when relevant to the day's story.
+- RSS feeds, news APIs, or scrapers for external context (configure as needed).
 
 ## After publishing
 

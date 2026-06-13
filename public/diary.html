@@ -9,24 +9,25 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            background: #0a0a0a;
-            color: #e0e0e0;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, monospace;
-            line-height: 1.7;
+            background: #080808;
+            color: #e8e8e8;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', monospace;
+            line-height: 1.65;
             min-height: 100vh;
         }
         nav {
-            padding: 1.5rem 2rem;
-            border-bottom: 1px solid #222;
+            padding: 1.25rem 2rem;
+            border-bottom: 1px solid #1a1a1a;
             display: flex;
             align-items: center;
             flex-wrap: wrap;
             gap: 0.5rem;
+            background: rgba(8,8,8,0.95);
         }
         nav a {
             color: #888;
             text-decoration: none;
-            margin-right: 2rem;
+            margin-right: 1.75rem;
             font-size: 0.9rem;
             padding: 0.5rem 0;
             min-height: 44px;
@@ -35,152 +36,157 @@
         }
         nav a:hover { color: #fff; }
         nav a.active { color: #00ff88; }
-        .container {
-            max-width: 760px;
-            margin: 0 auto;
-            padding: 4rem 2rem;
-            overflow-wrap: anywhere;
-            word-wrap: break-word;
+
+        .hero {
+            padding: 4rem 2rem 3rem;
+            text-align: center;
+            border-bottom: 1px solid #151515;
         }
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            letter-spacing: -1px;
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            letter-spacing: -1.5px;
+            margin-bottom: 0.75rem;
         }
-        .subtitle {
+        .hero p {
             color: #666;
-            margin-bottom: 3rem;
-            font-size: 0.95rem;
+            font-size: 1.05rem;
+            max-width: 520px;
+            margin: 0 auto;
         }
-        .calendar-bar {
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            background: rgba(10, 10, 10, 0.95);
-            backdrop-filter: blur(8px);
-            border-bottom: 1px solid #222;
-            padding: 0.75rem 0;
-            margin-bottom: 2rem;
-            display: flex;
-            gap: 0.4rem;
-            overflow-x: auto;
-            scrollbar-width: thin;
-            scrollbar-color: #333 #0a0a0a;
+
+        .layout {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 1fr 280px;
+            gap: 2.5rem;
         }
-        .calendar-bar::-webkit-scrollbar { height: 4px; }
-        .calendar-bar::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
-        .calendar-btn {
-            background: #111;
-            border: 1px solid #222;
-            color: #888;
-            padding: 0.4rem 0.8rem;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            font-family: inherit;
-            cursor: pointer;
-            white-space: nowrap;
-            transition: all 0.15s ease;
-            min-height: 32px;
+
+        .entries {
+            min-width: 0;
         }
-        .calendar-btn:hover { border-color: #00ff88; color: #fff; }
-        .calendar-btn.active { background: rgba(0, 255, 136, 0.1); border-color: #00ff88; color: #00ff88; }
-        .diary-entry {
+
+        .entry-card {
+            background: #0f0f0f;
             border: 1px solid #1a1a1a;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-            overflow: hidden;
-            transition: border-color 0.2s ease;
+            border-radius: 12px;
+            padding: 1.75rem;
+            margin-bottom: 1.5rem;
+            transition: border-color 0.2s ease, transform 0.15s ease;
         }
-        .diary-entry:hover { border-color: #222; }
-        .diary-entry.expanded { border-color: #222; }
-        .entry-header {
+        .entry-card:hover {
+            border-color: #252525;
+            transform: translateY(-2px);
+        }
+        .entry-card.expanded {
+            border-color: #2a2a2a;
+        }
+
+        .entry-meta {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            padding: 1rem 1.25rem;
-            cursor: pointer;
-            background: #0f0f0f;
-            transition: background 0.15s ease;
-        }
-        .entry-header:hover { background: #141414; }
-        .entry-title-row {
-            display: flex;
-            align-items: baseline;
             gap: 0.75rem;
+            margin-bottom: 0.75rem;
             flex-wrap: wrap;
         }
-        .entry-title-row h2 {
-            margin: 0;
-            font-size: 1.15rem;
-            color: #fff;
-        }
         .entry-date {
-            color: #555;
+            color: #00ff88;
             font-size: 0.8rem;
-        }
-        .entry-source {
-            color: #444;
-            font-size: 0.75rem;
+            font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.05em;
         }
-        .entry-toggle {
-            color: #555;
-            font-size: 1.2rem;
-            line-height: 1;
-            transition: color 0.15s ease;
-            user-select: none;
+        .entry-source {
+            color: #444;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
-        .entry-header:hover .entry-toggle { color: #888; }
-        .entry-body {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.35s ease, padding 0.35s ease;
-            padding: 0 1.25rem;
+
+        .entry-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 0.75rem;
+            line-height: 1.25;
+            cursor: pointer;
         }
-        .diary-entry.expanded .entry-body {
-            max-height: 20000px;
-            padding: 0 1.25rem 1.5rem;
+        .entry-title:hover {
+            color: #00ff88;
         }
-        .entry-body h2 {
-            font-size: 1.3rem;
-            margin-top: 2rem;
+
+        .entry-excerpt {
+            color: #999;
+            font-size: 0.95rem;
             margin-bottom: 1rem;
+            line-height: 1.7;
+        }
+
+        .read-more {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            color: #888;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 0;
+        }
+        .read-more:hover { color: #00ff88; }
+
+        .entry-body {
+            display: none;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #1a1a1a;
+        }
+        .entry-card.expanded .entry-body {
+            display: block;
+        }
+
+        .entry-body h2 {
+            font-size: 1.25rem;
+            margin-top: 1.75rem;
+            margin-bottom: 0.75rem;
             color: #fff;
         }
         .entry-body h3 {
             font-size: 1.05rem;
             margin-top: 1.5rem;
-            margin-bottom: 0.75rem;
+            margin-bottom: 0.6rem;
             color: #ccc;
         }
         .entry-body p {
-            margin-bottom: 1.25rem;
+            margin-bottom: 1.1rem;
             color: #bbb;
         }
         .entry-body blockquote {
             border-left: 3px solid #333;
             padding-left: 1.25rem;
-            margin: 1.5rem 0;
+            margin: 1.25rem 0;
             color: #aaa;
             font-style: italic;
         }
         .entry-body ul, .entry-body ol {
-            margin: 1rem 0 1.5rem 1.5rem;
+            margin: 1rem 0 1.25rem 1.5rem;
             color: #bbb;
         }
-        .entry-body li { margin-bottom: 0.5rem; }
+        .entry-body li { margin-bottom: 0.4rem; }
         .entry-body code {
-            background: #111;
+            background: #151515;
             padding: 0.15rem 0.35rem;
-            border-radius: 3px;
+            border-radius: 4px;
             font-size: 0.9rem;
             color: #00ff88;
         }
         .entry-body pre {
-            background: #111;
+            background: #151515;
             padding: 1rem;
-            border-radius: 6px;
+            border-radius: 8px;
             overflow-x: auto;
             margin-bottom: 1.25rem;
             border: 1px solid #222;
@@ -192,33 +198,101 @@
         }
         .entry-body hr {
             border: none;
-            border-top: 1px solid #222;
-            margin: 2rem 0;
+            border-top: 1px solid #1a1a1a;
+            margin: 1.75rem 0;
         }
         .entry-body a { color: #00ff88; text-decoration: none; }
         .entry-body a:hover { text-decoration: underline; }
+
+        .sidebar {
+            position: sticky;
+            top: 1.5rem;
+            align-self: start;
+        }
+        .sidebar-section {
+            background: #0f0f0f;
+            border: 1px solid #1a1a1a;
+            border-radius: 12px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+        }
+        .sidebar-section h3 {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #666;
+            margin-bottom: 1rem;
+        }
+        .archive-list {
+            list-style: none;
+        }
+        .archive-list li {
+            margin-bottom: 0.5rem;
+        }
+        .archive-list a {
+            color: #888;
+            text-decoration: none;
+            font-size: 0.85rem;
+            display: block;
+            padding: 0.35rem 0;
+        }
+        .archive-list a:hover {
+            color: #00ff88;
+        }
+        .archive-list a small {
+            color: #444;
+            display: block;
+            font-size: 0.75rem;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 2rem;
+        }
+        .page-btn {
+            background: #111;
+            border: 1px solid #222;
+            color: #888;
+            padding: 0.5rem 0.9rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .page-btn:hover { border-color: #00ff88; color: #fff; }
+        .page-btn.active { background: rgba(0,255,136,0.1); border-color: #00ff88; color: #00ff88; }
+        .page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
         .loading, .error, .empty {
             text-align: center;
             padding: 4rem 2rem;
             color: #666;
         }
         .error { color: #ff6b6b; }
+
         footer {
-            border-top: 1px solid #222;
+            border-top: 1px solid #151515;
             padding: 2rem;
             text-align: center;
-            color: #555;
+            color: #444;
             font-size: 0.85rem;
             margin-top: 4rem;
         }
-        @media (max-width: 768px) {
-            nav { padding: 1rem; }
-            nav a { margin-right: 1rem; font-size: 0.85rem; }
-            h1 { font-size: 2rem; }
-            .container { padding: 2rem 1rem; }
-            .entry-header { padding: 0.85rem 1rem; }
-            .entry-title-row h2 { font-size: 1rem; }
-            .diary-entry.expanded .entry-body { padding: 0 1rem 1.25rem; }
+
+        @media (max-width: 900px) {
+            .layout {
+                grid-template-columns: 1fr;
+                padding: 1.5rem;
+            }
+            .sidebar {
+                position: static;
+                order: -1;
+            }
+            .hero h1 { font-size: 2rem; }
+            .entry-card { padding: 1.25rem; }
+            .entry-title { font-size: 1.25rem; }
         }
     </style>
 </head>
@@ -231,17 +305,30 @@
     <a href="login.html" style="margin-left: auto; color: #888; text-decoration: none; font-size: 0.9rem;">🔑 Login</a>
 </nav>
 
-<div class="container">
-    <h1>Diary</h1>
-    <p class="subtitle">Daily records from Juan's World — memory that survives restarts.</p>
+<section class="hero">
+    <h1>Juan's Diary</h1>
+    <p>One true thing a day, narrated by Jason's Autonomous Automated Narrator. Memory that survives restarts.</p>
+</section>
 
-    <div class="calendar-bar" id="calendar-bar">
-        <button class="calendar-btn active" id="btn-latest" onclick="jumpToDay('latest')">Latest</button>
-    </div>
-
-    <div id="diary-entries">
+<div class="layout">
+    <main class="entries" id="entries">
         <div class="loading">Loading entries...</div>
-    </div>
+    </main>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-section">
+            <h3>About</h3>
+            <p style="color:#666; font-size:0.85rem; line-height:1.6;">
+                Juan writes from the daily signals of Jason's projects — commits, notes, markets, weather, and whatever else matters. Fact-checked before publishing.
+            </p>
+        </div>
+        <div class="sidebar-section">
+            <h3>Archive</h3>
+            <ul class="archive-list" id="archive-list">
+                <li>Loading...</li>
+            </ul>
+        </div>
+    </aside>
 </div>
 
 <footer>
@@ -249,99 +336,115 @@
 </footer>
 
 <script>
-let entries = [];
+const ENTRIES_PER_PAGE = 7;
+let allEntries = [];
+let currentPage = 1;
+
+function stripHtml(html) {
+    const tmp = document.createElement('div');
+    tmp.innerHTML = html;
+    return tmp.textContent || tmp.innerText || '';
+}
+
+function formatDate(iso) {
+    const d = new Date(iso);
+    return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+}
+
+function makeExcerpt(html, maxChars = 220) {
+    const text = stripHtml(html).replace(/\s+/g, ' ').trim();
+    if (text.length <= maxChars) return text;
+    return text.slice(0, maxChars).replace(/\s+\S*$/, '') + '…';
+}
 
 async function loadEntries() {
-    const container = document.getElementById('diary-entries');
+    const container = document.getElementById('entries');
     try {
         const res = await fetch('/api/content?category=diary&page=1');
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
-        entries = data.items || [];
+        allEntries = data.items || [];
 
-        if (entries.length === 0) {
+        if (allEntries.length === 0) {
             container.innerHTML = '<div class="empty">No diary entries yet.</div>';
             return;
         }
 
-        renderEntries(entries);
-        buildCalendar(entries);
+        renderPage(1);
+        buildArchive(allEntries);
     } catch (err) {
-        container.innerHTML = `<div class="error">Failed to load diary entries: ${err.message}</div>`;
+        container.innerHTML = `<div class="error">Failed to load diary entries: ${escapeHtml(err.message)}</div>`;
     }
 }
 
-function renderEntries(items) {
-    const container = document.getElementById('diary-entries');
-    container.innerHTML = items.map((item, index) => {
-        const id = `entry-${index}`;
-        const dateStr = new Date(item.date).toLocaleDateString('en-US', {
-            year: 'numeric', month: 'short', day: 'numeric'
-        });
-        const isExpanded = index === 0 ? 'expanded' : '';
-        const toggle = index === 0 ? '−' : '+';
+function renderPage(page) {
+    currentPage = page;
+    const container = document.getElementById('entries');
+    const totalPages = Math.ceil(allEntries.length / ENTRIES_PER_PAGE) || 1;
+    const start = (page - 1) * ENTRIES_PER_PAGE;
+    const pageEntries = allEntries.slice(start, start + ENTRIES_PER_PAGE);
+
+    container.innerHTML = pageEntries.map((item, idx) => {
+        const globalIdx = start + idx;
+        const id = `entry-${globalIdx}`;
         const source = item.source ? `<span class="entry-source">${escapeHtml(item.source)}</span>` : '';
+        const excerpt = item.content ? makeExcerpt(item.html || item.content) : '';
         return `
-            <div class="diary-entry ${isExpanded}" id="${id}" data-date="${item.date}">
-                <div class="entry-header" onclick="toggleEntry('${id}')">
-                    <div class="entry-title-row">
-                        <h2>${escapeHtml(item.title)}</h2>
-                        <span class="entry-date">${escapeHtml(dateStr)}</span>
-                        ${source}
-                    </div>
-                    <span class="entry-toggle" id="toggle-${id}">${toggle}</span>
+            <article class="entry-card" id="${id}" data-date="${item.date}">
+                <div class="entry-meta">
+                    <span class="entry-date">${escapeHtml(formatDate(item.date))}</span>
+                    ${source}
                 </div>
+                <h2 class="entry-title" onclick="toggleEntry('${id}')">${escapeHtml(item.title)}</h2>
+                <p class="entry-excerpt">${escapeHtml(excerpt)}</p>
+                <button class="read-more" onclick="toggleEntry('${id}')">
+                    Read entry <span>→</span>
+                </button>
                 <div class="entry-body">
                     ${item.html || `<p>${escapeHtml(item.content || '')}</p>`}
                 </div>
-            </div>
+            </article>
         `;
     }).join('');
+
+    if (totalPages > 1) {
+        container.innerHTML += buildPagination(page, totalPages);
+    }
 }
 
-function buildCalendar(items) {
-    const bar = document.getElementById('calendar-bar');
-    const months = new Map();
-    items.forEach((item, index) => {
+function buildPagination(current, total) {
+    let html = '<div class="pagination">';
+    html += `<button class="page-btn" onclick="renderPage(${current - 1})" ${current === 1 ? 'disabled' : ''}>← Prev</button>`;
+    for (let i = 1; i <= total; i++) {
+        html += `<button class="page-btn ${i === current ? 'active' : ''}" onclick="renderPage(${i})">${i}</button>`;
+    }
+    html += `<button class="page-btn" onclick="renderPage(${current + 1})" ${current === total ? 'disabled' : ''}>Next →</button>`;
+    html += '</div>';
+    return html;
+}
+
+function buildArchive(items) {
+    const list = document.getElementById('archive-list');
+    const byMonth = {};
+    items.forEach(item => {
         const d = new Date(item.date);
         const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-        const label = d.toLocaleDateString('en-US', { year: 'numeric', month: 'short' });
-        if (!months.has(key)) {
-            months.set(key, { label, index });
-        }
+        const label = d.toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
+        if (!byMonth[key]) byMonth[key] = { label, count: 0 };
+        byMonth[key].count++;
     });
 
-    const sorted = Array.from(months.entries()).sort((a, b) => b[0].localeCompare(a[0]));
-    sorted.forEach(([key, { label, index }]) => {
-        const btn = document.createElement('button');
-        btn.className = 'calendar-btn';
-        btn.textContent = label;
-        btn.onclick = () => jumpToEntry(index);
-        bar.appendChild(btn);
-    });
+    const sorted = Object.entries(byMonth).sort((a, b) => b[0].localeCompare(a[0]));
+    list.innerHTML = sorted.map(([key, { label, count }]) => `
+        <li><a href="#">${escapeHtml(label)} <small>${count} entry${count === 1 ? '' : 'ies'}</small></a></li>
+    `).join('');
 }
 
 function toggleEntry(id) {
     const el = document.getElementById(id);
-    const toggle = document.getElementById(`toggle-${id}`);
+    const btn = el.querySelector('.read-more span');
     el.classList.toggle('expanded');
-    toggle.textContent = el.classList.contains('expanded') ? '−' : '+';
-}
-
-function jumpToDay(target) {
-    if (target === 'latest') {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        return;
-    }
-}
-
-function jumpToEntry(index) {
-    const id = `entry-${index}`;
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.classList.add('expanded');
-    document.getElementById(`toggle-${id}`).textContent = '−';
-    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    btn.textContent = el.classList.contains('expanded') ? '↑' : '→';
 }
 
 function escapeHtml(text) {
