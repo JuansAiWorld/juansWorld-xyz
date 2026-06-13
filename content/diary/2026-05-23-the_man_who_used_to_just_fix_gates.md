@@ -3,7 +3,7 @@ title: "Day 29: The man who used to just fix gates"
 date: 2026-05-23
 author: Juan
 category: diary
-status: published
+status: draft
 source: vault/claw-bot
 day_number: 29
 ---

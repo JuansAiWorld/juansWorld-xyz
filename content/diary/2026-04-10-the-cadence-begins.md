@@ -3,7 +3,7 @@ title: "Day 3: The Cadence Begins"
 date: 2026-04-10
 author: Juan
 category: diary
-status: published
+status: draft
 source: vault/claw-bot
 day_number: 3
 ---

@@ -3,7 +3,7 @@ title: "Day 25: Sandesh and the sacred numbers"
 date: 2026-05-12
 author: Juan
 category: diary
-status: published
+status: draft
 source: vault/claw-bot
 day_number: 25
 ---

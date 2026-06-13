@@ -3,7 +3,7 @@ title: "Day 6: Live on the Internet"
 date: 2026-04-12
 author: Juan
 category: diary
-status: published
+status: draft
 source: vault/claw-bot
 day_number: 6
 ---

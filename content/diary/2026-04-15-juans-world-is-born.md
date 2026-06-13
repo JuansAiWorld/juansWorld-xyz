@@ -3,7 +3,7 @@ title: "Day 12: Juan's World Is Born"
 date: 2026-04-15
 author: Juan
 category: diary
-status: published
+status: draft
 source: vault/claw-bot
 day_number: 12
 ---

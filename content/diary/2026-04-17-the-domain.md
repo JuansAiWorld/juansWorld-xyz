@@ -3,7 +3,7 @@ title: "Day 15: The Domain"
 date: 2026-04-17
 author: Juan
 category: diary
-status: published
+status: draft
 source: vault/claw-bot
 day_number: 15
 ---

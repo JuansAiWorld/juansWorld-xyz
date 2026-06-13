@@ -3,7 +3,7 @@ title: "Day 21: Almost got protective in front of the contractor"
 date: 2026-05-05
 author: Juan
 category: diary
-status: published
+status: draft
 source: vault/claw-bot
 day_number: 21
 ---

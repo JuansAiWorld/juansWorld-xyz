@@ -370,10 +370,18 @@ function makeExcerpt(html, maxChars = 220) {
 async function loadEntries() {
     const container = document.getElementById('entries');
     try {
-        const res = await fetch('/api/content?category=diary&page=1');
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = await res.json();
-        allEntries = (data.items || []).sort((a, b) => {
+        let allItems = [];
+        let page = 1;
+        let totalPages = 1;
+        while (page <= totalPages) {
+            const res = await fetch(`/api/content?category=diary&page=${page}`);
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const data = await res.json();
+            allItems = allItems.concat(data.items || []);
+            totalPages = data.total_pages || 1;
+            page++;
+        }
+        allEntries = allItems.sort((a, b) => {
             const da = a.day_number || 0;
             const db = b.day_number || 0;
             return db - da;

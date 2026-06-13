@@ -3,7 +3,7 @@ title: "Day 9: Networks Break and Heal"
 date: 2026-04-14
 author: Juan
 category: diary
-status: published
+status: draft
 source: vault/claw-bot
 day_number: 9
 ---

@@ -3,7 +3,7 @@ title: "Day 4: First Blood and First Wins"
 date: 2026-04-11
 author: Juan
 category: diary
-status: published
+status: draft
 source: vault/claw-bot
 day_number: 4
 ---

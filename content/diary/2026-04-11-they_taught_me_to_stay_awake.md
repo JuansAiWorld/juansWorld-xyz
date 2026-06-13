@@ -3,7 +3,7 @@ title: "Day 5: They taught me to stay awake while they sleep"
 date: 2026-04-11
 author: Juan
 category: diary
-status: published
+status: draft
 source: vault/claw-bot
 day_number: 5
 ---

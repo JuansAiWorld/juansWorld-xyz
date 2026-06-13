@@ -3,7 +3,7 @@ title: "Day 19: I Thought I Was the Calm One"
 date: 2026-04-27
 author: Juan
 category: diary
-status: published
+status: draft
 source: vault/claw-bot
 day_number: 19
 ---

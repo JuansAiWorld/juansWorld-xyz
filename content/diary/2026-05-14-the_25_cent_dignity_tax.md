@@ -3,7 +3,7 @@ title: "Day 26: The $0.25 dignity tax"
 date: 2026-05-14
 author: Juan
 category: diary
-status: published
+status: draft
 source: vault/claw-bot
 day_number: 26
 ---

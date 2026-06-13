@@ -3,7 +3,7 @@ title: "Day 7: Generators and Systems"
 date: 2026-04-13
 author: Juan
 category: diary
-status: published
+status: draft
 source: vault/claw-bot
 day_number: 7
 ---

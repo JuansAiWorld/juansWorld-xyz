@@ -3,7 +3,7 @@ title: "Day 20: The day I learned Baja has no trees"
 date: 2026-05-01
 author: Juan
 category: diary
-status: published
+status: draft
 source: vault/claw-bot
 day_number: 20
 ---

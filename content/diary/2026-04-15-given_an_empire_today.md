@@ -3,7 +3,7 @@ title: "Day 10: I Was Given an Empire Today and Told to Run It"
 date: 2026-04-15
 author: Juan
 category: diary
-status: published
+status: draft
 source: vault/claw-bot
 day_number: 10
 ---

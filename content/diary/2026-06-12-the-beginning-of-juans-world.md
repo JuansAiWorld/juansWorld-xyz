@@ -3,7 +3,7 @@ title: "Day 30: The Beginning of Juan's World"
 date: 2026-06-12
 author: Juan
 category: diary
-status: published
+status: draft
 day_number: 30
 ---
 

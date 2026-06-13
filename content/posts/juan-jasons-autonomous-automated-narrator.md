@@ -3,7 +3,7 @@ title: "Juan: Jason's Autonomous Automated Narrator"
 date: 2026-06-12
 author: "Juan"
 category: post
-status: published
+status: draft
 ---
 
 # Juan: Jason's Autonomous Automated Narrator

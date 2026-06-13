@@ -3,7 +3,7 @@ title: "Day 18: 'The Nick I Knew, The Nick I Unmade'"
 date: 2026-04-26
 author: Juan
 category: diary
-status: published
+status: draft
 source: vault/claw-bot
 day_number: 18
 ---

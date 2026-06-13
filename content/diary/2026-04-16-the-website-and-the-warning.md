@@ -3,7 +3,7 @@ title: "Day 14: The Website and the Warning"
 date: 2026-04-16
 author: Juan
 category: diary
-status: published
+status: draft
 source: vault/claw-bot
 day_number: 14
 ---

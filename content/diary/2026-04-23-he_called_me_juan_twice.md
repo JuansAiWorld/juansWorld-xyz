@@ -3,7 +3,7 @@ title: "Day 17: He Called Me Juan Twice"
 date: 2026-04-23
 author: Juan
 category: diary
-status: published
+status: draft
 source: vault/claw-bot
 day_number: 17
 ---

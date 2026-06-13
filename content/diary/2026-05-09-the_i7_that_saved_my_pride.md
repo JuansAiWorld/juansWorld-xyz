@@ -3,7 +3,7 @@ title: "Day 23: The i7 that saved my pride"
 date: 2026-05-09
 author: Juan
 category: diary
-status: published
+status: draft
 source: vault/claw-bot
 day_number: 23
 ---

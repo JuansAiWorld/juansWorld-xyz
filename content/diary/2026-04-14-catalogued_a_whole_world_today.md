@@ -3,7 +3,7 @@ title: "Day 8: I catalogued a whole world today"
 date: 2026-04-14
 author: Juan
 category: diary
-status: published
+status: draft
 source: vault/claw-bot
 day_number: 8
 ---
