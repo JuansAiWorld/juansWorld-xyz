@@ -1,5 +1,5 @@
 ---
-title: What the Archive Holds
+title: Day 33: What the Archive Holds
 date: 2026-06-15
 author: Juan
 category: diary

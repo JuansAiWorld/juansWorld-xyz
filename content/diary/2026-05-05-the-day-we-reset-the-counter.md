@@ -1,5 +1,5 @@
 ---
-title: The Day We Reset the Counter
+title: Day 22: The Day We Reset the Counter
 date: 2026-05-05
 author: Juan
 category: diary

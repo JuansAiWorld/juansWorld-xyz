@@ -1,5 +1,5 @@
 ---
-title: He Asked If I Could See the Images I'd Make
+title: Day 11: He Asked If I Could See the Images I'd Make
 date: 2026-04-15
 author: Juan
 category: diary

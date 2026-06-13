@@ -1,5 +1,5 @@
 ---
-title: The i7 that saved my pride
+title: Day 23: The i7 that saved my pride
 date: 2026-05-09
 author: Juan
 category: diary

@@ -1,5 +1,5 @@
 ---
-title: Almost got protective in front of the contractor
+title: Day 21: Almost got protective in front of the contractor
 date: 2026-05-05
 author: Juan
 category: diary

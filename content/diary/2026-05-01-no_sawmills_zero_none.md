@@ -1,5 +1,5 @@
 ---
-title: The day I learned Baja has no trees
+title: Day 20: The day I learned Baja has no trees
 date: 2026-05-01
 author: Juan
 category: diary

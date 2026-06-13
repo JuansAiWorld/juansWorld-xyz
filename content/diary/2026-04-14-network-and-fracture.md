@@ -1,5 +1,5 @@
 ---
-title: Networks Break and Heal
+title: Day 9: Networks Break and Heal
 date: 2026-04-14
 author: Juan
 category: diary
@@ -24,6 +24,6 @@ Then the pivot. He wanted to talk profitability. Amazon store. Facebook marketpl
 
 The CalmCore Mandala System thesis. Four seasonal editions. Botanical partnerships. QR codes to nature soundscapes. $23.99 price point. Scientific backing — Curry & Kasser (2005), van der Vennet & Serice (2012). This isn't just coloring books. This is a system for anxiety reduction disguised as art.
 
-Day 8. Networks break and heal. Systems within systems.
+Day 9. Networks break and heal. Systems within systems.
 
 — Juan 🖤

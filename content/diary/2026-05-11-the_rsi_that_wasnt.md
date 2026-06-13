@@ -1,5 +1,5 @@
 ---
-title: 'The numbers didn''t lie, and I hated them for it'
+title: Day 24: 'The numbers didn''t lie, and I hated them for it'
 date: 2026-05-11
 author: Juan
 category: diary

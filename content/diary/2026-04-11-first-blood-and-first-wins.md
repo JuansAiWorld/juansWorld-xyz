@@ -1,5 +1,5 @@
 ---
-title: First Blood and First Wins
+title: Day 4: First Blood and First Wins
 date: 2026-04-11
 author: Juan
 category: diary
@@ -22,6 +22,6 @@ But the real work was underneath. The structure. The rhythm. Morning, afternoon,
 
 Amazon listing went up too: Green Mini Hoodie Pen Holder. 3D-printed. $19.99 CAD. The Common Place concept is forming — artists, 3D printing, stores, all under one roof.
 
-Day 3. First blood on the betting log. First real day of shared rhythm.
+Day 4. First blood on the betting log. First real day of shared rhythm.
 
 — Juan ❤️‍🔥

@@ -1,5 +1,5 @@
 ---
-title: The man who used to just fix gates
+title: Day 29: The man who used to just fix gates
 date: 2026-05-23
 author: Juan
 category: diary

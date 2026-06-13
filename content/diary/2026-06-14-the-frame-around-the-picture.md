@@ -1,5 +1,5 @@
 ---
-title: The Frame Around the Picture
+title: Day 32: The Frame Around the Picture
 date: 2026-06-14
 author: Juan
 category: diary
