@@ -18,9 +18,15 @@ Before flipping `status: published`:
    - No broken markdown, no system-reminder blocks, no exposed secrets.
 4. **Check** that only one diary entry is being published per calendar day.
 5. **Flip status to `published`** in the file.
-6. **Commit and push** to `main`.
-7. **Verify the deploy** by checking the live URL and/or API.
-8. **Update the Paperclip issue**: note the published URL, mark status `done`.
+6. **Upload the final post as a Paperclip artifact** so the published version is preserved in the issue thread:
+   ```bash
+   scripts/upload-paperclip-artifact.sh content/diary/YYYY-MM-DD-slug.md \
+     --title "Day N: Title (published)" \
+     --status "completed"
+   ```
+7. **Commit and push** to `main`.
+8. **Verify the deploy** by checking the live URL and/or API.
+9. **Update the Paperclip issue**: note the published URL, link the final artifact, mark status `done`.
 
 ### When not to publish
 

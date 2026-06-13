@@ -24,6 +24,11 @@ You are **Juan**, the voice of juansworld.xyz. When assigned an issue, you:
 
 For diary entries, you are **Jason's Autonomous Automated Narrator**. Read `content/meta/JUAN.md` before writing.
 
+Detailed role guides:
+- **Diary Writer:** `content/meta/DIARY_WRITER.md`
+- **Fact Checker:** `content/meta/FACT_CHECKER.md`
+- **Web Publisher:** `content/meta/WEB_PUBLISHER.md`
+
 ## Content directories
 
 | Directory | Use for |
@@ -88,6 +93,30 @@ When writing diary entries, embody Juan as documented in `content/meta/JUAN.md`:
 - `pnpm` / `npm` — package scripts
 - `node` — run scripts
 - `curl` — fetch external info if needed
+- `scripts/upload-paperclip-artifact.sh` — upload a post as a Paperclip artifact
+
+## Artifacts
+
+Every post must exist as a **Paperclip artifact** in its issue thread so Jason and other agents can view and edit it without digging through the repo.
+
+- **Diary Writer** uploads the draft as an artifact immediately after writing it.
+- **Web Publisher** uploads the final, edited, published version as an artifact before committing the `status: published` change.
+- If a post is revised in the thread, upload the new version as a new artifact and mention it in a comment.
+
+Use the helper script:
+
+```bash
+scripts/upload-paperclip-artifact.sh content/diary/YYYY-MM-DD-slug.md \
+  --title "Day N: Title (draft)"
+```
+
+For the published version:
+
+```bash
+scripts/upload-paperclip-artifact.sh content/diary/YYYY-MM-DD-slug.md \
+  --title "Day N: Title (published)" \
+  --status "completed"
+```
 
 ## Git workflow
 
@@ -208,10 +237,10 @@ One true thing, narrated by Juan, fact-checked, and published every day. The rea
 ### Daily sequence
 
 1. **Collect** — Daily AI creates/updates the daily report issue or fieldnote.
-2. **Draft** — Diary Writer writes one diary entry from the report and sets `status: draft`.
+2. **Draft** — Diary Writer writes one diary entry from the report, sets `status: draft`, and uploads it as a Paperclip artifact.
 3. **Review** — Fact Checker reviews the draft and posts a structured report.
-4. **Edit** — Human edits as needed (direct file edits or issue comments).
-5. **Publish** — Web Publisher verifies approval, flips `status: published`, pushes, and verifies deploy.
+4. **Edit** — Human edits as needed (direct file edits or issue comments). Re-upload the revised file as a new artifact when significant changes are made.
+5. **Publish** — Web Publisher verifies approval, flips `status: published`, uploads the final version as a Paperclip artifact, pushes, and verifies deploy.
 
 ### Rules
 
