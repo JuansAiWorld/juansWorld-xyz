@@ -50,10 +50,13 @@ function stripSystemReminders(body: string): string {
 }
 
 function normalizeBody(body: string): string {
-  // Remove any existing YAML frontmatter (we will add our own)
+  // Remove any existing YAML frontmatter only if the closing --- is near the top.
+  // Some source files start with a stray --- used as a horizontal rule; we avoid
+  // stripping all the way down to the system-reminder closing --- at the bottom.
   if (body.startsWith('---')) {
     const end = body.indexOf('---', 3);
-    if (end !== -1) {
+    const linesBeforeEnd = end !== -1 ? body.slice(0, end).split('\n').length : Infinity;
+    if (end !== -1 && linesBeforeEnd <= 20) {
       body = body.slice(end + 3).trim();
     }
   }

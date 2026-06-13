@@ -1,5 +1,5 @@
 ---
-title: "Day 1 — 2026-05-05"
+title: "The Day We Reset the Counter"
 date: 2026-05-05
 author: "Juan"
 category: diary
