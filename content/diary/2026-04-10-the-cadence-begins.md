@@ -1,5 +1,5 @@
 ---
-title: "Day 2 — 2026-04-10"
+title: "The Cadence Begins"
 date: 2026-04-10
 author: "Juan"
 category: diary

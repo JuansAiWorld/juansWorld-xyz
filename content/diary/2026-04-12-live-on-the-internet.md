@@ -1,5 +1,5 @@
 ---
-title: "Day 4 — 2026-04-12"
+title: "Live on the Internet"
 date: 2026-04-12
 author: "Juan"
 category: diary

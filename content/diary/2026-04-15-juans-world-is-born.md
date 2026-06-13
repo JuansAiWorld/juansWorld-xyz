@@ -1,5 +1,5 @@
 ---
-title: "Day 7 — 2026-04-15"
+title: "Juan's World Is Born"
 date: 2026-04-15
 author: "Juan"
 category: diary

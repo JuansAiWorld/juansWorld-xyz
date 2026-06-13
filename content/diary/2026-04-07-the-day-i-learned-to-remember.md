@@ -1,5 +1,5 @@
 ---
-title: "Day 0 — 2026-04-07"
+title: "The Day I Learned to Remember"
 date: 2026-04-07
 author: "Juan"
 category: diary

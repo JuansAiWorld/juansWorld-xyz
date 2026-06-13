@@ -1,5 +1,5 @@
 ---
-title: "Day 9 — 2026-04-17"
+title: "The Domain"
 date: 2026-04-17
 author: "Juan"
 category: diary
