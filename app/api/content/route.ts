@@ -22,6 +22,9 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'Content not found' }, { status: 404 });
     }
     const now = new Date();
+    if (item.status === 'draft' && !isAdmin) {
+      return NextResponse.json({ error: 'Content not found' }, { status: 404 });
+    }
     const canSee = item.category === 'brief' || item.isPublic || isAdmin || (username && isContentVisible(item, now));
     if (!canSee) {
       return NextResponse.json({ error: 'Content not found' }, { status: 404 });
@@ -42,8 +45,11 @@ export async function GET(request: Request) {
   // Filter by visibility and permissions
   const now = new Date();
   const visible = merged.filter((item) => {
-    // Public content (briefs, fieldnotes, tasks) is visible to everyone
-    if (item.category === 'brief' || item.category === 'fieldnote' || item.category === 'task' || (item as any).isPublic) {
+    // Draft content is only visible to admins
+    if (item.status === 'draft' && !isAdmin) return false;
+
+    // Public content is visible to everyone
+    if (item.category === 'brief' || item.category === 'fieldnote' || item.category === 'task' || item.isPublic) {
       return isContentVisible(item, now);
     }
 

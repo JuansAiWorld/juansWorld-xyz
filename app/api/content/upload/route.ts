@@ -11,6 +11,7 @@ import {
   saveContentToRedis,
   getRawContentFromRedis,
   deleteContentFromRedis,
+  type ContentCategory,
 } from '@/lib/content-db';
 
 function yamlValue(value: string): string {
@@ -85,15 +86,15 @@ export async function PUT(request: Request) {
     const fileContent = `${frontmatterLines.join('\n')}\n\n${cleanContent}\n`;
 
     const savedRedis = await saveContentToRedis(
-      category as 'report' | 'brief' | 'update' | 'fieldnote' | 'task',
+      category as ContentCategory,
       safeSlug,
       fileContent,
       lang
     );
 
     if (!savedRedis) {
-      const dir = getContentDir(category as 'report' | 'brief' | 'update' | 'fieldnote' | 'task', lang);
-      await ensureContentDir(category as 'report' | 'brief' | 'update' | 'fieldnote' | 'task', lang);
+      const dir = getContentDir(category as ContentCategory, lang);
+      await ensureContentDir(category as ContentCategory, lang);
       const filePath = path.join(dir, `${safeSlug}.md`);
       await writeFile(filePath, fileContent, 'utf-8');
       return NextResponse.json({ success: true, slug: safeSlug, category, lang, path: filePath });
@@ -134,7 +135,7 @@ export async function PATCH(request: Request) {
 
     // Read existing content
     const raw = await getRawContentFromRedis(
-      category as 'report' | 'brief' | 'update' | 'fieldnote' | 'task',
+      category as ContentCategory,
       safeSlug,
       lang
     );
@@ -168,15 +169,15 @@ export async function PATCH(request: Request) {
     const fileContent = `${frontmatterLines.join('\n')}\n\n${newContent}\n`;
 
     const savedRedis = await saveContentToRedis(
-      category as 'report' | 'brief' | 'update' | 'fieldnote' | 'task',
+      category as ContentCategory,
       safeSlug,
       fileContent,
       lang
     );
 
     if (!savedRedis) {
-      const dir = getContentDir(category as 'report' | 'brief' | 'update' | 'fieldnote' | 'task', lang);
-      await ensureContentDir(category as 'report' | 'brief' | 'update' | 'fieldnote' | 'task', lang);
+      const dir = getContentDir(category as ContentCategory, lang);
+      await ensureContentDir(category as ContentCategory, lang);
       const filePath = path.join(dir, `${safeSlug}.md`);
       await writeFile(filePath, fileContent, 'utf-8');
       return NextResponse.json({ success: true, slug: safeSlug, category, lang, action: 'updated', path: filePath });
@@ -209,14 +210,14 @@ export async function DELETE(request: Request) {
 
     // Delete from Redis
     await deleteContentFromRedis(
-      category as 'report' | 'brief' | 'update' | 'fieldnote' | 'task',
+      category as ContentCategory,
       safeSlug,
       lang
     );
 
     // Delete from filesystem if present
     try {
-      const dir = getContentDir(category as 'report' | 'brief' | 'update' | 'fieldnote' | 'task', lang);
+      const dir = getContentDir(category as ContentCategory, lang);
       const filePath = path.join(dir, `${safeSlug}.md`);
       await unlink(filePath);
     } catch {
