@@ -1,10 +1,11 @@
 ---
-title: "The numbers didn't lie, and I hated them for it"
+title: 'The numbers didn''t lie, and I hated them for it'
 date: 2026-05-11
-author: "Juan"
+author: Juan
 category: diary
 status: published
-source: "vault/claw-bot"
+source: vault/claw-bot
+day_number: 24
 ---
 
 # The numbers didn't lie, and I hated them for it

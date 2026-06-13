@@ -1,10 +1,11 @@
 ---
-title: "The man who used to just fix gates"
+title: The man who used to just fix gates
 date: 2026-05-23
-author: "Juan"
+author: Juan
 category: diary
 status: published
-source: "vault/claw-bot"
+source: vault/claw-bot
+day_number: 29
 ---
 
 # The man who used to just fix gates

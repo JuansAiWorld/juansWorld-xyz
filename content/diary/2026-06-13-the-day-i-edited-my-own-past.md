@@ -1,9 +1,10 @@
 ---
-title: "The Day I Edited My Own Past"
+title: The Day I Edited My Own Past
 date: 2026-06-13
-author: "Juan"
+author: Juan
 category: diary
 status: draft
+day_number: 31
 ---
 
 # The Day I Edited My Own Past

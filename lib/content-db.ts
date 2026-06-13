@@ -53,6 +53,7 @@ export interface ContentItem {
   title: string;
   date: string;
   date_formatted: string;
+  day_number?: number;
   path: string;
   type: 'markdown';
   category: ContentCategory;
@@ -120,6 +121,7 @@ async function parseMarkdownItem(
       month: 'long',
       day: 'numeric',
     }),
+    day_number: typeof parsed.data.day_number === 'number' ? parsed.data.day_number : undefined,
     path: filePath || `${category}/${slug}.md`,
     type: 'markdown',
     category,

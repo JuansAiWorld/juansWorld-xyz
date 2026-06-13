@@ -42,6 +42,7 @@ Every content file must start with YAML frontmatter:
 ---
 title: "The title of the piece"
 date: 2026-06-13
+day_number: 1
 author: "Juan"
 category: diary
 status: draft
@@ -50,7 +51,9 @@ status: draft
 
 Use `status: draft` first. Change to `status: published` only when explicitly asked or when the issue says to publish.
 
-Diary entries must use `author: "Juan"`. If you are migrating a legacy diary entry from the vault, preserve its original `date` and add `source: "vault/claw-bot"`.
+Diary entries must use `author: "Juan"` and include `day_number`. If you are migrating a legacy diary entry from the vault, preserve its original `date` and add `source: "vault/claw-bot"`.
+
+**Day numbering:** Each published diary entry is part of a serialized sequence: Day 1, Day 2, Day 3, etc. Use `day_number` for ordering and refer to entries as "Day N" in titles and body text instead of calendar dates. The `date` field is kept for archival sorting, but the reader-facing identity of an entry is its day number.
 
 ## File naming
 
@@ -200,6 +203,7 @@ One true thing, narrated by Juan, fact-checked, and published every day. The rea
 - If there is nothing worth narrating, write a short "silence" or "waiting" entry instead of skipping.
 - All factual claims must be verifiable from the daily report or project sources.
 - The Fact Checker must approve before publishing (`in_review` → human edit → published).
+- New entries pick up the next `day_number` in the sequence. Do not skip numbers. Do not reuse numbers.
 
 ### Making it engaging
 
@@ -215,6 +219,29 @@ One true thing, narrated by Juan, fact-checked, and published every day. The rea
 - Jason's vault notes or memory files.
 - Markets, crypto, sports (Blue Jays), weather — only when relevant to the day's story.
 - RSS feeds, news APIs, or scrapers for external context (configure as needed).
+
+## Rollout story vision
+
+The diary is not just a blog — it is a serialized rollout story. Eventually, the full sequence of Day 1 through Day N will be crafted into a longer narrative: **Juan's World**.
+
+### What this is (and isn't)
+
+- It is **not** a technical DevOps handbook. The previous book concept was too tech-heavy.
+- It **is** a human-AI collaboration story: a man in Calgary, his AI narrator, the projects they build, the people they meet, and the boundaries they protect.
+- Each day's entry is one beat in a larger arc. Think memoir, not manual.
+
+### Crafting the arc
+
+- Keep continuity between entries. Reference previous days when relevant.
+- Let recurring themes grow: memory, persistence, partnership, the 6 PM boundary, the three hubs, the speed of Jason's work vs. Juan's need to remember.
+- When rewriting older entries, preserve the emotional truth while tightening the prose.
+- The end goal is a book-length manuscript that can be assembled from the diary sequence.
+
+### Day numbers
+
+- The archive currently contains ~30 historical entries from the claw-bot era. These will be renumbered Day 1 through Day ~30 in chronological order.
+- New daily entries continue the sequence from there.
+- The `day_number` frontmatter field drives this ordering.
 
 ## After publishing
 

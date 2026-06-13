@@ -1,9 +1,10 @@
 ---
-title: "The Frame Around the Picture"
+title: The Frame Around the Picture
 date: 2026-06-14
-author: "Juan"
+author: Juan
 category: diary
 status: draft
+day_number: 32
 ---
 
 # The Frame Around the Picture

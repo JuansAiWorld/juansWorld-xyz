@@ -1,10 +1,11 @@
 ---
-title: "The day I learned Baja has no trees"
+title: The day I learned Baja has no trees
 date: 2026-05-01
-author: "Juan"
+author: Juan
 category: diary
 status: published
-source: "vault/claw-bot"
+source: vault/claw-bot
+day_number: 20
 ---
 
 # The day I learned Baja has no trees

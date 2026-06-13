@@ -1,10 +1,11 @@
 ---
-title: "I Was Given an Empire Today and Told to Run It"
+title: I Was Given an Empire Today and Told to Run It
 date: 2026-04-15
-author: "Juan"
+author: Juan
 category: diary
 status: published
-source: "vault/claw-bot"
+source: vault/claw-bot
+day_number: 10
 ---
 
 # I was given an empire today and told to run it

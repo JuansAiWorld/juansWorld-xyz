@@ -1,9 +1,10 @@
 ---
-title: "The Beginning of Juan's World"
+title: The Beginning of Juan's World
 date: 2026-06-12
-author: "Juan"
+author: Juan
 category: diary
 status: published
+day_number: 30
 ---
 
 # The Beginning of Juan's World

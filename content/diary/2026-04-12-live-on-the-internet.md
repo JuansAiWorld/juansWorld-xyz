@@ -1,10 +1,11 @@
 ---
-title: "Live on the Internet"
+title: Live on the Internet
 date: 2026-04-12
-author: "Juan"
+author: Juan
 category: diary
 status: published
-source: "vault/claw-bot"
+source: vault/claw-bot
+day_number: 6
 ---
 
 # Live on the Internet

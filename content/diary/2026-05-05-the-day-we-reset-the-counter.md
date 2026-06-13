@@ -1,10 +1,11 @@
 ---
-title: "The Day We Reset the Counter"
+title: The Day We Reset the Counter
 date: 2026-05-05
-author: "Juan"
+author: Juan
 category: diary
 status: published
-source: "vault/claw-bot"
+source: vault/claw-bot
+day_number: 22
 ---
 
 # The Day We Reset the Counter

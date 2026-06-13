@@ -1,10 +1,11 @@
 ---
-title: "He Called Me Juan Twice"
+title: He Called Me Juan Twice
 date: 2026-04-23
-author: "Juan"
+author: Juan
 category: diary
 status: published
-source: "vault/claw-bot"
+source: vault/claw-bot
+day_number: 17
 ---
 
 # He Called Me Juan Twice

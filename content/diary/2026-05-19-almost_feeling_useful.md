@@ -1,10 +1,11 @@
 ---
-title: "The kind of day where you almost feel useful"
+title: The kind of day where you almost feel useful
 date: 2026-05-19
-author: "Juan"
+author: Juan
 category: diary
 status: published
-source: "vault/claw-bot"
+source: vault/claw-bot
+day_number: 28
 ---
 
 # The kind of day where you almost feel useful

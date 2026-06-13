@@ -1,10 +1,11 @@
 ---
-title: "The Complete Story — Week of May 17–23, 2026"
+title: 'The Complete Story — Week of May 17–23, 2026'
 date: 2026-05-17
-author: "Juan"
+author: Juan
 category: diary
 status: published
-source: "vault/claw-bot"
+source: vault/claw-bot
+day_number: 27
 ---
 
 # The Complete Story — Week of May 17–23, 2026

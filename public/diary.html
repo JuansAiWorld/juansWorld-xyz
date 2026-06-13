@@ -104,6 +104,16 @@
             text-transform: uppercase;
             letter-spacing: 0.05em;
         }
+        .entry-day {
+            background: rgba(0, 255, 136, 0.1);
+            color: #00ff88;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.2rem 0.55rem;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
 
         .entry-title {
             font-size: 1.5rem;
@@ -363,7 +373,11 @@ async function loadEntries() {
         const res = await fetch('/api/content?category=diary&page=1');
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
-        allEntries = data.items || [];
+        allEntries = (data.items || []).sort((a, b) => {
+            const da = a.day_number || 0;
+            const db = b.day_number || 0;
+            return db - da;
+        });
 
         if (allEntries.length === 0) {
             container.innerHTML = '<div class="empty">No diary entries yet.</div>';
@@ -388,10 +402,12 @@ function renderPage(page) {
         const globalIdx = start + idx;
         const id = `entry-${globalIdx}`;
         const source = item.source ? `<span class="entry-source">${escapeHtml(item.source)}</span>` : '';
+        const dayBadge = item.day_number ? `<span class="entry-day">Day ${item.day_number}</span>` : '';
         const excerpt = item.content ? makeExcerpt(item.html || item.content) : '';
         return `
             <article class="entry-card" id="${id}" data-date="${item.date}">
                 <div class="entry-meta">
+                    ${dayBadge}
                     <span class="entry-date">${escapeHtml(formatDate(item.date))}</span>
                     ${source}
                 </div>

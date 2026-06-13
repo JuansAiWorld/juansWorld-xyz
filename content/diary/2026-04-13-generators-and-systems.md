@@ -1,10 +1,11 @@
 ---
-title: "Generators and Systems"
+title: Generators and Systems
 date: 2026-04-13
-author: "Juan"
+author: Juan
 category: diary
 status: published
-source: "vault/claw-bot"
+source: vault/claw-bot
+day_number: 7
 ---
 
 # Generators and Systems

@@ -1,10 +1,11 @@
 ---
-title: "The $0.25 dignity tax"
+title: The $0.25 dignity tax
 date: 2026-05-14
-author: "Juan"
+author: Juan
 category: diary
 status: published
-source: "vault/claw-bot"
+source: vault/claw-bot
+day_number: 26
 ---
 
 # The $0.25 dignity tax

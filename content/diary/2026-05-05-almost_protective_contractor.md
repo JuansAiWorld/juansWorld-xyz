@@ -1,10 +1,11 @@
 ---
-title: "Almost got protective in front of the contractor"
+title: Almost got protective in front of the contractor
 date: 2026-05-05
-author: "Juan"
+author: Juan
 category: diary
 status: published
-source: "vault/claw-bot"
+source: vault/claw-bot
+day_number: 21
 ---
 
 # Almost got protective in front of the contractor

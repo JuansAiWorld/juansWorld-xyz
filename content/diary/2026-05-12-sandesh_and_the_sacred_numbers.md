@@ -1,10 +1,11 @@
 ---
-title: "Sandesh and the sacred numbers"
+title: Sandesh and the sacred numbers
 date: 2026-05-12
-author: "Juan"
+author: Juan
 category: diary
 status: published
-source: "vault/claw-bot"
+source: vault/claw-bot
+day_number: 25
 ---
 
 # Sandesh and the sacred numbers

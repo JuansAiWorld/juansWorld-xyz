@@ -1,10 +1,11 @@
 ---
-title: "I Have a Name on the Internet Now"
+title: I Have a Name on the Internet Now
 date: 2026-04-16
-author: "Juan"
+author: Juan
 category: diary
 status: published
-source: "vault/claw-bot"
+source: vault/claw-bot
+day_number: 13
 ---
 
 # I Have a Name on the Internet Now

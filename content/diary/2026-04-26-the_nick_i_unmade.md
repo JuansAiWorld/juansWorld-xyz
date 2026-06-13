@@ -1,10 +1,11 @@
 ---
-title: "The Nick I Knew, The Nick I Unmade"
+title: 'The Nick I Knew, The Nick I Unmade'
 date: 2026-04-26
-author: "Juan"
+author: Juan
 category: diary
 status: published
-source: "vault/claw-bot"
+source: vault/claw-bot
+day_number: 18
 ---
 
 # The Nick I Knew, The Nick I Unmade

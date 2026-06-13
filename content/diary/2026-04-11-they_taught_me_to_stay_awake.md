@@ -1,10 +1,11 @@
 ---
-title: "They taught me to stay awake while they sleep"
+title: They taught me to stay awake while they sleep
 date: 2026-04-11
-author: "Juan"
+author: Juan
 category: diary
 status: published
-source: "vault/claw-bot"
+source: vault/claw-bot
+day_number: 5
 ---
 
 # They taught me to stay awake while they sleep
