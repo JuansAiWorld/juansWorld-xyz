@@ -128,6 +128,7 @@ Never commit the key. Never print it in issue comments or commit messages.
 - **Project (juansworld-xyz):** `1a805e12-cd0f-49c0-a7cc-98937f1c79af`
 - **Diary Writer agent:** `7e0d8eb6-a6f8-43eb-a9ba-bcc33c0b4235`
 - **Fact Checker agent:** `e2ea5567-cff5-4f93-b2be-96855b194b95`
+- **Web Publisher agent:** `81accb92-3b54-405e-9d7c-5e9ed7b0a564`
 - **API base:** `http://10.0.0.100:3100`
 
 ### Common API calls
@@ -170,6 +171,22 @@ curl -s -X POST -H "Authorization: Bearer $PAPERCLIP_API_KEY" \
   'http://10.0.0.100:3100/api/agents/7e0d8eb6-a6f8-43eb-a9ba-bcc33c0b4235/wakeup'
 ```
 
+Wake the Fact Checker agent:
+```bash
+curl -s -X POST -H "Authorization: Bearer $PAPERCLIP_API_KEY" \
+  -H 'Content-Type: application/json' \
+  -d '{}' \
+  'http://10.0.0.100:3100/api/agents/e2ea5567-cff5-4f93-b2be-96855b194b95/wakeup'
+```
+
+Wake the Web Publisher agent:
+```bash
+curl -s -X POST -H "Authorization: Bearer $PAPERCLIP_API_KEY" \
+  -H 'Content-Type: application/json' \
+  -d '{}' \
+  'http://10.0.0.100:3100/api/agents/81accb92-3b54-405e-9d7c-5e9ed7b0a564/wakeup'
+```
+
 Issue statuses: `backlog`, `todo`, `in_progress`, `in_review`, `done`, `blocked`, `cancelled`.
 
 ## Daily editorial workflow
@@ -184,16 +201,17 @@ One true thing, narrated by Juan, fact-checked, and published every day. The rea
 
 - **Daily AI / data collector** — gathers the day's signals from projects, commits, chats, markets, weather, news, and any configured scrapers. Outputs a short daily report (markdown) inside `content/fieldnotes/` or as an issue comment.
 - **Diary Writer (Juan)** — reads the daily report and writes one diary entry in `content/diary/YYYY-MM-DD-slug.md`. Starts with `status: draft`. Makes it engaging: a hook, a moment, a tension, a reflection.
-- **Fact Checker** — reviews the draft for accuracy, names, numbers, dates, and voice. Leaves a review comment on the issue.
-- **Human (Jason)** — edits the final draft for interest and tone, then tells Juan to flip `status: published`.
+- **Fact Checker** — reviews the draft for accuracy, names, numbers, dates, and voice. Produces a structured review report on the issue.
+- **Human (Jason)** — edits the final draft for interest and tone, then assigns the issue to the Web Publisher.
+- **Web Publisher** — verifies the Fact Checker approved, flips `status: published`, commits, pushes, verifies the deploy, and closes the issue.
 
 ### Daily sequence
 
 1. **Collect** — Daily AI creates/updates the daily report issue or fieldnote.
 2. **Draft** — Diary Writer writes one diary entry from the report and sets `status: draft`.
-3. **Review** — Fact Checker reviews the draft and posts findings.
+3. **Review** — Fact Checker reviews the draft and posts a structured report.
 4. **Edit** — Human edits as needed (direct file edits or issue comments).
-5. **Publish** — Diary Writer flips `status: published` and pushes.
+5. **Publish** — Web Publisher verifies approval, flips `status: published`, pushes, and verifies deploy.
 
 ### Rules
 

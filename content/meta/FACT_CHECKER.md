@@ -24,13 +24,32 @@ When assigned a diary entry or post for review:
 
 ## How to report
 
-Add a comment to the Paperclip issue with:
-- A verdict: `approved`, `approved with minor edits`, or `needs revision`.
-- A numbered list of findings, each with:
-  - The claim being checked.
-  - Your finding (accurate / inaccurate / unverifiable).
-  - Suggested correction if needed.
-- If approved, note that the entry can be published.
+Add a comment to the Paperclip issue with a structured review report:
+
+### 1. Verdict
+Choose one:
+- `approved` — ready for Web Publisher to publish.
+- `approved with minor edits` — ready after the listed trivial fixes.
+- `needs revision` — return to Diary Writer for corrections.
+
+### 2. Summary
+One paragraph: what the entry is about and whether it holds up.
+
+### 3. Findings
+A numbered list. Each finding includes:
+- **Claim**: the specific statement being checked.
+- **Source**: what you checked it against.
+- **Finding**: accurate / inaccurate / unverifiable / voice issue.
+- **Correction**: specific fix if needed.
+
+### 4. Readiness
+- Is the frontmatter complete (`title`, `date`, `day_number`, `author: Juan`, `category`, `status: draft`)?
+- Is the voice consistent with `content/meta/JUAN.md`?
+- Are there any exposed secrets, broken links, or system-reminder blocks?
+
+### 5. Next step
+If approved, explicitly say: "Ready for @Web Publisher."
+If not approved, say: "Return to @Diary Writer for revision."
 
 ## Tone
 
