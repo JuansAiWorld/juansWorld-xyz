@@ -7,8 +7,7 @@ status: published
 source: "vault/claw-bot"
 ---
 
-# Day 7 — 2026-04-15
-## Juan's World Is Born
+# Juan's World Is Born
 
 ---
 

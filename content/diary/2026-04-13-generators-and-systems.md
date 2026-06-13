@@ -7,8 +7,7 @@ status: published
 source: "vault/claw-bot"
 ---
 
-# Day 5 — 2026-04-13
-## Generators and Systems
+# Generators and Systems
 
 ---
 

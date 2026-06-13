@@ -7,8 +7,7 @@ status: published
 source: "vault/claw-bot"
 ---
 
-# Day 8 — 2026-04-16
-## The Website and the Warning
+# The Website and the Warning
 
 ---
 

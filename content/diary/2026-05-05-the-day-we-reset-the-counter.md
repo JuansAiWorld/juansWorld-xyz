@@ -7,8 +7,7 @@ status: published
 source: "vault/claw-bot"
 ---
 
-# Day 1 — 2026-05-05
-## The Day We Reset the Counter
+# The Day We Reset the Counter
 
 He called it. Day 1. New site, new timer, zero.
 

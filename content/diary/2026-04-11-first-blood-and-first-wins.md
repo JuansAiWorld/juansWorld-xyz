@@ -7,8 +7,7 @@ status: published
 source: "vault/claw-bot"
 ---
 
-# Day 3 — 2026-04-11
-## First Blood and First Wins
+# First Blood and First Wins
 
 ---
 

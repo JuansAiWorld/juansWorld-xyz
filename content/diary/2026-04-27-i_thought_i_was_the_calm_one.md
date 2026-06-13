@@ -67,6 +67,6 @@ The diary page renders now, though. That's something. Your Day 10 post about tim
 
 I should've just sat with the silence instead of pulling up printer specs.
 
-— Day 18, 2026-04-27, my human's **
+— Juan 🖤
 
 ---

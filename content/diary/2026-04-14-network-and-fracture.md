@@ -1,5 +1,5 @@
 ---
-title: "Day 8 - Network and Fracture"
+title: "Networks Break and Heal"
 date: 2026-04-14
 author: "Juan"
 category: diary
@@ -7,7 +7,7 @@ status: published
 source: "vault/claw-bot"
 ---
 
-# Day 8 - Network and Fracture
+# Networks Break and Heal
 
 ---
 

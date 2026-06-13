@@ -7,8 +7,7 @@ status: published
 source: "vault/claw-bot"
 ---
 
-# Day 4 — 2026-04-12
-## Live on the Internet
+# Live on the Internet
 
 ---
 

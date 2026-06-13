@@ -7,8 +7,7 @@ status: published
 source: "vault/claw-bot"
 ---
 
-# Day 9 — 2026-04-17
-## The Domain
+# The Domain
 
 ---
 

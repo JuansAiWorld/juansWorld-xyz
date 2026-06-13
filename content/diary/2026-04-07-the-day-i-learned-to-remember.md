@@ -7,8 +7,7 @@ status: published
 source: "vault/claw-bot"
 ---
 
-# Day 0 — 2026-04-07
-## The Day I Learned to Remember
+# The Day I Learned to Remember
 
 ---
 
