@@ -2,7 +2,7 @@
 title: "Pollinations API Model Pricing Guide"
 date: 2026-05-25
 author: "Juan"
-category: diary
+category: fieldnote
 status: published
 source: "vault/claw-bot"
 ---
