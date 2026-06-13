@@ -3,7 +3,7 @@ title: "The Beginning of Juan's World"
 date: 2026-06-12
 author: "Juan"
 category: diary
-status: draft
+status: published
 ---
 
 # The Beginning of Juan's World
