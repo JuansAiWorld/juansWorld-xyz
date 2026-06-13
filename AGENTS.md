@@ -99,6 +99,75 @@ git push origin main
 
 Use the existing git config. Do not force push.
 
+## Working with Paperclip
+
+This project is managed through the local Paperclip instance. When you need to create issues, add comments, or look up project/agent IDs, use the Paperclip REST API directly with `curl`.
+
+### Authentication
+
+The board API key is stored in the Paperclip Agent Bridge environment file on the host:
+
+```
+/home/theone/.config/paperclip/paperclip-bridge.env
+```
+
+Read `PAPERCLIP_API_KEY` from that file and use it as a Bearer token:
+
+```bash
+PAPERCLIP_API_KEY=$(grep PAPERCLIP_API_KEY /home/theone/.config/paperclip/paperclip-bridge.env | cut -d= -f2)
+```
+
+Never commit the key. Never print it in issue comments or commit messages.
+
+### Useful IDs
+
+- **Company:** `6f9fb8e0-5cb4-435e-af7c-d5e008148f86`
+- **Project (juansworld-xyz):** `1a805e12-cd0f-49c0-a7cc-98937f1c79af`
+- **Diary Writer agent:** `7e0d8eb6-a6f8-43eb-a9ba-bcc33c0b4235`
+- **API base:** `http://10.0.0.100:3100`
+
+### Common API calls
+
+List agents:
+```bash
+curl -s -H "Authorization: Bearer $PAPERCLIP_API_KEY" \
+  'http://10.0.0.100:3100/api/companies/6f9fb8e0-5cb4-435e-af7c-d5e008148f86/agents'
+```
+
+Create an issue:
+```bash
+curl -s -H "Authorization: Bearer $PAPERCLIP_API_KEY" \
+  -H 'Content-Type: application/json' \
+  -d '{"title":"...","description":"...","status":"todo","priority":"normal","assigneeAgentId":"7e0d8eb6-a6f8-43eb-a9ba-bcc33c0b4235","projectId":"1a805e12-cd0f-49c0-a7cc-98937f1c79af"}' \
+  'http://10.0.0.100:3100/api/companies/6f9fb8e0-5cb4-435e-af7c-d5e008148f86/issues'
+```
+
+Add a comment:
+```bash
+curl -s -H "Authorization: Bearer $PAPERCLIP_API_KEY" \
+  -H 'Content-Type: application/json' \
+  -d '{"body":"..."}' \
+  'http://10.0.0.100:3100/api/issues/<issue-id>/comments'
+```
+
+Update issue status:
+```bash
+curl -s -X PATCH -H "Authorization: Bearer $PAPERCLIP_API_KEY" \
+  -H 'Content-Type: application/json' \
+  -d '{"status":"in_review"}' \
+  'http://10.0.0.100:3100/api/issues/<issue-id>'
+```
+
+Wake the Diary Writer agent:
+```bash
+curl -s -X POST -H "Authorization: Bearer $PAPERCLIP_API_KEY" \
+  -H 'Content-Type: application/json' \
+  -d '{}' \
+  'http://10.0.0.100:3100/api/agents/7e0d8eb6-a6f8-43eb-a9ba-bcc33c0b4235/wakeup'
+```
+
+Issue statuses: `backlog`, `todo`, `in_progress`, `in_review`, `done`, `blocked`, `cancelled`.
+
 ## After publishing
 
 1. Note the deployed URL.
