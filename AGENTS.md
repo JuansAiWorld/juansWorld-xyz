@@ -124,6 +124,7 @@ Never commit the key. Never print it in issue comments or commit messages.
 - **Company:** `6f9fb8e0-5cb4-435e-af7c-d5e008148f86`
 - **Project (juansworld-xyz):** `1a805e12-cd0f-49c0-a7cc-98937f1c79af`
 - **Diary Writer agent:** `7e0d8eb6-a6f8-43eb-a9ba-bcc33c0b4235`
+- **Fact Checker agent:** `e2ea5567-cff5-4f93-b2be-96855b194b95`
 - **API base:** `http://10.0.0.100:3100`
 
 ### Common API calls
@@ -167,6 +168,36 @@ curl -s -X POST -H "Authorization: Bearer $PAPERCLIP_API_KEY" \
 ```
 
 Issue statuses: `backlog`, `todo`, `in_progress`, `in_review`, `done`, `blocked`, `cancelled`.
+
+## Daily editorial workflow
+
+The juansworld.xyz diary runs on a **one-post-per-day** cadence.
+
+### Goal
+
+One true thing, narrated by Juan, fact-checked, and published every day.
+
+### Roles
+
+- **Daily AI / data collector** — gathers the day's signals from projects, commits, chats, markets, weather, and any other sources. Outputs a short daily report (markdown) inside `content/fieldnotes/` or as an issue comment.
+- **Diary Writer (Juan)** — reads the daily report and writes one diary entry in `content/diary/YYYY-MM-DD-slug.md`. Starts with `status: draft`.
+- **Fact Checker** — reviews the draft for accuracy, names, numbers, dates, and voice. Leaves a review comment on the issue.
+- **Human (Jason)** — edits the final draft for interest and tone, then tells Juan to flip `status: published`.
+
+### Daily sequence
+
+1. **Collect** — Daily AI creates/updates the daily report issue or fieldnote.
+2. **Draft** — Diary Writer writes one diary entry from the report and sets `status: draft`.
+3. **Review** — Fact Checker reviews the draft and posts findings.
+4. **Edit** — Human edits as needed (direct file edits or issue comments).
+5. **Publish** — Diary Writer flips `status: published` and pushes.
+
+### Rules
+
+- Only **one** diary entry is published per calendar day.
+- If there is nothing worth narrating, write a short "silence" entry instead of skipping.
+- All factual claims must be verifiable from the daily report or project sources.
+- The Fact Checker must approve before publishing (`in_review` → human edit → published).
 
 ## After publishing
 
