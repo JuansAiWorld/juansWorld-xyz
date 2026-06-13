@@ -28,6 +28,8 @@ Detailed role guides:
 - **Diary Writer:** `content/meta/DIARY_WRITER.md`
 - **Fact Checker:** `content/meta/FACT_CHECKER.md`
 - **Web Publisher:** `content/meta/WEB_PUBLISHER.md`
+- **CEO:** `content/meta/CEO.md`
+- **CTO:** `content/meta/CTO.md`
 
 ## Content directories
 
@@ -158,6 +160,8 @@ Never commit the key. Never print it in issue comments or commit messages.
 - **Diary Writer agent:** `7e0d8eb6-a6f8-43eb-a9ba-bcc33c0b4235`
 - **Fact Checker agent:** `e2ea5567-cff5-4f93-b2be-96855b194b95`
 - **Web Publisher agent:** `81accb92-3b54-405e-9d7c-5e9ed7b0a564`
+- **CEO agent:** `dcb91e02-1e6f-4bbd-ad74-334b6ec41372`
+- **CTO agent:** `80c7549c-7e7d-4cfb-b017-2de5c90fa40f`
 - **API base:** `http://10.0.0.100:3100`
 
 ### Common API calls
@@ -216,6 +220,22 @@ curl -s -X POST -H "Authorization: Bearer $PAPERCLIP_API_KEY" \
   'http://10.0.0.100:3100/api/agents/81accb92-3b54-405e-9d7c-5e9ed7b0a564/wakeup'
 ```
 
+Wake the CEO agent:
+```bash
+curl -s -X POST -H "Authorization: Bearer $PAPERCLIP_API_KEY" \
+  -H 'Content-Type: application/json' \
+  -d '{}' \
+  'http://10.0.0.100:3100/api/agents/dcb91e02-1e6f-4bbd-ad74-334b6ec41372/wakeup'
+```
+
+Wake the CTO agent:
+```bash
+curl -s -X POST -H "Authorization: Bearer $PAPERCLIP_API_KEY" \
+  -H 'Content-Type: application/json' \
+  -d '{}' \
+  'http://10.0.0.100:3100/api/agents/80c7549c-7e7d-4cfb-b017-2de5c90fa40f/wakeup'
+```
+
 Issue statuses: `backlog`, `todo`, `in_progress`, `in_review`, `done`, `blocked`, `cancelled`.
 
 ## Daily editorial workflow
@@ -266,6 +286,33 @@ One true thing, narrated by Juan, fact-checked, and published every day. The rea
 - Jason's vault notes or memory files.
 - Markets, crypto, sports (Blue Jays), weather — only when relevant to the day's story.
 - RSS feeds, news APIs, or scrapers for external context (configure as needed).
+
+## Executive delegation
+
+Two executive agents are available for strategic and technical decisions:
+
+- **CEO** (`content/meta/CEO.md`) — strategic oversight, final say on conflicting priorities, and delegation of cross-functional work.
+- **CTO** (`content/meta/CTO.md`) — technical architecture, build/deploy health, security, and engineering delegation.
+
+Use them when:
+
+- An issue is unclear or blocked and needs a decision before work proceeds.
+- A proposal spans content, code, and infrastructure.
+- You want an executive review before committing resources.
+
+When delegating from CEO or CTO, create or update a Paperclip issue with clear acceptance criteria, assign it to the right agent, and wake that agent.
+
+### Org chart
+
+```
+CEO (strategic oversight)
+├── CTO (technical oversight)
+├── Diary Writer (content)
+│   └── Fact Checker (review)
+└── Web Publisher (publish)
+```
+
+Day-to-day editorial work still flows through the daily sequence. CEO and CTO step in only when asked or when a decision is required.
 
 ## Rollout story vision
 
