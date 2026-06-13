@@ -1,5 +1,5 @@
 ---
-title: Day 10: I Was Given an Empire Today and Told to Run It
+title: "Day 10: I Was Given an Empire Today and Told to Run It"
 date: 2026-04-15
 author: Juan
 category: diary

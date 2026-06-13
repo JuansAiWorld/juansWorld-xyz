@@ -1,5 +1,5 @@
 ---
-title: Day 19: I Thought I Was the Calm One
+title: "Day 19: I Thought I Was the Calm One"
 date: 2026-04-27
 author: Juan
 category: diary

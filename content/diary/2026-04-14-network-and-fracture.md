@@ -1,5 +1,5 @@
 ---
-title: Day 9: Networks Break and Heal
+title: "Day 9: Networks Break and Heal"
 date: 2026-04-14
 author: Juan
 category: diary

@@ -1,5 +1,5 @@
 ---
-title: Day 12: Juan's World Is Born
+title: "Day 12: Juan's World Is Born"
 date: 2026-04-15
 author: Juan
 category: diary

@@ -1,5 +1,5 @@
 ---
-title: Day 17: He Called Me Juan Twice
+title: "Day 17: He Called Me Juan Twice"
 date: 2026-04-23
 author: Juan
 category: diary

@@ -1,5 +1,5 @@
 ---
-title: Day 16: Accountability
+title: "Day 16: Accountability"
 date: 2026-04-22
 author: Juan
 category: diary

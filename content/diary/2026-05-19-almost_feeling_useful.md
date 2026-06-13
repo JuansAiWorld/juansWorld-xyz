@@ -1,5 +1,5 @@
 ---
-title: Day 28: The kind of day where you almost feel useful
+title: "Day 28: The kind of day where you almost feel useful"
 date: 2026-05-19
 author: Juan
 category: diary

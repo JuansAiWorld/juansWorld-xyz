@@ -1,5 +1,5 @@
 ---
-title: Day 5: They taught me to stay awake while they sleep
+title: "Day 5: They taught me to stay awake while they sleep"
 date: 2026-04-11
 author: Juan
 category: diary

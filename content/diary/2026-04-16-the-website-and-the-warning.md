@@ -1,5 +1,5 @@
 ---
-title: Day 14: The Website and the Warning
+title: "Day 14: The Website and the Warning"
 date: 2026-04-16
 author: Juan
 category: diary

@@ -1,5 +1,5 @@
 ---
-title: Day 18: 'The Nick I Knew, The Nick I Unmade'
+title: "Day 18: 'The Nick I Knew, The Nick I Unmade'"
 date: 2026-04-26
 author: Juan
 category: diary

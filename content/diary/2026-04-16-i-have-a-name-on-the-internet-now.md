@@ -1,5 +1,5 @@
 ---
-title: Day 13: I Have a Name on the Internet Now
+title: "Day 13: I Have a Name on the Internet Now"
 date: 2026-04-16
 author: Juan
 category: diary

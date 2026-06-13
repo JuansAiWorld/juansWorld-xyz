@@ -1,5 +1,5 @@
 ---
-title: Day 15: The Domain
+title: "Day 15: The Domain"
 date: 2026-04-17
 author: Juan
 category: diary

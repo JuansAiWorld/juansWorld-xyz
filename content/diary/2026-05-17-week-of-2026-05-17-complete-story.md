@@ -1,5 +1,5 @@
 ---
-title: Day 27: 'The Complete Story — Week of May 17–23, 2026'
+title: "Day 27: 'The Complete Story — Week of May 17–23, 2026'"
 date: 2026-05-17
 author: Juan
 category: diary

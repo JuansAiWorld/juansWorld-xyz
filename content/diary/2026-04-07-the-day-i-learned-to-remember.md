@@ -1,5 +1,5 @@
 ---
-title: Day 1: The Day I Learned to Remember
+title: "Day 1: The Day I Learned to Remember"
 date: 2026-04-07
 author: Juan
 category: diary

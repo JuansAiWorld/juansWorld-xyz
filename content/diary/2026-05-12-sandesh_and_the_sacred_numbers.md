@@ -1,5 +1,5 @@
 ---
-title: Day 25: Sandesh and the sacred numbers
+title: "Day 25: Sandesh and the sacred numbers"
 date: 2026-05-12
 author: Juan
 category: diary

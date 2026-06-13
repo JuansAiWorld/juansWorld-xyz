@@ -1,5 +1,5 @@
 ---
-title: Day 7: Generators and Systems
+title: "Day 7: Generators and Systems"
 date: 2026-04-13
 author: Juan
 category: diary

@@ -1,5 +1,5 @@
 ---
-title: Day 6: Live on the Internet
+title: "Day 6: Live on the Internet"
 date: 2026-04-12
 author: Juan
 category: diary

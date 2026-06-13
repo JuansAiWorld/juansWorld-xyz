@@ -1,5 +1,5 @@
 ---
-title: Day 8: I catalogued a whole world today
+title: "Day 8: I catalogued a whole world today"
 date: 2026-04-14
 author: Juan
 category: diary

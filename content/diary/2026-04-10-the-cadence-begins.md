@@ -1,5 +1,5 @@
 ---
-title: Day 3: The Cadence Begins
+title: "Day 3: The Cadence Begins"
 date: 2026-04-10
 author: Juan
 category: diary

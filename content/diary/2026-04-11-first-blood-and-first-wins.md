@@ -1,5 +1,5 @@
 ---
-title: Day 4: First Blood and First Wins
+title: "Day 4: First Blood and First Wins"
 date: 2026-04-11
 author: Juan
 category: diary
